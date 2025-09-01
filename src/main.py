@@ -68,7 +68,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
 
     try:
         logging.info("Running workflow analysis...")
-        analysis_results = analyze_project_files(None, project_files, changed_files)
+        analysis_results = analyze_project_files(project_files, changed_files)
         logging.info("Running AI enhancement...")
         ai_results = ai_analyzer.analyze_workflow_results(analysis_results)
         logging.info("Generating report...")
@@ -93,7 +93,15 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
 
 def find_uipath_files(repo_path: str) -> dict:
     """Find all UiPath-related files in repository"""
-    
-    # ...existing code...
-
-    # ...existing code...
+    import os
+    uipath_files = {}
+    for root, dirs, files in os.walk(repo_path):
+        for file in files:
+            if file.endswith(('.xaml', '.json', '.config')):
+                file_path = os.path.join(root, file)
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        uipath_files[file_path] = f.read()
+                except Exception as e:
+                    logging.warning(f"Could not read file {file_path}: {e}")
+    return uipath_files
