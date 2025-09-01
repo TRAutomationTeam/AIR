@@ -21,6 +21,7 @@ class ReportGenerator:
             'go_no_go_decision': analysis_results.get('go_no_go_decision', 'REVIEW_REQUIRED'),
             'quality_metrics': self._calculate_metrics(analysis_results),
             'recommendations': analysis_results.get('recommendations', []),
+            'ai_insights': analysis_results.get('ai_insights', []),
             'next_steps': self._generate_next_steps(analysis_results)
         }
         logging.info("Generating HTML report...")
@@ -150,6 +151,8 @@ class ReportGenerator:
                 tr.violation-error { background-color: #ffe6e6; }
                 .file-list { font-size: 0.95em; color: #555; margin: 0; padding: 0; list-style: none; }
                 .file-list li { margin-bottom: 2px; }
+                .ai-insights { background-color: #f8f8ff; border-left: 4px solid #4b9cd3; margin: 20px 0; padding: 15px; border-radius: 5px; }
+                .ai-insights h2 { color: #4b9cd3; }
             </style>
         </head>
         <body>
@@ -187,6 +190,16 @@ class ReportGenerator:
                     <p>{{ quality_metrics.security_score }}/100</p>
                 </div>
             </div>
+            {% if ai_insights %}
+            <div class="ai-insights">
+                <h2>AI Arena Insights</h2>
+                <ul>
+                {% for insight in ai_insights %}
+                    <li>{{ insight }}</li>
+                {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
             {% set filtered_violations = detailed_results.original_analysis.rules_violations | selectattr('Severity', 'in', ['Warning', 'Error']) | list %}
             {% if filtered_violations %}
             <div class="violations">
@@ -245,7 +258,6 @@ class ReportGenerator:
         
     def _generate_json_summary(self, report_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate JSON summary for API responses"""
-        
         # Only include warnings and errors in JSON output
         filtered_violations = [v for v in report_data['detailed_results']['original_analysis'].get('rules_violations', []) if v.get('Severity') in ('Warning', 'Error')]
         return {
@@ -258,5 +270,6 @@ class ReportGenerator:
             'recommendations_count': len(report_data['recommendations']),
             'timestamp': report_data['timestamp'],
             'violations': filtered_violations,
-            'recommendations': report_data.get('recommendations', [])
+            'recommendations': report_data.get('recommendations', []),
+            'ai_insights': report_data.get('ai_insights', [])
         }
