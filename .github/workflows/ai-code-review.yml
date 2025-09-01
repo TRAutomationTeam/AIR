@@ -32,3 +32,11 @@ jobs:
 
       - name: Run AI code review
         run: python src/main.py
+
+      - name: Upload AI code review reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: ai-code-review-reports
+          path: |
+            C:/AI Reports/*.html
+            C:/AI Reports/*.json
