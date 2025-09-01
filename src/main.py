@@ -1,5 +1,7 @@
 import sys
 import logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
+import logging
 import argparse
 import os
 import git
@@ -81,9 +83,11 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
         }
         report = report_generator.generate_report(ai_results, project_info)
         repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-        with open(os.path.join(repo_root, 'report.json'), 'w') as f:
+        reports_dir = os.path.join(repo_root, 'reports')
+        os.makedirs(reports_dir, exist_ok=True)
+        with open(os.path.join(reports_dir, 'report.json'), 'w') as f:
             json.dump(report['json_summary'], f, indent=2)
-        with open(os.path.join(repo_root, 'report.html'), 'w') as f:
+        with open(os.path.join(reports_dir, 'report.html'), 'w') as f:
             f.write(report['html_report'])
         logging.info(f"Analysis complete. Decision: {report['json_summary']['decision']}")
         logging.info(f"Quality Score: {report['json_summary']['quality_score']}/100")
