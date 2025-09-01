@@ -36,7 +36,6 @@ def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
     """Analyze XAML content for UiPath best practices and rules."""
     import re
     violations = []
-    # Example rules (expand as needed):
     # 1. Missing annotation/comment
     if '<Annotation>' not in xaml_content:
         violations.append({
@@ -63,7 +62,7 @@ def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
         violations.append({
             'RuleId': 'XAML003',
             'RuleName': 'Hardcoded Value Detected',
-            'Severity': 'Info',
+            'Severity': 'Warning',
             'FilePath': file_path,
             'Description': 'Potential hardcoded value found in workflow.',
             'Recommendation': 'Replace hardcoded values with arguments or config settings.'
@@ -82,10 +81,11 @@ def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
     bad_names = re.findall(r'Name="([a-zA-Z0-9_]+)"', xaml_content)
     for name in bad_names:
         if not re.match(r'^[A-Z][A-Za-z0-9_]*$', name):
+            severity = 'Warning' if name.lower() in ['password', 'username', 'apikey', 'token'] else 'Info'
             violations.append({
                 'RuleId': 'XAML005',
                 'RuleName': 'Naming Convention Violation',
-                'Severity': 'Info',
+                'Severity': severity,
                 'FilePath': file_path,
                 'Description': f'Name "{name}" does not follow PascalCase.',
                 'Recommendation': 'Use PascalCase for workflow, variable, and argument names.'
@@ -99,6 +99,68 @@ def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
             'FilePath': file_path,
             'Description': 'Empty <Sequence> found in workflow.',
             'Recommendation': 'Remove or implement logic in empty sequences.'
+        })
+    # 7. Delay/Timeout detection
+    if re.search(r'<ui:Delay|Delay="[0-9]+"|Timeout="[0-9]+"', xaml_content):
+        violations.append({
+            'RuleId': 'XAML007',
+            'RuleName': 'Delay/Timeout Detected',
+            'Severity': 'Warning',
+            'FilePath': file_path,
+            'Description': 'Delay or timeout detected. Ensure values are configurable and not hardcoded.',
+            'Recommendation': 'Use config/arguments for delay/timeout values.'
+        })
+    # 8. Credential/security checks
+    if re.search(r'(password|apikey|token|secret|credential)', xaml_content, re.IGNORECASE):
+        if re.search(r'("[^"]+")', xaml_content):
+            violations.append({
+                'RuleId': 'XAML008',
+                'RuleName': 'Hardcoded Credential Detected',
+                'Severity': 'Error',
+                'FilePath': file_path,
+                'Description': 'Hardcoded credential or secret detected.',
+                'Recommendation': 'Use secure credential activities and config files.'
+            })
+    if re.search(r'<ui:GetCredential', xaml_content):
+        violations.append({
+            'RuleId': 'XAML009',
+            'RuleName': 'Credential Activity Used',
+            'Severity': 'Info',
+            'FilePath': file_path,
+            'Description': 'Credential activity detected. Ensure secure usage.',
+            'Recommendation': 'Store credentials securely and use SecureString.'
+        })
+    # 9. Retry logic detection
+    if re.search(r'RetryScope|RetryNumber|RetryCount', xaml_content):
+        violations.append({
+            'RuleId': 'XAML010',
+            'RuleName': 'Retry Logic Detected',
+            'Severity': 'Info',
+            'FilePath': file_path,
+            'Description': 'Retry logic detected. Ensure proper error handling and retry limits.',
+            'Recommendation': 'Configure retry limits and error handling.'
+        })
+    # 10. Loop optimization (performance)
+    if re.search(r'<ui:ForEach|<ui:While|<ui:DoWhile', xaml_content):
+        loop_count = len(re.findall(r'<ui:ForEach|<ui:While|<ui:DoWhile', xaml_content))
+        if loop_count > 5:
+            violations.append({
+                'RuleId': 'XAML011',
+                'RuleName': 'Excessive Looping',
+                'Severity': 'Warning',
+                'FilePath': file_path,
+                'Description': f'{loop_count} loops detected. Optimize for performance.',
+                'Recommendation': 'Reduce loop count or optimize loop logic.'
+            })
+    # 11. Modular design (maintainability)
+    if activity_count > 0 and len(re.findall(r'<ui:InvokeWorkflowFile', xaml_content)) < max(1, activity_count // 20):
+        violations.append({
+            'RuleId': 'XAML012',
+            'RuleName': 'Low Modularity',
+            'Severity': 'Warning',
+            'FilePath': file_path,
+            'Description': 'Few invoked workflows detected. Consider splitting logic into reusable components.',
+            'Recommendation': 'Increase modularity by using InvokeWorkflowFile.'
         })
     return violations
 from typing import Dict, List, Any

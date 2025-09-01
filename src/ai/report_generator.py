@@ -38,25 +38,24 @@ class ReportGenerator:
         """Create analysis summary"""
         
         original_analysis = analysis_results.get('original_analysis', {})
-        violations = original_analysis.get('rules_violations', [])
-        
+        # Only include warnings and errors
+        violations = [v for v in original_analysis.get('rules_violations', []) if v.get('Severity') in ('Warning', 'Error')]
+
         summary = {
             'total_violations': len(violations),
-            'critical_issues': len(analysis_results.get('critical_issues', [])),
+            'critical_issues': len([v for v in violations if v.get('Severity') == 'Error']),
             'quality_score': analysis_results.get('quality_score', 0),
             'files_analyzed': len(original_analysis.get('files_analyzed', [])),
             'decision': analysis_results.get('go_no_go_decision', 'REVIEW_REQUIRED'),
             'confidence': analysis_results.get('confidence', 0)
         }
-        
+
         # Categorize violations by severity
         severity_counts = {}
         for violation in violations:
             severity = violation.get('Severity', 'Unknown')
             severity_counts[severity] = severity_counts.get(severity, 0) + 1
-            
         summary['severity_breakdown'] = severity_counts
-        
         return summary
         
     def _calculate_metrics(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
@@ -144,10 +143,13 @@ class ReportGenerator:
                 .decision-no-go { color: red; font-weight: bold; }
                 .decision-review { color: orange; font-weight: bold; }
                 .violations { margin: 20px 0; }
-                .violation { margin: 10px 0; padding: 10px; border-left: 3px solid #ccc; }
-                .violation-error { border-left-color: red; }
-                .violation-warning { border-left-color: orange; }
-                .violation-info { border-left-color: blue; }
+                table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                tr.violation-warning { background-color: #fffbe6; }
+                tr.violation-error { background-color: #ffe6e6; }
+                .file-list { font-size: 0.95em; color: #555; margin: 0; padding: 0; list-style: none; }
+                .file-list li { margin-bottom: 2px; }
             </style>
         </head>
         <body>
@@ -156,7 +158,6 @@ class ReportGenerator:
                 <p>Generated: {{ timestamp }}</p>
                 <p>Project: {{ project_info.name or 'Unknown' }}</p>
             </div>
-            
             <div class="summary">
                 <h2>Summary</h2>
                 <p><strong>Decision:</strong> 
@@ -168,7 +169,6 @@ class ReportGenerator:
                 <p><strong>Total Violations:</strong> {{ analysis_summary.total_violations }}</p>
                 <p><strong>Critical Issues:</strong> {{ analysis_summary.critical_issues }}</p>
             </div>
-            
             <div class="metrics">
                 <div class="metric">
                     <h3>Maintainability</h3>
@@ -187,49 +187,32 @@ class ReportGenerator:
                     <p>{{ quality_metrics.security_score }}/100</p>
                 </div>
             </div>
-            
-            {% if detailed_results.original_analysis.rules_violations %}
+            {% set filtered_violations = detailed_results.original_analysis.rules_violations | selectattr('Severity', 'in', ['Warning', 'Error']) | list %}
+            {% if filtered_violations %}
             <div class="violations">
-                <h2>Critical Errors & Important Rules</h2>
+                <h2>Rule Violations Summary (Warnings & Errors Only)</h2>
+                {% set grouped = {} %}
+                {% for v in filtered_violations %}
+                    {% set key = v.RuleId ~ '|' ~ v.RuleName ~ '|' ~ v.Severity ~ '|' ~ v.Recommendation %}
+                    {% if key not in grouped %}
+                        {% set _ = grouped.update({key: {'count': 0, 'files': [], 'rule_id': v.RuleId, 'rule_name': v.RuleName, 'severity': v.Severity, 'recommendation': v.Recommendation}}) %}
+                    {% endif %}
+                    {% set _ = grouped[key].update({'count': grouped[key]['count'] + 1}) %}
+                    {% if v.FilePath not in grouped[key]['files'] %}
+                        {% set _ = grouped[key]['files'].append(v.FilePath) %}
+                    {% endif %}
+                {% endfor %}
                 <table>
-                    <tr>
-                        <th>Rule ID</th>
-                        <th>Rule Name</th>
-                        <th>Severity</th>
-                        <th>File</th>
-                        <th>Description</th>
-                        <th>Recommendation</th>
-                    </tr>
-                    {% for violation in detailed_results.original_analysis.rules_violations if violation.Severity == 'Error' or violation.RuleId in ['PJ000','PJ001','XAML004'] %}
-                    <tr class="violation-{{ violation.Severity.lower() }}">
-                        <td>{{ violation.RuleId }}</td>
-                        <td>{{ violation.RuleName }}</td>
-                        <td>{{ violation.Severity }}</td>
-                        <td>{{ violation.FilePath or 'Unknown' }}</td>
-                        <td>{{ violation.Description or violation.ErrorsDescription or 'No description available' }}</td>
-                        <td>{{ violation.Recommendation or 'N/A' }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-                <h2>All Rule Violations</h2>
-                <table>
-                    <tr>
-                        <th>Rule ID</th>
-                        <th>Rule Name</th>
-                        <th>Severity</th>
-                        <th>File</th>
-                        <th>Description</th>
-                        <th>Recommendation</th>
-                    </tr>
-                    {% for violation in detailed_results.original_analysis.rules_violations %}
-                    <tr class="violation-{{ violation.Severity.lower() }}">
-                        <td>{{ violation.RuleId }}</td>
-                        <td>{{ violation.RuleName }}</td>
-                        <td>{{ violation.Severity }}</td>
-                        <td>{{ violation.FilePath or 'Unknown' }}</td>
-                        <td>{{ violation.Description or violation.ErrorsDescription or 'No description available' }}</td>
-                        <td>{{ violation.Recommendation or 'N/A' }}</td>
-                    </tr>
+                    <tr><th>Rule ID</th><th>Rule Name</th><th>Severity</th><th>Count</th><th>Recommendation</th><th>Files</th></tr>
+                    {% for key, data in grouped.items() %}
+                        <tr class="violation-{{ data.severity.lower() }}">
+                            <td>{{ data.rule_id }}</td>
+                            <td>{{ data.rule_name }}</td>
+                            <td>{{ data.severity }}</td>
+                            <td>{{ data.count }}</td>
+                            <td>{{ data.recommendation }}</td>
+                            <td><ul class="file-list">{% for f in data.files %}<li>{{ f }}</li>{% endfor %}</ul></td>
+                        </tr>
                     {% endfor %}
                 </table>
             </div>
@@ -263,6 +246,8 @@ class ReportGenerator:
     def _generate_json_summary(self, report_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate JSON summary for API responses"""
         
+        # Only include warnings and errors in JSON output
+        filtered_violations = [v for v in report_data['detailed_results']['original_analysis'].get('rules_violations', []) if v.get('Severity') in ('Warning', 'Error')]
         return {
             'decision': report_data['go_no_go_decision'],
             'quality_score': report_data['analysis_summary']['quality_score'],
@@ -272,6 +257,6 @@ class ReportGenerator:
             'summary': report_data['detailed_results'].get('summary', ''),
             'recommendations_count': len(report_data['recommendations']),
             'timestamp': report_data['timestamp'],
-            'violations': report_data['detailed_results']['original_analysis'].get('rules_violations', []),
+            'violations': filtered_violations,
             'recommendations': report_data.get('recommendations', [])
         }

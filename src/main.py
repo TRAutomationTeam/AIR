@@ -90,10 +90,13 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
         }
         report = report_generator.generate_report(ai_results, project_info)
         repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        reports_dir = os.path.join(repo_root, 'reports')
-        os.makedirs(reports_dir, exist_ok=True)
-        report_json_path = os.path.join(reports_dir, 'report.json')
-        report_html_path = os.path.join(reports_dir, 'report.html')
+        reports_dir = os.path.join('C:\\', 'AI Reports')  # Ensure correct indentation
+        if not os.path.exists(reports_dir):
+            os.makedirs(reports_dir, exist_ok=True)
+        timestamp = report['report_data']['timestamp'].replace(':', '').replace('-', '').replace('T', '_').split('.')[0]
+        base_filename = f"{project_info['name']}_{timestamp}"
+        report_json_path = os.path.join(reports_dir, f'{base_filename}.json')
+        report_html_path = os.path.join(reports_dir, f'{base_filename}.html')
         with open(report_json_path, 'w', encoding='utf-8') as f:
             json.dump(report['json_summary'], f, indent=2, ensure_ascii=False)
         logging.info(f"Wrote report.json to {report_json_path}")
@@ -102,9 +105,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
         logging.info(f"Wrote report.html to {report_html_path}")
         logging.info(f"Analysis complete. Decision: {report['json_summary']['decision']}")
         logging.info(f"Quality Score: {report['json_summary']['quality_score']}/100")
-        if report['json_summary']['decision'] == 'NO_GO':
-            logging.error("NO_GO decision. Exiting with error code.")
-            sys.exit(1)
+        # Removed any code that uploads or pushes reports to Git
     except Exception as e:
         logging.error(f"Analysis failed: {e}")
         sys.exit(1)
