@@ -1,15 +1,20 @@
 import requests
+# Environment variable mapping (see README for details)
+# UIPATH_APP_ID, UIPATH_APP_SECRET, UIPATH_BASE_URL, UIPATH_SCOPE, UIPATH_TENANT, UIPATH_FOLDER, UIPATH_IDENTITY_URL
 import time
 from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 
 class UiPathOAuthClient:
-    def __init__(self, base_url: str = None, app_id: str = None, app_secret: str = None, scope: str = None):
+    def __init__(self, base_url: str = None, app_id: str = None, app_secret: str = None, scope: str = None, tenant: str = None, folder: str = None, identity_url: str = None):
         import os
         self.base_url = base_url or os.environ.get("UIPATH_BASE_URL")
         self.app_id = app_id or os.environ.get("UIPATH_APP_ID")
         self.app_secret = app_secret or os.environ.get("UIPATH_APP_SECRET")
         self.scope = scope or os.environ.get("UIPATH_SCOPE", "OR.Default OR.Processes.Read OR.Assets.Read")
+        self.tenant = tenant or os.environ.get("UIPATH_TENANT")
+        self.folder = folder or os.environ.get("UIPATH_FOLDER")
+        self.identity_url = identity_url or os.environ.get("UIPATH_IDENTITY_URL")
         self.token_endpoint = f"{self.base_url}/identity/connect/token"
         
     def get_access_token(self) -> Optional[str]:

@@ -1,4 +1,6 @@
 import json
+# Environment variable mapping (see README for details)
+# UIPATH_APP_ID, UIPATH_APP_SECRET, UIPATH_BASE_URL, UIPATH_SCOPE, UIPATH_TENANT, UIPATH_FOLDER, UIPATH_IDENTITY_URL
 import os
 from datetime import datetime, timedelta
 from .oauth_client import UiPathOAuthClient

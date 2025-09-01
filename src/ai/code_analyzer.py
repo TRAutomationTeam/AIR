@@ -1,11 +1,14 @@
 import requests
+# Environment variable mapping (see README for details)
+# AI_ARENA_API_KEY, AI_ARENA_ENDPOINT, AI_ARENA_MODEL_NAME
 from typing import Dict, List, Any
 
 class AICodeAnalyzer:
-    def __init__(self, ai_endpoint: str = None, api_key: str = None):
+    def __init__(self, ai_endpoint: str = None, api_key: str = None, model_name: str = None):
         import os
         self.ai_endpoint = ai_endpoint or os.environ.get("AI_ARENA_ENDPOINT")
         self.api_key = api_key or os.environ.get("AI_ARENA_API_KEY")
+        self.model_name = model_name or "openai_gpt-4-turbo"
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
         """Send workflow analyzer results to AI for enhanced analysis"""

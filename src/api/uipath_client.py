@@ -1,4 +1,6 @@
 import requests
+# Environment variable mapping (see README for details)
+# UIPATH_APP_ID, UIPATH_APP_SECRET, UIPATH_BASE_URL, UIPATH_SCOPE, UIPATH_TENANT, UIPATH_FOLDER, UIPATH_IDENTITY_URL
 from typing import Dict, List, Any, Optional
 from ..auth.token_manager import TokenManager
 
