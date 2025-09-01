@@ -1,0 +1,2217 @@
+{
+  "decision": "REVIEW_REQUIRED",
+  "quality_score": 0,
+  "total_violations": 275,
+  "critical_issues": 0,
+  "confidence": 0.6,
+  "summary": "Found 0 critical and 50 warning issues",
+  "recommendations_count": 3,
+  "timestamp": "2025-09-01T22:08:07.759830",
+  "violations": [
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"in_OrchestratorQueueName\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"in_OrchestratorQueueFolder\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"in_ConfigFilePath\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"__ReferenceID0\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"__ReferenceID2\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"io_TaxYear\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"__ReferenceID3\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"__ReferenceID1\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"isBusinessException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"strExceptionMessage\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"strProcessName\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"isSystemException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"dtProcessStartTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"dtReporter\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"drRowToUpdate\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"dt_TransactionData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"dtTestSummaryReport\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"dtInputData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"strBinderID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml",
+      "Description": "Name \"dtStartTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Name \"in_TestReportExcel\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Name \"in_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Name \"dt_TransposedSummaryReport\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Name \"counterException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Name \"excel\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Name \"dt_Exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Name \"counter\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\CloseAllApplications.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\CloseAllApplications.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml",
+      "Description": "Name \"in_TransactionNumber\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml",
+      "Description": "Name \"out_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml",
+      "Description": "Name \"out_TransactionField1\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml",
+      "Description": "Name \"out_TransactionField2\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml",
+      "Description": "Name \"out_TransactionID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml",
+      "Description": "Name \"io_dt_TransactionData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllApplications.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllApplications.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllApplications.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml",
+      "Description": "Name \"out_dtInputData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml",
+      "Description": "Name \"dtFilterInputData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml",
+      "Description": "Name \"dic_QueueItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "Description": "Name \"in_ConfigFile\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "Description": "Name \"in_ConfigSheets\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "Description": "Name \"out_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "Description": "Name \"dt_SettingsAndConstants\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "Description": "Name \"dt_Assets\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\KillAllProcesses.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\KillAllProcesses.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"in_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"out_isSystemException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"out_isBusinessException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"out_str_ExceptionMessage\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"out_FlowName\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"in_dtTestSummaryReport\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"in_dtReporter\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"in_dtInputData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"in_strBinderID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"in_ListWagesData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"in_strClientID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"io_TaxYear\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"in_drRowToUpdate\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"dtStartTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"dtEndTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"dtAutomationTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"strBinderID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"dtSummaryReport\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"strExceptionScreenshot\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"drRowToUpdate\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID9\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID5\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID0\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID10\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID11\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID13\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID1\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID2\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID3\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID4\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID17\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID18\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID16\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID20\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID15\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID19\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID7\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID6\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID14\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID12\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID8\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Description": "Name \"__ReferenceID21\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"io_RetryNumber\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"io_TransactionNumber\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"in_SystemException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"in_QueueRetry\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID10\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID0\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID1\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID2\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID8\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID3\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID7\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID9\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID4\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID5\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml",
+      "Description": "Name \"__ReferenceID6\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"in_BusinessException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"in_TransactionField1\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"in_TransactionField2\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"in_TransactionID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"in_SystemException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"in_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"io_RetryNumber\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"io_TransactionNumber\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"io_ConsecutiveSystemExceptions\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"__ReferenceID5\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"__ReferenceID4\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"__ReferenceID0\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"__ReferenceID1\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"__ReferenceID2\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"__ReferenceID3\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\TakeScreenshot.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\TakeScreenshot.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\TakeScreenshot.xaml",
+      "Description": "Name \"in_Folder\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\TakeScreenshot.xaml",
+      "Description": "Name \"io_FilePath\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"in_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"out_isSystemException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"in_dtTestSummaryReport\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"in_dtReporter\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"in_dtInputData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"in_drRowToUpdate\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"in_strClientID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"dtStartTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"strFlowName\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"intComponentRowIndex\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"dt_ClientID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"strClientID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"in_strBinderID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"out_isBusinessException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"in_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"in_dtReporter\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"in_drRowToUpdate\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"dtExtractJobDetails\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"strExceptionScreenshot\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"strBinderStatus\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"intBinderStatusIteration\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"intComponentRowIndex\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Description": "Name \"dtStartTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"in_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"in_dtTestSummaryReport\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"out_isSystemException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"in_dtReporter\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"in_dtInputData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"in_drRowToUpdate\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"dtStartTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"strFlowName\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"intComponentRowIndex\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"in_strBinderID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"in_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"in_dtTestSummaryReport\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"in_drRowToUpdate\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"in_dtReporter\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"in_dtInputData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"out_isSystemException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"dtStartTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"strFlowName\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"intComponentRowIndex\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"in_strBinderID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"out_isSystemException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"in_dtReporter\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"in_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"in_dtTestSummaryReport\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"in_dtInputData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"in_drRowToUpdate\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"in_strCliendID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"io_TaxYear\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"dtStartTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"strFlowName\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"intComponentRowIndex\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"strBinderID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"in_drRowToUpdate\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"in_dtInputData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"in_dtReporter\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"in_dtTestSummaryReport\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"in_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"out_isSystemException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"dtStartTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"intComponentRowIndex\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"strFlowName\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"in_strBinderID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML003",
+      "RuleName": "Hardcoded Value Detected",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Potential hardcoded value found in workflow.",
+      "Recommendation": "Replace hardcoded values with arguments or config settings."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"in_Config\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"in_TransactionItem\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"out_isSystemException\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"in_dtTestSummaryReport\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"in_dtReporter\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"out_ListWagesData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"in_drRowToUpdate\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"in_dtInputData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"in_strBinderID\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"io_TaxYear\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"dtStartTime\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"strFlowName\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"intComponentRowIndex\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"io_TaxYear\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Description": "Name \"exception\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\GetTransactionDataTestCase.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\GetTransactionDataTestCase.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\InitAllApplicationsTestCase.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\InitAllApplicationsTestCase.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\InitAllSettingsTestCase.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\InitAllSettingsTestCase.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\MainTestCase.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\MainTestCase.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\MainTestCase.xaml",
+      "Description": "Name \"dt_ResultsData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML005",
+      "RuleName": "Naming Convention Violation",
+      "Severity": "Info",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\MainTestCase.xaml",
+      "Description": "Name \"dt_ExpectedData\" does not follow PascalCase.",
+      "Recommendation": "Use PascalCase for workflow, variable, and argument names."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    },
+    {
+      "RuleId": "XAML001",
+      "RuleName": "Missing Annotation",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\WorkflowTestCaseTemplate.xaml",
+      "Description": "Workflow is missing <Annotation> for documentation.",
+      "Recommendation": "Add an <Annotation> element to describe workflow purpose."
+    },
+    {
+      "RuleId": "XAML004",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Warning",
+      "FilePath": "c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\WorkflowTestCaseTemplate.xaml",
+      "Description": "No TryCatch block found in workflow.",
+      "Recommendation": "Add TryCatch for robust error handling."
+    }
+  ],
+  "recommendations": [
+    "Multiple violations of rule XAML001 detected (25 instances)",
+    "Multiple violations of rule XAML004 detected (25 instances)",
+    "Multiple violations of rule XAML005 detected (224 instances)"
+  ]
+}

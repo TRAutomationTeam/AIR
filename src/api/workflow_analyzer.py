@@ -1,11 +1,82 @@
+from typing import Dict, List, Any
 import json
 import logging
-from typing import Dict, List, Any
 
-def analyze_project_files(self, project_files: Dict[str, str], 
-                         changed_files: List[str] = None) -> Dict[str, Any]:
+def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
+    """Analyze XAML content for UiPath best practices and rules."""
+    import re
+    violations = []
+    # Example rules (expand as needed):
+    # 1. Missing annotation/comment
+    if '<Annotation>' not in xaml_content:
+        violations.append({
+            'RuleId': 'XAML001',
+            'RuleName': 'Missing Annotation',
+            'Severity': 'Warning',
+            'FilePath': file_path,
+            'Description': 'Workflow is missing <Annotation> for documentation.',
+            'Recommendation': 'Add an <Annotation> element to describe workflow purpose.'
+        })
+    # 2. Excessive workflow complexity (too many activities)
+    activity_count = len(re.findall(r'<ui:Sequence|<ui:Flowchart|<ui:StateMachine|<ui:Activity', xaml_content))
+    if activity_count > 50:
+        violations.append({
+            'RuleId': 'XAML002',
+            'RuleName': 'Excessive Workflow Complexity',
+            'Severity': 'Warning',
+            'FilePath': file_path,
+            'Description': f'Workflow contains {activity_count} activities, which may be too complex.',
+            'Recommendation': 'Consider refactoring into smaller workflows.'
+        })
+    # 3. Hardcoded values
+    if re.search(r'>([0-9]{4,}|true|false|"[^"]+")<', xaml_content):
+        violations.append({
+            'RuleId': 'XAML003',
+            'RuleName': 'Hardcoded Value Detected',
+            'Severity': 'Info',
+            'FilePath': file_path,
+            'Description': 'Potential hardcoded value found in workflow.',
+            'Recommendation': 'Replace hardcoded values with arguments or config settings.'
+        })
+    # 4. Missing exception handling
+    if '<ui:TryCatch' not in xaml_content:
+        violations.append({
+            'RuleId': 'XAML004',
+            'RuleName': 'Missing Exception Handling',
+            'Severity': 'Warning',
+            'FilePath': file_path,
+            'Description': 'No TryCatch block found in workflow.',
+            'Recommendation': 'Add TryCatch for robust error handling.'
+        })
+    # 5. Naming convention violations (simple check)
+    bad_names = re.findall(r'Name="([a-zA-Z0-9_]+)"', xaml_content)
+    for name in bad_names:
+        if not re.match(r'^[A-Z][A-Za-z0-9_]*$', name):
+            violations.append({
+                'RuleId': 'XAML005',
+                'RuleName': 'Naming Convention Violation',
+                'Severity': 'Info',
+                'FilePath': file_path,
+                'Description': f'Name "{name}" does not follow PascalCase.',
+                'Recommendation': 'Use PascalCase for workflow, variable, and argument names.'
+            })
+    # 6. Empty sequences
+    if re.search(r'<ui:Sequence[^>]*>\s*</ui:Sequence>', xaml_content):
+        violations.append({
+            'RuleId': 'XAML006',
+            'RuleName': 'Empty Sequence',
+            'Severity': 'Info',
+            'FilePath': file_path,
+            'Description': 'Empty <Sequence> found in workflow.',
+            'Recommendation': 'Remove or implement logic in empty sequences.'
+        })
+    return violations
+from typing import Dict, List, Any
+import json
+import logging
+
+def analyze_project_files(project_files: Dict[str, str], changed_files: List[str] = None) -> Dict[str, Any]:
     """Analyze project files directly from repository"""
-    
     logging.info("Starting project file analysis...")
     analysis_results = {
         'rules_violations': [],
@@ -16,7 +87,6 @@ def analyze_project_files(self, project_files: Dict[str, str],
         'files_analyzed': [],
         'summary': {}
     }
-    
     # Focus on changed files if provided
     files_to_analyze = project_files
     if changed_files:
@@ -25,30 +95,27 @@ def analyze_project_files(self, project_files: Dict[str, str],
             path: content for path, content in project_files.items()
             if any(path.endswith(changed.split('/')[-1]) for changed in changed_files)
         }
-    
     for file_path, content in files_to_analyze.items():
         logging.info(f"Analyzing file: {file_path}")
         if file_path.endswith('.xaml'):
-            violations = self._analyze_xaml_content(content, file_path)
+            violations = _analyze_xaml_content(content, file_path)
             analysis_results['rules_violations'].extend(violations)
             analysis_results['files_analyzed'].append(file_path)
         elif file_path.endswith('.json') and 'project.json' in file_path:
-            violations = self._analyze_project_json(content, file_path)
+            violations = _analyze_project_json(content, file_path)
             analysis_results['rules_violations'].extend(violations)
             analysis_results['files_analyzed'].append(file_path)
-    
     # Generate summary
     logging.info("Generating analysis summary...")
     analysis_results['summary'] = {
         'total_violations': len(analysis_results['rules_violations']),
         'files_with_issues': len(set(v['FilePath'] for v in analysis_results['rules_violations'])),
-        'severity_counts': self._count_by_severity(analysis_results['rules_violations'])
+        'severity_counts': _count_by_severity(analysis_results['rules_violations'])
     }
-    
     logging.info("Project file analysis complete.")
     return analysis_results
 
-def _analyze_project_json(self, json_content: str, file_path: str) -> List[Dict]:
+def _analyze_project_json(json_content: str, file_path: str) -> List[Dict]:
     """Analyze project.json file"""
     
     violations = []
@@ -71,7 +138,7 @@ def _analyze_project_json(self, json_content: str, file_path: str) -> List[Dict]
         # Check for outdated dependencies
         if 'dependencies' in project_data:
             for dep_name, version in project_data['dependencies'].items():
-                if self._is_outdated_dependency(dep_name, version):
+                if _is_outdated_dependency(dep_name, version):
                     violations.append({
                         'RuleId': 'PJ002',
                         'RuleName': 'Outdated Dependency',
@@ -91,13 +158,13 @@ def _analyze_project_json(self, json_content: str, file_path: str) -> List[Dict]
     
     return violations
 
-def _is_outdated_dependency(self, dep_name: str, version: str) -> bool:
+def _is_outdated_dependency(dep_name: str, version: str) -> bool:
     """Check if dependency version is outdated (simplified)"""
     # This could be enhanced to check against a database of current versions
     outdated_patterns = ['2019.', '2020.', '2021.']
     return any(version.startswith(pattern) for pattern in outdated_patterns)
 
-def _count_by_severity(self, violations: List[Dict]) -> Dict[str, int]:
+def _count_by_severity(violations: List[Dict]) -> Dict[str, int]:
     """Count violations by severity"""
     counts = {}
     for violation in violations:

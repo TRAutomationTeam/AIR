@@ -190,18 +190,50 @@ class ReportGenerator:
             
             {% if detailed_results.original_analysis.rules_violations %}
             <div class="violations">
-                <h2>Rule Violations</h2>
-                {% for violation in detailed_results.original_analysis.rules_violations %}
-                <div class="violation violation-{{ violation.Severity.lower() }}">
-                    <h4>{{ violation.RuleName }} ({{ violation.RuleId }})</h4>
-                    <p><strong>Severity:</strong> {{ violation.Severity }}</p>
-                    <p><strong>File:</strong> {{ violation.FilePath or 'Unknown' }}</p>
-                    <p>{{ violation.Description or violation.ErrorsDescription or 'No description available' }}</p>
-                </div>
-                {% endfor %}
+                <h2>Critical Errors & Important Rules</h2>
+                <table>
+                    <tr>
+                        <th>Rule ID</th>
+                        <th>Rule Name</th>
+                        <th>Severity</th>
+                        <th>File</th>
+                        <th>Description</th>
+                        <th>Recommendation</th>
+                    </tr>
+                    {% for violation in detailed_results.original_analysis.rules_violations if violation.Severity == 'Error' or violation.RuleId in ['PJ000','PJ001','XAML004'] %}
+                    <tr class="violation-{{ violation.Severity.lower() }}">
+                        <td>{{ violation.RuleId }}</td>
+                        <td>{{ violation.RuleName }}</td>
+                        <td>{{ violation.Severity }}</td>
+                        <td>{{ violation.FilePath or 'Unknown' }}</td>
+                        <td>{{ violation.Description or violation.ErrorsDescription or 'No description available' }}</td>
+                        <td>{{ violation.Recommendation or 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <h2>All Rule Violations</h2>
+                <table>
+                    <tr>
+                        <th>Rule ID</th>
+                        <th>Rule Name</th>
+                        <th>Severity</th>
+                        <th>File</th>
+                        <th>Description</th>
+                        <th>Recommendation</th>
+                    </tr>
+                    {% for violation in detailed_results.original_analysis.rules_violations %}
+                    <tr class="violation-{{ violation.Severity.lower() }}">
+                        <td>{{ violation.RuleId }}</td>
+                        <td>{{ violation.RuleName }}</td>
+                        <td>{{ violation.Severity }}</td>
+                        <td>{{ violation.FilePath or 'Unknown' }}</td>
+                        <td>{{ violation.Description or violation.ErrorsDescription or 'No description available' }}</td>
+                        <td>{{ violation.Recommendation or 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
             </div>
             {% endif %}
-            
             {% if recommendations %}
             <div class="recommendations">
                 <h2>AI Recommendations</h2>
@@ -212,7 +244,6 @@ class ReportGenerator:
                 </ul>
             </div>
             {% endif %}
-            
             <div class="next-steps">
                 <h2>Next Steps</h2>
                 <ul>
@@ -227,6 +258,7 @@ class ReportGenerator:
         
         template = Template(html_template)
         return template.render(**report_data)
+
         
     def _generate_json_summary(self, report_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate JSON summary for API responses"""
@@ -239,5 +271,7 @@ class ReportGenerator:
             'confidence': report_data['detailed_results'].get('confidence', 0),
             'summary': report_data['detailed_results'].get('summary', ''),
             'recommendations_count': len(report_data['recommendations']),
-            'timestamp': report_data['timestamp']
+            'timestamp': report_data['timestamp'],
+            'violations': report_data['detailed_results']['original_analysis'].get('rules_violations', []),
+            'recommendations': report_data.get('recommendations', [])
         }

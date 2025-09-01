@@ -17,7 +17,14 @@ from ai.code_analyzer import AICodeAnalyzer
 from ai.report_generator import ReportGenerator
 from api.workflow_analyzer import analyze_project_files
 
+
+
+
 # .... existing imports ....
+
+
+# ...existing code...
+
 
 def analyze_repository(repo_path: str, commit_sha: str = None):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
@@ -82,13 +89,17 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
             'changed_files': changed_files[:10] if changed_files else None  # Limit for display
         }
         report = report_generator.generate_report(ai_results, project_info)
-        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
         reports_dir = os.path.join(repo_root, 'reports')
         os.makedirs(reports_dir, exist_ok=True)
-        with open(os.path.join(reports_dir, 'report.json'), 'w') as f:
-            json.dump(report['json_summary'], f, indent=2)
-        with open(os.path.join(reports_dir, 'report.html'), 'w') as f:
+        report_json_path = os.path.join(reports_dir, 'report.json')
+        report_html_path = os.path.join(reports_dir, 'report.html')
+        with open(report_json_path, 'w', encoding='utf-8') as f:
+            json.dump(report['json_summary'], f, indent=2, ensure_ascii=False)
+        logging.info(f"Wrote report.json to {report_json_path}")
+        with open(report_html_path, 'w', encoding='utf-8') as f:
             f.write(report['html_report'])
+        logging.info(f"Wrote report.html to {report_html_path}")
         logging.info(f"Analysis complete. Decision: {report['json_summary']['decision']}")
         logging.info(f"Quality Score: {report['json_summary']['quality_score']}/100")
         if report['json_summary']['decision'] == 'NO_GO':
@@ -111,4 +122,9 @@ def find_uipath_files(repo_path: str) -> dict:
                         uipath_files[file_path] = f.read()
                 except Exception as e:
                     logging.warning(f"Could not read file {file_path}: {e}")
+
     return uipath_files
+
+if __name__ == "__main__":
+    repo_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    analyze_repository(repo_path)
