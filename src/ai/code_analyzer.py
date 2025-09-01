@@ -6,31 +6,47 @@ import logging
 
 class AICodeAnalyzer:
     def __init__(self, ai_endpoint: str = None, api_key: str = None, model_name: str = None):
-        import os
-        self.ai_endpoint = ai_endpoint or os.environ.get("AI_ARENA_ENDPOINT")
-        self.api_key = api_key or os.environ.get("AI_ARENA_API_KEY")
-        self.model_name = model_name or "openai_gpt-4-turbo"
+        # Always use hardcoded values
+        self.ai_endpoint = "https://aiopenarena.gcs.int.thomsonreuters.com/"
+        self.api_key = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJERTBPVEF3UVVVMk16Z3hPRUpGTkVSRk5qUkRNakkzUVVFek1qZEZOVEJCUkRVMlJrTTRSZyJ9.eyJodHRwczovL3RyLmNvbS9mZWRlcmF0ZWRfdXNlcl9pZCI6IkMyOTE4MjUiLCJodHRwczovL3RyLmNvbS9mZWRlcmF0ZWRfcHJvdmlkZXJfaWQiOiJUUlNTTyIsImh0dHBzOi8vdHIuY29tL2xpbmtlZF9kYXRhIjpbeyJzdWIiOiJvaWRjfHNzby1hdXRofFRSU1NPfGMyOTE4MjUifV0sImh0dHBzOi8vdHIuY29tL2V1aWQiOiIxNjY2YzdlMC0yYWJiLTQ3YzgtYWFlYi03ZTAxZGJhMmFmMDYiLCJodHRwczovL3RyLmNvbS9hc3NldElEIjoiYTIwODE5OSIsImlzcyI6Imh0dHBzOi8vYXV0aC50aG9tc29ucmV1dGVycy5jb20vIiwic3ViIjoiYXV0aDB8NjU3OTZiZmU2NGI3OWEyY2RjZDRlZjBhIiwiYXVkIjpbIjQ5ZDcwYTU4LTk1MDktNDhhMi1hZTEyLTRmNmUwMGNlYjI3MCIsImh0dHBzOi8vbWFpbi5jaWFtLnRob21zb25yZXV0ZXJzLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE3NTY3MTkzMzgsImV4cCI6MTc1NjgwNTczOCwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImF6cCI6InRnVVZad1hBcVpXV0J5dXM5UVNQaTF5TnlvTjJsZmxJIn0.DeTs6Gtej7ZBUeKoIts-RZ8UTtq-RU5kkYSIXoPukqcrG8hbd5MtKrBYgS1vm0H7y35H75AiGkL1Nm9viGsIjq4wvBUe99txExBgi4-N_gTZg-Iq94nTUuR2Tfv2hVpeAGRA5tnaOAEIofgj6qqskVxLEd1FBBGb6TR_AUo6_RASswiSdhLXlMjbqPoW_MDwGgxpoVhurUufKeOvLsUgDbRN-53ibU7y9K2XKfT6l61_r7DGC6MWf9xehVEryCSLFHeCRI5ccb74ZQB11E0YRmjYqRE2W2qTcfvmTmRA5FNqNq2tu2deo_GUswUlxLtqEz4y5R5E4VfMoHv8Ec-_Kg"
+        self.model_name = "openai_gpt-4-turbo"
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
         """Send workflow analyzer results to AI for enhanced analysis"""
-        
+        logging.info(f"[DEBUG] AI Endpoint: {self.ai_endpoint}")
+        logging.info(f"[DEBUG] API Key (first 20 chars): {self.api_key[:20]}...")
+        logging.info(f"[DEBUG] Model Name: {self.model_name}")
+        workflow_id = "80f448d2-fd59-440f-ba24-ebc3014e1fdf"
+        endpoint = f"{self.ai_endpoint.rstrip('/')}/v1/inference"
         payload = {
-            'analysis_data': analysis_results,
-            'analysis_type': 'uipath_workflow',
-            'request_type': 'code_review'
+            "workflow_id": workflow_id,
+            "query": "Run UiPath workflow analysis.",
+            "is_persistence_allowed": False,
+            "modelparams": {
+                self.model_name: {
+                    "system_prompt": "You are an experienced Software Developer. Respond in a professional manner.",
+                    "temperature": "0.7",
+                    "top_p": "0.9",
+                    "frequency_penalty": "0",
+                    "max_tokens": "800",
+                    "presence_penalty": "0"
+                }
+            }
         }
-        
         headers = {
             'Authorization': f'Bearer {self.api_key}',
             'Content-Type': 'application/json'
         }
         try:
+            logging.info(f"[DEBUG] Sending POST to {endpoint}")
             response = requests.post(
-                f"{self.ai_endpoint}/analyze",
+                endpoint,
                 json=payload,
                 headers=headers,
                 timeout=120
             )
+            logging.info(f"[DEBUG] Response status code: {response.status_code}")
+            logging.info(f"[DEBUG] Response text: {response.text[:200]}...")
             if response.status_code == 200:
                 ai_results = response.json()
                 return self._process_ai_results(ai_results, analysis_results)

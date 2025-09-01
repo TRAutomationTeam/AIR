@@ -1,0 +1,564 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>UiPath Code Review Report</title>
+            <style>
+                body { font-family: Arial, sans-serif; margin: 20px; }
+                .header { background-color: #f0f0f0; padding: 20px; border-radius: 5px; }
+                .summary { margin: 20px 0; }
+                .metrics { display: flex; gap: 20px; margin: 20px 0; }
+                .metric { background-color: #e8f4f8; padding: 15px; border-radius: 5px; flex: 1; }
+                .decision-go { color: green; font-weight: bold; }
+                .decision-no-go { color: red; font-weight: bold; }
+                .decision-review { color: orange; font-weight: bold; }
+                .violations { margin: 20px 0; }
+                table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+                tr.violation-warning { background-color: #fffbe6; }
+                tr.violation-error { background-color: #ffe6e6; }
+                .file-list { font-size: 0.95em; color: #555; margin: 0; padding: 0; list-style: none; }
+                .file-list li { margin-bottom: 2px; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>UiPath Code Review Report</h1>
+                <p>Generated: 2025-09-02T00:09:48.648682</p>
+                <p>Project: Test-AI-Review</p>
+            </div>
+            <div class="summary">
+                <h2>Summary</h2>
+                <p><strong>Decision:</strong> 
+                    <span class="decision-no-go">
+                        NO_GO
+                    </span>
+                </p>
+                <p><strong>Quality Score:</strong> 0/100</p>
+                <p><strong>Total Violations:</strong> 56</p>
+                <p><strong>Critical Issues:</strong> 2</p>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <h3>Maintainability</h3>
+                    <p>100/100</p>
+                </div>
+                <div class="metric">
+                    <h3>Reliability</h3>
+                    <p>70/100</p>
+                </div>
+                <div class="metric">
+                    <h3>Performance</h3>
+                    <p>85/100</p>
+                </div>
+                <div class="metric">
+                    <h3>Security</h3>
+                    <p>90/100</p>
+                </div>
+            </div>
+            
+            
+            <div class="violations">
+                <h2>Rule Violations Summary (Warnings & Errors Only)</h2>
+                
+                
+                    
+                    
+                        
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                        
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                        
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                        
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                        
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                        
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                        
+                    
+                
+                <table>
+                    <tr><th>Rule ID</th><th>Rule Name</th><th>Severity</th><th>Count</th><th>Recommendation</th><th>Files</th></tr>
+                    
+                        <tr class="violation-warning">
+                            <td>XAML001</td>
+                            <td>Missing Annotation</td>
+                            <td>Warning</td>
+                            <td>25</td>
+                            <td>Add an <Annotation> element to describe workflow purpose.</td>
+                            <td><ul class="file-list"><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Main.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Data Service Report\TestSummary_DataService_CRUD.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\CloseAllApplications.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\GetTransactionData.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\InitAllApplications.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\InitAllProcessInputs.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\InitAllSettings.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\KillAllProcesses.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\Process.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\RetryCurrentTransaction.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\SetTransactionStatus.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\TakeScreenshot.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\Client Creation.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\GetBinderStatus.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\IndexTree_Exxon mobil page.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\Sanity_IndexTreeAssociation.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\SubmissionWizard.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\ThumbnailPageAssociation.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\Wizards.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\GetTransactionDataTestCase.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\InitAllApplicationsTestCase.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\InitAllSettingsTestCase.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\MainTestCase.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\ProcessTestCase.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\WorkflowTestCaseTemplate.xaml</li></ul></td>
+                        </tr>
+                    
+                        <tr class="violation-warning">
+                            <td>XAML004</td>
+                            <td>Missing Exception Handling</td>
+                            <td>Warning</td>
+                            <td>25</td>
+                            <td>Add TryCatch for robust error handling.</td>
+                            <td><ul class="file-list"><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Main.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Data Service Report\TestSummary_DataService_CRUD.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\CloseAllApplications.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\GetTransactionData.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\InitAllApplications.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\InitAllProcessInputs.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\InitAllSettings.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\KillAllProcesses.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\Process.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\RetryCurrentTransaction.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\SetTransactionStatus.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\TakeScreenshot.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\Client Creation.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\GetBinderStatus.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\IndexTree_Exxon mobil page.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\Sanity_IndexTreeAssociation.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\SubmissionWizard.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\ThumbnailPageAssociation.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\Wizards.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\GetTransactionDataTestCase.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\InitAllApplicationsTestCase.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\InitAllSettingsTestCase.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\MainTestCase.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\ProcessTestCase.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Tests\WorkflowTestCaseTemplate.xaml</li></ul></td>
+                        </tr>
+                    
+                        <tr class="violation-error">
+                            <td>XAML008</td>
+                            <td>Hardcoded Credential Detected</td>
+                            <td>Error</td>
+                            <td>2</td>
+                            <td>Use secure credential activities and config files.</td>
+                            <td><ul class="file-list"><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Data Service Report\TestSummary_DataService_CRUD.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\RetryCurrentTransaction.xaml</li></ul></td>
+                        </tr>
+                    
+                        <tr class="violation-warning">
+                            <td>XAML011</td>
+                            <td>Excessive Looping</td>
+                            <td>Warning</td>
+                            <td>1</td>
+                            <td>Reduce loop count or optimize loop logic.</td>
+                            <td><ul class="file-list"><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Framework\InitAllSettings.xaml</li></ul></td>
+                        </tr>
+                    
+                        <tr class="violation-warning">
+                            <td>XAML007</td>
+                            <td>Delay/Timeout Detected</td>
+                            <td>Warning</td>
+                            <td>2</td>
+                            <td>Use config/arguments for delay/timeout values.</td>
+                            <td><ul class="file-list"><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\IndexTree_Exxon mobil page.xaml</li><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\Sanity_IndexTreeAssociation.xaml</li></ul></td>
+                        </tr>
+                    
+                        <tr class="violation-warning">
+                            <td>XAML003</td>
+                            <td>Hardcoded Value Detected</td>
+                            <td>Warning</td>
+                            <td>1</td>
+                            <td>Replace hardcoded values with arguments or config settings.</td>
+                            <td><ul class="file-list"><li>c:\Users\C291825\Desktop\Rajesh\AI\Test-AI-Review\TR_Sanity_TaxCaddy\Performer\Wizards.xaml</li></ul></td>
+                        </tr>
+                    
+                </table>
+            </div>
+            
+            
+            <div class="recommendations">
+                <h2>AI Recommendations</h2>
+                <ul>
+                
+                    <li>Multiple violations of rule XAML001 detected (25 instances)</li>
+                
+                    <li>Multiple violations of rule XAML004 detected (25 instances)</li>
+                
+                    <li>Multiple violations of rule XAML005 detected (224 instances)</li>
+                
+                    <li>Multiple violations of rule XAML010 detected (5 instances)</li>
+                
+                    <li>Multiple violations of rule XAML008 detected (2 instances)</li>
+                
+                    <li>Multiple violations of rule XAML007 detected (2 instances)</li>
+                
+                </ul>
+            </div>
+            
+            <div class="next-steps">
+                <h2>Next Steps</h2>
+                <ul>
+                
+                    <li>❌ Code review failed - Address critical issues before deployment</li>
+                
+                    <li>Focus on resolving error-level violations first</li>
+                
+                    <li>Re-run analysis after fixes are implemented</li>
+                
+                </ul>
+            </div>
+        </body>
+        </html>
+        
