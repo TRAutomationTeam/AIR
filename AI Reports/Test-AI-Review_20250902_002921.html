@@ -20,19 +20,21 @@
                 tr.violation-error { background-color: #ffe6e6; }
                 .file-list { font-size: 0.95em; color: #555; margin: 0; padding: 0; list-style: none; }
                 .file-list li { margin-bottom: 2px; }
+                .ai-insights { background-color: #f8f8ff; border-left: 4px solid #4b9cd3; margin: 20px 0; padding: 15px; border-radius: 5px; }
+                .ai-insights h2 { color: #4b9cd3; }
             </style>
         </head>
         <body>
             <div class="header">
                 <h1>UiPath Code Review Report</h1>
-                <p>Generated: 2025-09-02T00:07:44.300172</p>
+                <p>Generated: 2025-09-02T00:29:21.788608</p>
                 <p>Project: Test-AI-Review</p>
             </div>
             <div class="summary">
                 <h2>Summary</h2>
                 <p><strong>Decision:</strong> 
-                    <span class="decision-no-go">
-                        NO_GO
+                    <span class="decision-review-required">
+                        REVIEW_REQUIRED
                     </span>
                 </p>
                 <p><strong>Quality Score:</strong> 0/100</p>
@@ -46,7 +48,7 @@
                 </div>
                 <div class="metric">
                     <h3>Reliability</h3>
-                    <p>70/100</p>
+                    <p>100/100</p>
                 </div>
                 <div class="metric">
                     <h3>Performance</h3>
@@ -57,6 +59,7 @@
                     <p>90/100</p>
                 </div>
             </div>
+            
             
             
             <div class="violations">
@@ -528,34 +531,15 @@
             </div>
             
             
-            <div class="recommendations">
-                <h2>AI Recommendations</h2>
-                <ul>
-                
-                    <li>Multiple violations of rule XAML001 detected (25 instances)</li>
-                
-                    <li>Multiple violations of rule XAML004 detected (25 instances)</li>
-                
-                    <li>Multiple violations of rule XAML005 detected (224 instances)</li>
-                
-                    <li>Multiple violations of rule XAML010 detected (5 instances)</li>
-                
-                    <li>Multiple violations of rule XAML008 detected (2 instances)</li>
-                
-                    <li>Multiple violations of rule XAML007 detected (2 instances)</li>
-                
-                </ul>
-            </div>
-            
             <div class="next-steps">
                 <h2>Next Steps</h2>
                 <ul>
                 
-                    <li>❌ Code review failed - Address critical issues before deployment</li>
+                    <li>⚠️ Manual review required</li>
                 
-                    <li>Focus on resolving error-level violations first</li>
+                    <li>Review AI recommendations and decide on next steps</li>
                 
-                    <li>Re-run analysis after fixes are implemented</li>
+                    <li>Consider addressing warning-level violations</li>
                 
                 </ul>
             </div>

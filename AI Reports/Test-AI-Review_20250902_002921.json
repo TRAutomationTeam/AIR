@@ -1,12 +1,12 @@
 {
-  "decision": "NO_GO",
+  "decision": "REVIEW_REQUIRED",
   "quality_score": 0,
   "total_violations": 56,
   "critical_issues": 2,
-  "confidence": 0.6,
-  "summary": "Found 2 critical and 54 warning issues",
-  "recommendations_count": 6,
-  "timestamp": "2025-09-02T00:07:44.300172",
+  "confidence": 0,
+  "summary": "",
+  "recommendations_count": 0,
+  "timestamp": "2025-09-02T00:29:21.788608",
   "violations": [
     {
       "RuleId": "XAML001",
@@ -457,12 +457,6 @@
       "Recommendation": "Add TryCatch for robust error handling."
     }
   ],
-  "recommendations": [
-    "Multiple violations of rule XAML001 detected (25 instances)",
-    "Multiple violations of rule XAML004 detected (25 instances)",
-    "Multiple violations of rule XAML005 detected (224 instances)",
-    "Multiple violations of rule XAML010 detected (5 instances)",
-    "Multiple violations of rule XAML008 detected (2 instances)",
-    "Multiple violations of rule XAML007 detected (2 instances)"
-  ]
+  "recommendations": [],
+  "ai_insights": []
 }
