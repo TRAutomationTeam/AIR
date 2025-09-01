@@ -33,11 +33,6 @@ jobs:
       - name: Run AI code review
         run: python src/main.py
 
-      - name: Move reports to folder
-        run: |
-          mkdir -p reports
-          mv report.json reports/
-          mv report.html reports/
 
       - name: Commit and push reports
         run: |

@@ -2,6 +2,7 @@ import requests
 # Environment variable mapping (see README for details)
 # AI_ARENA_API_KEY, AI_ARENA_ENDPOINT, AI_ARENA_MODEL_NAME
 from typing import Dict, List, Any
+import logging
 
 class AICodeAnalyzer:
     def __init__(self, ai_endpoint: str = None, api_key: str = None, model_name: str = None):
@@ -23,7 +24,6 @@ class AICodeAnalyzer:
             'Authorization': f'Bearer {self.api_key}',
             'Content-Type': 'application/json'
         }
-        
         try:
             response = requests.post(
                 f"{self.ai_endpoint}/analyze",
@@ -31,16 +31,14 @@ class AICodeAnalyzer:
                 headers=headers,
                 timeout=120
             )
-            
             if response.status_code == 200:
                 ai_results = response.json()
                 return self._process_ai_results(ai_results, analysis_results)
             else:
-                print(f"AI analysis failed: {response.status_code}")
+                logging.error(f"AI analysis failed: {response.status_code}")
                 return self._fallback_analysis(analysis_results)
-                
         except Exception as e:
-            print(f"Error calling AI service: {e}")
+            logging.error(f"Error calling AI service: {e}")
             return self._fallback_analysis(analysis_results)
             
     def _process_ai_results(self, ai_results: Dict, original_results: Dict) -> Dict[str, Any]:

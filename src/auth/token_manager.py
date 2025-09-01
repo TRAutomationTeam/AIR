@@ -1,5 +1,6 @@
 import json
 import logging
+import logging
 # Environment variable mapping (see README for details)
 # UIPATH_APP_ID, UIPATH_APP_SECRET, UIPATH_BASE_URL, UIPATH_SCOPE, UIPATH_TENANT, UIPATH_FOLDER, UIPATH_IDENTITY_URL
 import os
@@ -64,4 +65,4 @@ class TokenManager:
             with open(self.token_file, 'w') as f:
                 json.dump(self._token_data, f)
         except Exception as e:
-            print(f"Warning: Could not save token cache: {e}")
+            logging.warning(f"Could not save token cache: {e}")
