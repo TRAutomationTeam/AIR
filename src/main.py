@@ -4,7 +4,7 @@ import os
 import git
 from pathlib import Path
 
-# ... existing imports ...
+# .... existing imports ....
 
 def analyze_repository(repo_path: str, commit_sha: str = None):
     """Analyze entire repository for UiPath files"""
