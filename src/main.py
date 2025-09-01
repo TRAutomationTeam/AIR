@@ -90,7 +90,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
         }
         report = report_generator.generate_report(ai_results, project_info)
         repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        reports_dir = os.path.join('C:\\', 'AI Reports')  # Ensure correct indentation
+        reports_dir = os.path.join(os.getcwd(), 'AI Reports')
         if not os.path.exists(reports_dir):
             os.makedirs(reports_dir, exist_ok=True)
         timestamp = report['report_data']['timestamp'].replace(':', '').replace('-', '').replace('T', '_').split('.')[0]
