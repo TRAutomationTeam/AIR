@@ -38,5 +38,5 @@ jobs:
         with:
           name: ai-code-review-reports
           path: |
-            C:/AI Reports/*.html
-            C:/AI Reports/*.json
+            AI Reports/*.html
+            AI Reports/*.json
