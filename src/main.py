@@ -105,6 +105,25 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
         logging.info(f"Wrote report.html to {report_html_path}")
         logging.info(f"Analysis complete. Decision: {report['json_summary']['decision']}")
         logging.info(f"Quality Score: {report['json_summary']['quality_score']}/100")
+        # Print rule violations summary table in logs
+        violations = report['json_summary'].get('violations', [])
+        if violations:
+            print("\nRule Violations Summary (Warnings & Errors Only):")
+            print("| Rule ID | Rule Name | Severity | Count | Recommendation | Files |")
+            print("|---------|-----------|----------|-------|----------------|-------|")
+            # Group by RuleId, RuleName, Severity, Recommendation
+            grouped = {}
+            for v in violations:
+                key = (v.get('RuleId'), v.get('RuleName'), v.get('Severity'), v.get('Recommendation'))
+                if key not in grouped:
+                    grouped[key] = {'count': 0, 'files': set()}
+                grouped[key]['count'] += 1
+                grouped[key]['files'].add(v.get('FilePath'))
+            for (rule_id, rule_name, severity, recommendation), data in grouped.items():
+                files_str = ', '.join(sorted(data['files']))
+                print(f"| {rule_id} | {rule_name} | {severity} | {data['count']} | {recommendation} | {files_str} |")
+        else:
+            print("No warnings or errors found.")
         # Removed any code that uploads or pushes reports to Git
     except Exception as e:
         logging.error(f"Analysis failed: {e}")
