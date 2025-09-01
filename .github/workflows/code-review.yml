@@ -1,0 +1,79 @@
+name: UiPath AI Code Review
+
+on:
+  push:
+    branches: [ main, develop, feature/* ]
+    paths:
+      - '**.xaml'
+      - '**.json'
+      - '**.config'
+      - 'project.json'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '**.xaml'
+      - '**.json'
+      - '**.config'
+      - 'project.json'
+
+jobs:
+  code-review:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Get full history for better analysis
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        pip install -r code-review/requirements.txt
+    
+    - name: Run AI Code Review
+      env:
+        UIPATH_APP_ID: ${{ secrets.UIPATH_APP_ID }}
+        UIPATH_APP_SECRET: ${{ secrets.UIPATH_APP_SECRET }}
+        UIPATH_BASE_URL: ${{ secrets.UIPATH_BASE_URL }}
+        AI_ARENA_API_KEY: ${{ secrets.AI_ARENA_API_KEY }}
+        AI_ARENA_ENDPOINT: ${{ secrets.AI_ARENA_ENDPOINT }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cd code-review
+        python -m src.main analyze_repository --repo-path="${{ github.workspace }}" --commit-sha="${{ github.sha }}"
+    
+    - name: Post Review Comment
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          if (fs.existsSync('code-review/report.json')) {
+            const report = JSON.parse(fs.readFileSync('code-review/report.json', 'utf8'));
+            
+            const comment = `## 🤖 AI Code Review Results
+            
+            **Decision:** ${report.decision}
+            **Quality Score:** ${report.quality_score}/100
+            **Total Violations:** ${report.total_violations}
+            **Critical Issues:** ${report.critical_issues}
+            
+            ${report.decision === 'NO_GO' ? '❌ **Code review failed - Address critical issues before merging**' : ''}
+            ${report.decision === 'GO' ? '✅ **Code review passed - Ready to merge**' : ''}
+            ${report.decision === 'REVIEW_REQUIRED' ? '⚠️ **Manual review required**' : ''}
+            
+            [View Full Report](${report.html_report_url})
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
