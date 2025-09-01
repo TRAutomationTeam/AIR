@@ -56,16 +56,6 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
         logging.warning("No UiPath project files found")
         return
     
-    # Filter to only changed files if available
-    if changed_files:
-        uipath_changed = [f for f in changed_files if f.endswith(('.xaml', '.json', '.config'))]
-        if not uipath_changed:
-            logging.info("No UiPath files changed")
-            return
-        logging.info(f"Analyzing {len(uipath_changed)} changed UiPath files")
-    else:
-        logging.info(f"Analyzing all {len(project_files)} UiPath files")
-    
     # Read secrets from environment variables
     ai_arena_api_key = os.environ.get("AI_ARENA_API_KEY")
     ai_arena_endpoint = os.environ.get("AI_ARENA_ENDPOINT")
@@ -90,8 +80,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
             'changed_files': changed_files[:10] if changed_files else None  # Limit for display
         }
         report = report_generator.generate_report(ai_results, project_info)
-        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-        reports_dir = os.path.join(os.getcwd(), 'AI Reports')
+        reports_dir = os.path.join(repo_path, 'AI Reports')
         if not os.path.exists(reports_dir):
             os.makedirs(reports_dir, exist_ok=True)
         timestamp = report['report_data']['timestamp'].replace(':', '').replace('-', '').replace('T', '_').split('.')[0]
@@ -107,6 +96,27 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
         logging.info(f"Analysis complete. Decision: {report['json_summary']['decision']}")
         logging.info(f"Quality Score: {report['json_summary']['quality_score']}/100")
         # Print rule violations summary table in logs
+        violations = report['json_summary'].get('violations', [])
+        if violations:
+            print("\nRule Violations Summary (Warnings & Errors Only):")
+            print("| Rule ID | Rule Name | Severity | Count | Recommendation | Files |")
+            print("|---------|-----------|----------|-------|----------------|-------|")
+            # Group by RuleId, RuleName, Severity, Recommendation
+            grouped = {}
+            for v in violations:
+                key = (v.get('RuleId'), v.get('RuleName'), v.get('Severity'), v.get('Recommendation'))
+                if key not in grouped:
+                    grouped[key] = {'count': 0, 'files': set()}
+                grouped[key]['files'].add(v.get('FilePath'))
+            for (rule_id, rule_name, severity, recommendation), data in grouped.items():
+                files_str = ', '.join(sorted(data['files']))
+                print(f"| {rule_id} | {rule_name} | {severity} | {data['count']} | {recommendation} | {files_str} |")
+        else:
+            print("No warnings or errors found.")
+        # Removed any code that uploads or pushes reports to Git
+    except Exception as e:
+        logging.error(f"Analysis failed: {e}")
+        sys.exit(1)
         violations = report['json_summary'].get('violations', [])
         if violations:
             print("\nRule Violations Summary (Warnings & Errors Only):")
@@ -157,6 +167,6 @@ def cleanup_old_reports(report_dir):
 
 if __name__ == "__main__":
     repo_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    report_dir = os.path.join(os.getcwd(), 'AI Reports')
+    report_dir = os.path.join(repo_path, 'AI Reports')
     cleanup_old_reports(report_dir)
     analyze_repository(repo_path)
