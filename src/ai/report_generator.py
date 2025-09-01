@@ -1,17 +1,20 @@
 import json
+import logging
 from datetime import datetime
 from jinja2 import Template
 from typing import Dict, Any, List
 
 class ReportGenerator:
     def __init__(self, template_path: str = "templates/report_template.html"):
+        logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
         self.template_path = template_path
         
     def generate_report(self, analysis_results: Dict[str, Any], 
                        project_info: Dict[str, Any]) -> Dict[str, Any]:
         """Generate comprehensive code review report"""
         
-        report_data = {
+    logging.info("Generating report data...")
+    report_data = {
             'timestamp': datetime.now().isoformat(),
             'project_info': project_info,
             'analysis_summary': self._create_summary(analysis_results),
@@ -23,12 +26,15 @@ class ReportGenerator:
         }
         
         # Generate HTML report
-        html_report = self._generate_html_report(report_data)
+    logging.info("Generating HTML report...")
+    html_report = self._generate_html_report(report_data)
         
         # Generate JSON summary for API responses
-        json_summary = self._generate_json_summary(report_data)
+    logging.info("Generating JSON summary...")
+    json_summary = self._generate_json_summary(report_data)
         
-        return {
+    logging.info("Report generation complete.")
+    return {
             'html_report': html_report,
             'json_summary': json_summary,
             'report_data': report_data

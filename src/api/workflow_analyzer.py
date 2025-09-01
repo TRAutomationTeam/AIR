@@ -1,10 +1,12 @@
 import json
+import logging
 from typing import Dict, List, Any
 
 def analyze_project_files(self, project_files: Dict[str, str], 
                          changed_files: List[str] = None) -> Dict[str, Any]:
     """Analyze project files directly from repository"""
     
+    logging.info("Starting project file analysis...")
     analysis_results = {
         'rules_violations': [],
         'project_info': {
@@ -18,12 +20,14 @@ def analyze_project_files(self, project_files: Dict[str, str],
     # Focus on changed files if provided
     files_to_analyze = project_files
     if changed_files:
+        logging.info(f"Filtering to changed files: {changed_files}")
         files_to_analyze = {
             path: content for path, content in project_files.items()
             if any(path.endswith(changed.split('/')[-1]) for changed in changed_files)
         }
     
     for file_path, content in files_to_analyze.items():
+        logging.info(f"Analyzing file: {file_path}")
         if file_path.endswith('.xaml'):
             violations = self._analyze_xaml_content(content, file_path)
             analysis_results['rules_violations'].extend(violations)
@@ -34,12 +38,14 @@ def analyze_project_files(self, project_files: Dict[str, str],
             analysis_results['files_analyzed'].append(file_path)
     
     # Generate summary
+    logging.info("Generating analysis summary...")
     analysis_results['summary'] = {
         'total_violations': len(analysis_results['rules_violations']),
         'files_with_issues': len(set(v['FilePath'] for v in analysis_results['rules_violations'])),
         'severity_counts': self._count_by_severity(analysis_results['rules_violations'])
     }
     
+    logging.info("Project file analysis complete.")
     return analysis_results
 
 def _analyze_project_json(self, json_content: str, file_path: str) -> List[Dict]:

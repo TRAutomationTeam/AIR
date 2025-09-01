@@ -1,4 +1,5 @@
 import requests
+import logging
 # Environment variable mapping (see README for details)
 # UIPATH_APP_ID, UIPATH_APP_SECRET, UIPATH_BASE_URL, UIPATH_SCOPE, UIPATH_TENANT, UIPATH_FOLDER, UIPATH_IDENTITY_URL
 from typing import Dict, List, Any, Optional
@@ -10,6 +11,7 @@ class UiPathClient:
         self.token_manager = token_manager
         
     def _make_request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
+        logging.info(f"Making {method} request to {endpoint}")
         """Make authenticated request to UiPath API"""
         
         headers = kwargs.get('headers', {})
@@ -19,14 +21,20 @@ class UiPathClient:
         
         url = f"{self.base_url}{endpoint}"
         
-        response = requests.request(method, url, **kwargs)
+        try:
+            response = requests.request(method, url, **kwargs)
+            logging.info(f"Response status: {response.status_code}")
+        except Exception as e:
+            logging.error(f"Request failed: {e}")
+            raise
         
         if response.status_code == 401:
+            logging.warning("Token expired, refreshing...")
             # Token might be expired, try once more with fresh token
             headers['Authorization'] = f"Bearer {self.token_manager._refresh_token()}"
             response = requests.request(method, url, **kwargs)
             
-        return response
+    return response
         
     def get_processes(self, folder_id: Optional[int] = None) -> List[Dict]:
         """Get all processes from Orchestrator"""
