@@ -1,3 +1,6 @@
+import json
+from typing import Dict, List, Any
+
 def analyze_project_files(self, project_files: Dict[str, str], 
                          changed_files: List[str] = None) -> Dict[str, Any]:
     """Analyze project files directly from repository"""
