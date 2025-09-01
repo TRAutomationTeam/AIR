@@ -1,0 +1,19 @@
+uipath:
+  base_url: "https://your-orchestrator.uipath.com"
+  identity_url: "https://your-orchestrator.uipath.com/identity"
+  app_id: "your-app-id"
+  app_secret: "your-app-secret"
+  scope: "OR.Default OR.Processes.Read OR.Assets.Read"
+  
+github:
+  token: "your-github-token"
+  webhook_secret: "your-webhook-secret"
+  
+ai_arena:
+  endpoint: "https://your-ai-arena.com/api"
+  api_key: "your-ai-api-key"
+  
+analysis:
+  quality_threshold: 80
+  critical_rules: ["ST001", "ST002", "ST003"]
+  auto_approve_threshold: 95
