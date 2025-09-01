@@ -7,6 +7,7 @@ import os
 import git
 from pathlib import Path
 import json
+import glob
 # Environment variable mapping (see README for details)
 # UiPath: UIPATH_APP_ID, UIPATH_APP_SECRET, UIPATH_BASE_URL, UIPATH_SCOPE, UIPATH_TENANT, UIPATH_FOLDER, UIPATH_IDENTITY_URL
 # TR Arena: AI_ARENA_API_KEY, AI_ARENA_ENDPOINT, AI_ARENA_MODEL_NAME
@@ -145,6 +146,17 @@ def find_uipath_files(repo_path: str) -> dict:
 
     return uipath_files
 
+def cleanup_old_reports(report_dir):
+    html_files = glob.glob(os.path.join(report_dir, '*.html'))
+    json_files = glob.glob(os.path.join(report_dir, '*.json'))
+    for f in html_files + json_files:
+        try:
+            os.remove(f)
+        except Exception as e:
+            print(f"Failed to remove {f}: {e}")
+
 if __name__ == "__main__":
     repo_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+    report_dir = os.path.join(os.getcwd(), 'AI Reports')
+    cleanup_old_reports(report_dir)
     analyze_repository(repo_path)
