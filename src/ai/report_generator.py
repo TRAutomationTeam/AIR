@@ -12,9 +12,8 @@ class ReportGenerator:
     def generate_report(self, analysis_results: Dict[str, Any], 
                        project_info: Dict[str, Any]) -> Dict[str, Any]:
         """Generate comprehensive code review report"""
-        
-    logging.info("Generating report data...")
-    report_data = {
+        logging.info("Generating report data...")
+        report_data = {
             'timestamp': datetime.now().isoformat(),
             'project_info': project_info,
             'analysis_summary': self._create_summary(analysis_results),
@@ -24,17 +23,12 @@ class ReportGenerator:
             'recommendations': analysis_results.get('recommendations', []),
             'next_steps': self._generate_next_steps(analysis_results)
         }
-        
-        # Generate HTML report
-    logging.info("Generating HTML report...")
-    html_report = self._generate_html_report(report_data)
-        
-        # Generate JSON summary for API responses
-    logging.info("Generating JSON summary...")
-    json_summary = self._generate_json_summary(report_data)
-        
-    logging.info("Report generation complete.")
-    return {
+        logging.info("Generating HTML report...")
+        html_report = self._generate_html_report(report_data)
+        logging.info("Generating JSON summary...")
+        json_summary = self._generate_json_summary(report_data)
+        logging.info("Report generation complete.")
+        return {
             'html_report': html_report,
             'json_summary': json_summary,
             'report_data': report_data
