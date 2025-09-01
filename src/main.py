@@ -3,11 +3,17 @@ import argparse
 import os
 import git
 from pathlib import Path
+import json
+
+# Import required classes
+from ai.code_analyzer import AICodeAnalyzer
+from ai.report_generator import ReportGenerator
+from api.workflow_analyzer import analyze_project_files
 
 # .... existing imports ....
 
 def analyze_repository(repo_path: str, commit_sha: str = None):
-    """Analyze entire repository for UiPath files"""
+    """Analyzes entire repository for UiPath files"""
     
     repo = git.Repo(repo_path)
     
@@ -42,32 +48,44 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     
     # Run analysis
     try:
-        analysis_results = workflow_analyzer.analyze_project_files(project_files, changed_files)
-        ai_results = ai_analyzer.analyze_workflow_results(analysis_results)
-        
+    # Read secrets from environment variables
+    uipath_app_id = os.environ.get("UIPATH_APP_ID")
+    uipath_app_secret = os.environ.get("UIPATH_APP_SECRET")
+    uipath_base_url = os.environ.get("UIPATH_BASE_URL")
+    ai_arena_api_key = os.environ.get("AI_ARENA_API_KEY")
+    ai_arena_endpoint = os.environ.get("AI_ARENA_ENDPOINT")
+
+    # Initialize analyzers with env vars
+    ai_analyzer = AICodeAnalyzer(ai_endpoint=ai_arena_endpoint, api_key=ai_arena_api_key)
+    report_generator = ReportGenerator()
+
+    # Run workflow analysis
+    analysis_results = analyze_project_files(None, project_files, changed_files)
+    ai_results = ai_analyzer.analyze_workflow_results(analysis_results)
+
         # Generate report
         project_info = {
             'name': os.path.basename(repo_path),
             'commit_sha': commit_sha,
             'changed_files': changed_files[:10] if changed_files else None  # Limit for display
         }
-        
+
         report = report_generator.generate_report(ai_results, project_info)
-        
+
         # Save report files
         with open('report.json', 'w') as f:
             json.dump(report['json_summary'], f, indent=2)
-        
+
         with open('report.html', 'w') as f:
             f.write(report['html_report'])
-        
+
         print(f"Analysis complete. Decision: {report['json_summary']['decision']}")
         print(f"Quality Score: {report['json_summary']['quality_score']}/100")
-        
+
         # Exit with error code if NO_GO
         if report['json_summary']['decision'] == 'NO_GO':
             sys.exit(1)
-            
+
     except Exception as e:
         print(f"Analysis failed: {e}")
         sys.exit(1)
@@ -108,4 +126,7 @@ if __name__ == '__main__':
         analyze_repository(args.repo_path, args.commit_sha)
     
     elif args.command == 'run_server':
+        # Flask app import and run
+        from flask import Flask
+        app = Flask(__name__)
         app.run(host='0.0.0.0', port=args.port, debug=False)

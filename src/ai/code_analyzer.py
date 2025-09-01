@@ -2,9 +2,10 @@ import requests
 from typing import Dict, List, Any
 
 class AICodeAnalyzer:
-    def __init__(self, ai_endpoint: str, api_key: str):
-        self.ai_endpoint = ai_endpoint
-        self.api_key = api_key
+    def __init__(self, ai_endpoint: str = None, api_key: str = None):
+        import os
+        self.ai_endpoint = ai_endpoint or os.environ.get("AI_ARENA_ENDPOINT")
+        self.api_key = api_key or os.environ.get("AI_ARENA_API_KEY")
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
         """Send workflow analyzer results to AI for enhanced analysis"""

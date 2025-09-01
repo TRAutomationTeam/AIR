@@ -4,12 +4,13 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, Any
 
 class UiPathOAuthClient:
-    def __init__(self, base_url: str, app_id: str, app_secret: str, scope: str):
-        self.base_url = base_url
-        self.app_id = app_id
-        self.app_secret = app_secret
-        self.scope = scope
-        self.token_endpoint = f"{base_url}/identity/connect/token"
+    def __init__(self, base_url: str = None, app_id: str = None, app_secret: str = None, scope: str = None):
+        import os
+        self.base_url = base_url or os.environ.get("UIPATH_BASE_URL")
+        self.app_id = app_id or os.environ.get("UIPATH_APP_ID")
+        self.app_secret = app_secret or os.environ.get("UIPATH_APP_SECRET")
+        self.scope = scope or os.environ.get("UIPATH_SCOPE", "OR.Default OR.Processes.Read OR.Assets.Read")
+        self.token_endpoint = f"{self.base_url}/identity/connect/token"
         
     def get_access_token(self) -> Optional[str]:
         """Get OAuth access token using client credentials flow"""
