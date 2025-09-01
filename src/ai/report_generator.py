@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from jinja2 import Template
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 class ReportGenerator:
     def __init__(self, template_path: str = "templates/report_template.html"):
