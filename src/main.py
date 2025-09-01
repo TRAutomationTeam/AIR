@@ -38,7 +38,9 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     
     # Find all UiPath project files
     logging.info("Finding UiPath project files...")
-    project_files = find_uipath_files(repo_path)
+    # Scan only the TR_Sanity_TaxCaddy folder for UiPath files
+    uipath_project_path = os.path.join(repo_path, "TR_Sanity_TaxCaddy")
+    project_files = find_uipath_files(uipath_project_path)
     
     if not project_files:
         logging.warning("No UiPath project files found")
