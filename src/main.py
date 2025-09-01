@@ -23,7 +23,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
     """Analyzes entire repository for UiPath files"""
     
-    logging.info(f"Analyzing repository at {repo_path}")
+    logging.info(f"Analying repository at {repo_path}")
     repo = git.Repo(repo_path)
     
     # Get changed files if commit_sha provided
