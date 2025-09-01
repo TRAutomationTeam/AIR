@@ -80,9 +80,10 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
             'changed_files': changed_files[:10] if changed_files else None  # Limit for display
         }
         report = report_generator.generate_report(ai_results, project_info)
-        with open('report.json', 'w') as f:
+        repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+        with open(os.path.join(repo_root, 'report.json'), 'w') as f:
             json.dump(report['json_summary'], f, indent=2)
-        with open('report.html', 'w') as f:
+        with open(os.path.join(repo_root, 'report.html'), 'w') as f:
             f.write(report['html_report'])
         logging.info(f"Analysis complete. Decision: {report['json_summary']['decision']}")
         logging.info(f"Quality Score: {report['json_summary']['quality_score']}/100")
