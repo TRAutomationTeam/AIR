@@ -1,0 +1,34 @@
+name: AI Code Review
+
+on:
+  push:
+    paths:
+      - 'TR_Sanity_TaxCaddy/**/*.xaml'
+  pull_request:
+    paths:
+      - 'TR_Sanity_TaxCaddy/**/*.xaml'
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Set environment variables
+        env:
+          AI_ARENA_API_KEY: ${{ secrets.AI_ARENA_API_KEY }}
+          AI_ARENA_ENDPOINT: ${{ secrets.AI_ARENA_ENDPOINT }}
+        run: echo "Environment variables set"
+
+      - name: Run AI code review
+        run: python src/main.py
