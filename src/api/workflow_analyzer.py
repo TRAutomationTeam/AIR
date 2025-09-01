@@ -1,3 +1,33 @@
+import requests
+
+# UiPath Cloud API integration template
+def get_uipath_access_token(client_id, client_secret, base_url):
+    url = f'{base_url}/identity_/connect/token'
+    data = {
+        'grant_type': 'client_credentials',
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'scope': 'OR.Platform'
+    }
+    response = requests.post(url, data=data)
+    response.raise_for_status()
+    return response.json()['access_token']
+
+def analyze_xaml_with_uipath_api(access_token, base_url, xaml_file_path):
+    # Example endpoint, adjust as needed for your tenant/organization
+    url = f'{base_url}/odata/Processes/UiPath.Server.Configuration.OData.AnalyzeWorkflow'
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'Content-Type': 'application/json'
+    }
+    with open(xaml_file_path, 'r', encoding='utf-8') as f:
+        xaml_content = f.read()
+    payload = {
+        'WorkflowContent': xaml_content
+    }
+    response = requests.post(url, headers=headers, json=payload)
+    response.raise_for_status()
+    return response.json()
 from typing import Dict, List, Any
 import json
 import logging
