@@ -51,12 +51,14 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     # Scan only the TR_Sanity_TaxCaddy folder for UiPath files
     uipath_project_path = os.path.join(repo_path, "TR_Sanity_TaxCaddy")
     project_files = find_uipath_files(uipath_project_path)
-    
+
     if not project_files:
         logging.warning("No UiPath project files found")
         return
-    
-    # Read secrets from environment variables
+
+    logging.info(f"Found {len(project_files)} UiPath files to analyze.")
+    for idx, file_path in enumerate(project_files.keys(), 1):
+        logging.info(f"Analyzing file {idx}/{len(project_files)}: {file_path}")
     ai_arena_api_key = os.environ.get("AI_ARENA_API_KEY")
     ai_arena_endpoint = os.environ.get("AI_ARENA_ENDPOINT")
     logging.info("Initializing AI analyzer and report generator...")
@@ -110,7 +112,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
                 grouped[key]['count'] += 1
                 grouped[key]['files'].add(v.get('FilePath'))
             for (rule_id, rule_name, severity, recommendation), data in grouped.items():
-                files_str = ', '.join(sorted(data['files']))
+                files_str = ', '.join(sorted(f for f in data['files'] if f))
                 print(f"| {rule_id} | {rule_name} | {severity} | {data['count']} | {recommendation} | {files_str} |")
         else:
             print("No warnings or errors found.")
