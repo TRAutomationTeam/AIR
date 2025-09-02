@@ -94,10 +94,39 @@ class ReportGenerator:
         # Only include warnings and errors
         violations = [v for v in original_analysis.get('rules_violations', []) if v.get('Severity') in ('Warning', 'Error')]
 
+        # Group violations by rule
+        rule_violations = {}
+        for v in violations:
+            rule_id = v.get('RuleId', '')
+            if rule_id not in rule_violations:
+                rule_violations[rule_id] = {
+                    'name': v.get('RuleName', ''),
+                    'severity': v.get('Severity', ''),
+                    'count': 0,
+                    'recommendation': v.get('Recommendation', ''),
+                    'files': set()
+                }
+            rule_violations[rule_id]['count'] += 1
+            if 'File' in v:
+                rule_violations[rule_id]['files'].add(v['File'])
+            elif 'FilePath' in v:
+                rule_violations[rule_id]['files'].add(v['FilePath'])
+
         summary = {
             'total_violations': len(violations),
             'critical_issues': len([v for v in violations if v.get('Severity') == 'Error']),
             'quality_score': analysis_results.get('quality_score', 0),
+            'rule_violations': [
+                {
+                    'id': rule_id,
+                    'name': info['name'],
+                    'severity': info['severity'],
+                    'count': info['count'],
+                    'recommendation': info['recommendation'],
+                    'files': sorted(list(info['files']))
+                }
+                for rule_id, info in rule_violations.items()
+            ],
             'files_analyzed': len(original_analysis.get('files_analyzed', [])),
             'decision': analysis_results.get('go_no_go_decision', 'REVIEW_REQUIRED'),
             'confidence': analysis_results.get('confidence', 0)
@@ -255,7 +284,7 @@ class ReportGenerator:
             {% set filtered_violations = detailed_results.original_analysis.rules_violations | selectattr('Severity', 'in', ['Warning', 'Error']) | list %}
             {% if filtered_violations %}
             <div class="violations">
-                <h2>Rule Violations Summary (Warnings & Errors Only)</h2>
+                <h2>Rule Violations Summary (Errors)</h2>
                 {% set grouped = {} %}
                 {% for v in filtered_violations %}
                     {% set key = v.RuleId ~ '|' ~ v.RuleName ~ '|' ~ v.Severity ~ '|' ~ v.Recommendation %}
@@ -263,20 +292,47 @@ class ReportGenerator:
                         {% set _ = grouped.update({key: {'count': 0, 'files': [], 'rule_id': v.RuleId, 'rule_name': v.RuleName, 'severity': v.Severity, 'recommendation': v.Recommendation}}) %}
                     {% endif %}
                     {% set _ = grouped[key].update({'count': grouped[key]['count'] + 1}) %}
-                    {% if v.FilePath not in grouped[key]['files'] %}
+                    {% if v.get('FilePath') and v.FilePath not in grouped[key]['files'] %}
                         {% set _ = grouped[key]['files'].append(v.FilePath) %}
+                    {% endif %}
+                    {% if v.get('File') and v.File not in grouped[key]['files'] %}
+                        {% set _ = grouped[key]['files'].append(v.File) %}
+                    {% endif %}
+                {% endfor %}
+                {% set errors = [] %}
+                {% set warnings = [] %}
+                {% for key, data in grouped.items() %}
+                    {% if data.severity == 'Error' %}
+                        {% set _ = errors.append(data) %}
+                    {% else %}
+                        {% set _ = warnings.append(data) %}
                     {% endif %}
                 {% endfor %}
                 <table>
                     <tr><th>Rule ID</th><th>Rule Name</th><th>Severity</th><th>Count</th><th>Recommendation</th><th>Files</th></tr>
-                    {% for key, data in grouped.items() %}
-                        <tr class="violation-{{ data.severity.lower() }}">
+                    {% for data in errors|sort(attribute='rule_id') %}
+                        <tr class="violation-error">
                             <td>{{ data.rule_id }}</td>
                             <td>{{ data.rule_name }}</td>
                             <td>{{ data.severity }}</td>
                             <td>{{ data.count }}</td>
                             <td>{{ data.recommendation }}</td>
-                            <td><ul class="file-list">{% for f in data.files %}<li>{{ f }}</li>{% endfor %}</ul></td>
+                            <td><ul class="file-list">{% for f in data.files|sort %}<li>{{ f }}</li>{% endfor %}</ul></td>
+                        </tr>
+                    {% endfor %}
+                </table>
+
+                <h2>Rule Violations Summary (Warnings)</h2>
+                <table>
+                    <tr><th>Rule ID</th><th>Rule Name</th><th>Severity</th><th>Count</th><th>Recommendation</th><th>Files</th></tr>
+                    {% for data in warnings|sort(attribute='rule_id') %}
+                        <tr class="violation-warning">
+                            <td>{{ data.rule_id }}</td>
+                            <td>{{ data.rule_name }}</td>
+                            <td>{{ data.severity }}</td>
+                            <td>{{ data.count }}</td>
+                            <td>{{ data.recommendation }}</td>
+                            <td><ul class="file-list">{% for f in data.files|sort %}<li>{{ f }}</li>{% endfor %}</ul></td>
                         </tr>
                     {% endfor %}
                 </table>
