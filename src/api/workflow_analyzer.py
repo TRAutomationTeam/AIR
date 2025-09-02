@@ -196,3 +196,11 @@ def analyze_workflow_files(project_files: Dict[str, str], changed_files: List[st
     }
     for file_path, content in files_to_analyze.items():
         if file_path.endswith('.xaml'):
+            violations = _analyze_xaml_content(content, file_path)
+            analysis_results['rules_violations'].extend(violations)
+            analysis_results['files_analyzed'].append(file_path)
+        elif file_path.endswith('project.json'):
+            violations = _analyze_project_json(content, file_path)
+            analysis_results['rules_violations'].extend(violations)
+            analysis_results['files_analyzed'].append(file_path)
+    return analysis_results
