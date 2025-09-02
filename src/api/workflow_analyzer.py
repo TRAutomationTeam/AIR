@@ -37,145 +37,122 @@ def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
             'Description': 'Potential hardcoded value found in workflow.',
             'Recommendation': 'Replace hardcoded values with arguments or config settings.'
         })
-    # 4. Missing exception handling
-    if '<ui:TryCatch' not in xaml_content:
+    # Official UiPath Rule IDs and severities (Error/Warning only)
+    # Delay Activity Usage (ST-DBP-026, Error)
+    if re.search(r'<ui:Delay', xaml_content):
         violations.append({
-            'RuleId': 'XAML004',
-            'RuleName': 'Missing Exception Handling',
-            'Severity': 'Warning',
-            'FilePath': file_path,
-            'Description': 'No TryCatch block found in workflow.',
-            'Recommendation': 'Add TryCatch for robust error handling.'
+            'RuleId': 'ST-DBP-026',
+            'RuleName': 'Delay Activity Usage',
+            'Severity': 'Error',
+            'Description': 'Delay activity detected in workflow.',
+            'Recommendation': "Avoid using Delay activity. Use proper synchronization.",
+            'File': file_path
         })
-    # 5. Naming convention violations (simple check)
-    bad_names = re.findall(r'Name="([a-zA-Z0-9_]+)"', xaml_content)
-    for name in bad_names:
-        if not re.match(r'^[A-Z][A-Za-z0-9_]*$', name):
-            severity = 'Warning' if name.lower() in ['password', 'username', 'apikey', 'token'] else 'Info'
+    # Hardcoded Delay Activity (ST-PRR-004, Error)
+    if re.search(r'Delay="[0-9]+"', xaml_content):
+        violations.append({
+            'RuleId': 'ST-PRR-004',
+            'RuleName': 'Hardcoded Delay Activity',
+            'Severity': 'Error',
+            'Description': 'Hardcoded delay value detected.',
+            'Recommendation': 'Use config/arguments for delay values.',
+            'File': file_path
+        })
+    # Hardcoded Activity Properties (ST-USG-005, Error)
+    if re.search(r'Property="[^"]+"', xaml_content):
+        violations.append({
+            'RuleId': 'ST-USG-005',
+            'RuleName': 'Hardcoded Activity Properties',
+            'Severity': 'Error',
+            'Description': 'Hardcoded activity property detected.',
+            'Recommendation': 'Use arguments/config for activity properties.',
+            'File': file_path
+        })
+    # Hardcoded Delays (UI-PRR-004, Error)
+    if re.search(r'HardcodedDelay', xaml_content):
+        violations.append({
+            'RuleId': 'UI-PRR-004',
+            'RuleName': 'Hardcoded Delays',
+            'Severity': 'Error',
+            'Description': 'Hardcoded delay detected.',
+            'Recommendation': 'Use config/arguments for delays.',
+            'File': file_path
+        })
+    # Multiple Flowchart Layers (ST-DBP-007, Warning)
+    if re.search(r'<ui:Flowchart', xaml_content):
+        flowchart_count = len(re.findall(r'<ui:Flowchart', xaml_content))
+        if flowchart_count > 1:
             violations.append({
-                'RuleId': 'XAML005',
-                'RuleName': 'Naming Convention Violation',
-                'Severity': severity,
-                'FilePath': file_path,
-                'Description': f'Name "{name}" does not follow PascalCase.',
-                'Recommendation': 'Use PascalCase for workflow, variable, and argument names.'
+                'RuleId': 'ST-DBP-007',
+                'RuleName': 'Multiple Flowchart Layers',
+                'Severity': 'Warning',
+                'Description': f'{flowchart_count} flowchart layers detected.',
+                'Recommendation': 'Reduce flowchart layers for maintainability.',
+                'File': file_path
             })
-    # 6. Empty sequences
+    # Hardcoded Timeout (ST-DBP-021, Warning)
+    if re.search(r'Timeout="[0-9]+"', xaml_content):
+        violations.append({
+            'RuleId': 'ST-DBP-021',
+            'RuleName': 'Hardcoded Timeout',
+            'Severity': 'Warning',
+            'Description': 'Hardcoded timeout detected.',
+            'Recommendation': 'Use config/arguments for timeout values.',
+            'File': file_path
+        })
+    # Empty Workflow (ST-DBP-023, Warning)
     if re.search(r'<ui:Sequence[^>]*>\s*</ui:Sequence>', xaml_content):
         violations.append({
-            'RuleId': 'XAML006',
-            'RuleName': 'Empty Sequence',
-            'Severity': 'Info',
-            'FilePath': file_path,
-            'Description': 'Empty <Sequence> found in workflow.',
-            'Recommendation': 'Remove or implement logic in empty sequences.'
-        })
-    # 7. Delay/Timeout detection
-    if re.search(r'<ui:Delay|Delay="[0-9]+"|Timeout="[0-9]+"', xaml_content):
-        violations.append({
-            'RuleId': 'XAML007',
-            'RuleName': 'Delay/Timeout Detected',
+            'RuleId': 'ST-DBP-023',
+            'RuleName': 'Empty Workflow',
             'Severity': 'Warning',
-            'FilePath': file_path,
-            'Description': 'Delay or timeout detected. Ensure values are configurable and not hardcoded.',
-            'Recommendation': 'Use config/arguments for delay/timeout values.'
+            'Description': 'Empty workflow detected.',
+            'Recommendation': 'Remove or implement logic in empty workflows.',
+            'File': file_path
         })
-    # 8. Credential/security checks
-    if re.search(r'(password|apikey|token|secret|credential)', xaml_content, re.IGNORECASE):
-        if re.search(r'("[^"]+")', xaml_content):
-            violations.append({
-                'RuleId': 'XAML008',
-                'RuleName': 'Hardcoded Credential Detected',
-                'Severity': 'Error',
-                'FilePath': file_path,
-                'Description': 'Hardcoded credential or secret detected.',
-                'Recommendation': 'Use secure credential activities and config files.'
-            })
-    if re.search(r'<ui:GetCredential', xaml_content):
+    # Container Usage (UI-DBP-006, Warning)
+    if re.search(r'<ui:Container', xaml_content):
         violations.append({
-            'RuleId': 'XAML009',
-            'RuleName': 'Credential Activity Used',
-            'Severity': 'Info',
-            'FilePath': file_path,
-            'Description': 'Credential activity detected. Ensure secure usage.',
-            'Recommendation': 'Store credentials securely and use SecureString.'
-        })
-    # 9. Retry logic detection
-    if re.search(r'RetryScope|RetryNumber|RetryCount', xaml_content):
-        violations.append({
-            'RuleId': 'XAML010',
-            'RuleName': 'Retry Logic Detected',
-            'Severity': 'Info',
-            'FilePath': file_path,
-            'Description': 'Retry logic detected. Ensure proper error handling and retry limits.',
-            'Recommendation': 'Configure retry limits and error handling.'
-        })
-    # 10. Loop optimization (performance)
-    if re.search(r'<ui:ForEach|<ui:While|<ui:DoWhile', xaml_content):
-        loop_count = len(re.findall(r'<ui:ForEach|<ui:While|<ui:DoWhile', xaml_content))
-        if loop_count > 5:
-            violations.append({
-                'RuleId': 'XAML011',
-                'RuleName': 'Excessive Looping',
-                'Severity': 'Warning',
-                'FilePath': file_path,
-                'Description': f'{loop_count} loops detected. Optimize for performance.',
-                'Recommendation': 'Reduce loop count or optimize loop logic.'
-            })
-    # 11. Modular design (maintainability)
-    if activity_count > 0 and len(re.findall(r'<ui:InvokeWorkflowFile', xaml_content)) < max(1, activity_count // 20):
-        violations.append({
-            'RuleId': 'XAML012',
-            'RuleName': 'Low Modularity',
+            'RuleId': 'UI-DBP-006',
+            'RuleName': 'Container Usage',
             'Severity': 'Warning',
-            'FilePath': file_path,
-            'Description': 'Few invoked workflows detected. Consider splitting logic into reusable components.',
-            'Recommendation': 'Increase modularity by using InvokeWorkflowFile.'
+            'Description': 'Container activity detected.',
+            'Recommendation': 'Review container usage for best practices.',
+            'File': file_path
         })
+    # Excel Automation Misuse (UI-DBP-013, Warning)
+    if re.search(r'<ui:Excel', xaml_content):
+        violations.append({
+            'RuleId': 'UI-DBP-013',
+            'RuleName': 'Excel Automation Misuse',
+            'Severity': 'Warning',
+            'Description': 'Excel automation detected. Ensure proper usage.',
+            'Recommendation': 'Follow best practices for Excel automation.',
+            'File': file_path
+        })
+    # Simulate Click (UI-PRR-001, Warning)
+    if re.search(r'SimulateClick', xaml_content):
+        violations.append({
+            'RuleId': 'UI-PRR-001',
+            'RuleName': 'Simulate Click',
+            'Severity': 'Warning',
+            'Description': 'Simulate Click detected.',
+            'Recommendation': 'Ensure Simulate Click is used appropriately.',
+            'File': file_path
+        })
+    # Simulate Type (UI-PRR-002, Warning)
+    if re.search(r'SimulateType', xaml_content):
+        violations.append({
+            'RuleId': 'UI-PRR-002',
+            'RuleName': 'Simulate Type',
+            'Severity': 'Warning',
+            'Description': 'Simulate Type detected.',
+            'Recommendation': 'Ensure Simulate Type is used appropriately.',
+            'File': file_path
+        })
+    # Only include Error and Warning severity in output
+    violations[:] = [v for v in violations if v['Severity'] in ('Error', 'Warning')]
     return violations
-from typing import Dict, List, Any
-import json
-import logging
-
-def analyze_project_files(project_files: Dict[str, str], changed_files: List[str] = None) -> Dict[str, Any]:
-    """Analyze project files directly from repository"""
-    logging.info("Starting project file analysis...")
-    analysis_results = {
-        'rules_violations': [],
-        'project_info': {
-            'total_files': len(project_files),
-            'changed_files': len(changed_files) if changed_files else 0
-        },
-        'files_analyzed': [],
-        'summary': {}
-    }
-    # Focus on changed files if provided
-    files_to_analyze = project_files
-    if changed_files:
-        logging.info(f"Filtering to changed files: {changed_files}")
-        files_to_analyze = {
-            path: content for path, content in project_files.items()
-            if any(path.endswith(changed.split('/')[-1]) for changed in changed_files)
-        }
-    for file_path, content in files_to_analyze.items():
-        logging.info(f"Analyzing file: {file_path}")
-        if file_path.endswith('.xaml'):
-            violations = _analyze_xaml_content(content, file_path)
-            analysis_results['rules_violations'].extend(violations)
-            analysis_results['files_analyzed'].append(file_path)
-        elif file_path.endswith('.json') and 'project.json' in file_path:
-            violations = _analyze_project_json(content, file_path)
-            analysis_results['rules_violations'].extend(violations)
-            analysis_results['files_analyzed'].append(file_path)
-    # Generate summary
-    logging.info("Generating analysis summary...")
-    analysis_results['summary'] = {
-        'total_violations': len(analysis_results['rules_violations']),
-        'files_with_issues': len(set(v['FilePath'] for v in analysis_results['rules_violations'])),
-        'severity_counts': _count_by_severity(analysis_results['rules_violations'])
-    }
-    logging.info("Project file analysis complete.")
-    return analysis_results
 
 def _analyze_project_json(json_content: str, file_path: str) -> List[Dict]:
     """Analyze project.json file"""
@@ -219,6 +196,33 @@ def _analyze_project_json(json_content: str, file_path: str) -> List[Dict]:
         })
     
     return violations
+def analyze_workflow_files(project_files: Dict[str, str], changed_files: List[str] = None) -> Dict[str, Any]:
+    analysis_results = {
+        'rules_violations': [],
+        'files_analyzed': []
+    }
+    files_to_analyze = {
+        path: content for path, content in project_files.items()
+        if not changed_files or any(path.endswith(changed.split('/')[-1]) for changed in changed_files)
+    }
+    for file_path, content in files_to_analyze.items():
+        if file_path.endswith('.xaml'):
+            violations = _analyze_xaml_content(content, file_path)
+            analysis_results['rules_violations'].extend(violations)
+            analysis_results['files_analyzed'].append(file_path)
+        elif file_path.endswith('.json') and 'project.json' in file_path:
+            violations = _analyze_project_json(content, file_path)
+            analysis_results['rules_violations'].extend(violations)
+            analysis_results['files_analyzed'].append(file_path)
+    # Generate summary
+    logging.info("Generating analysis summary...")
+    analysis_results['summary'] = {
+        'total_violations': len(analysis_results['rules_violations']),
+        'files_with_issues': len(set(v.get('File', v.get('FilePath')) for v in analysis_results['rules_violations'])),
+        'severity_counts': _count_by_severity(analysis_results['rules_violations'])
+    }
+    logging.info("Project file analysis complete.")
+    return analysis_results
 
 def _is_outdated_dependency(dep_name: str, version: str) -> bool:
     """Check if dependency version is outdated (simplified)"""
