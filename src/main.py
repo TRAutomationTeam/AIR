@@ -111,9 +111,26 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
                     grouped[key] = {'count': 0, 'files': set()}
                 grouped[key]['count'] += 1
                 grouped[key]['files'].add(v.get('FilePath'))
+            def color_text(text, color):
+                colors = {
+                    'red': '\033[91m',
+                    'yellow': '\033[93m',
+                    'reset': '\033[0m',
+                }
+                return f"{colors.get(color, '')}{text}{colors['reset']}"
+
             for (rule_id, rule_name, severity, recommendation), data in grouped.items():
-                files_str = ', '.join(sorted(f for f in data['files'] if f))
-                print(f"| {rule_id} | {rule_name} | {severity} | {data['count']} | {recommendation} | {files_str} |")
+                # Show relative file paths only
+                rel_files = [os.path.relpath(f, repo_path) for f in data['files'] if f]
+                files_str = ', '.join(sorted(rel_files))
+                # Color code severity
+                if severity == 'Error':
+                    sev_str = color_text(severity, 'red')
+                elif severity == 'Warning':
+                    sev_str = color_text(severity, 'yellow')
+                else:
+                    sev_str = severity
+                print(f"| {rule_id} | {rule_name} | {sev_str} | {data['count']} | {recommendation} | {files_str} |")
         else:
             print("No warnings or errors found.")
         # Removed any code that uploads or pushes reports to Git

@@ -207,33 +207,3 @@ def analyze_workflow_files(project_files: Dict[str, str], changed_files: List[st
     }
     for file_path, content in files_to_analyze.items():
         if file_path.endswith('.xaml'):
-            violations = _analyze_xaml_content(content, file_path)
-            analysis_results['rules_violations'].extend(violations)
-            analysis_results['files_analyzed'].append(file_path)
-        elif file_path.endswith('.json') and 'project.json' in file_path:
-            violations = _analyze_project_json(content, file_path)
-            analysis_results['rules_violations'].extend(violations)
-            analysis_results['files_analyzed'].append(file_path)
-    # Generate summary
-    logging.info("Generating analysis summary...")
-    analysis_results['summary'] = {
-        'total_violations': len(analysis_results['rules_violations']),
-        'files_with_issues': len(set(v.get('File', v.get('FilePath')) for v in analysis_results['rules_violations'])),
-        'severity_counts': _count_by_severity(analysis_results['rules_violations'])
-    }
-    logging.info("Project file analysis complete.")
-    return analysis_results
-
-def _is_outdated_dependency(dep_name: str, version: str) -> bool:
-    """Check if dependency version is outdated (simplified)"""
-    # This could be enhanced to check against a database of current versions
-    outdated_patterns = ['2019.', '2020.', '2021.']
-    return any(version.startswith(pattern) for pattern in outdated_patterns)
-
-def _count_by_severity(violations: List[Dict]) -> Dict[str, int]:
-    """Count violations by severity"""
-    counts = {}
-    for violation in violations:
-        severity = violation.get('Severity', 'Unknown')
-        counts[severity] = counts.get(severity, 0) + 1
-    return counts
