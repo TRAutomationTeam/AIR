@@ -174,17 +174,6 @@ def _analyze_project_json(json_content: str, file_path: str) -> List[Dict]:
                     'Description': f'Project.json missing required field: {field}'
                 })
         
-        # Check for outdated dependencies
-        if 'dependencies' in project_data:
-            for dep_name, version in project_data['dependencies'].items():
-                if _is_outdated_dependency(dep_name, version):
-                    violations.append({
-                        'RuleId': 'PJ002',
-                        'RuleName': 'Outdated Dependency',
-                        'Severity': 'Info',
-                        'FilePath': file_path,
-                        'Description': f'Dependency {dep_name} version {version} may be outdated'
-                    })
                     
     except json.JSONDecodeError:
         violations.append({
