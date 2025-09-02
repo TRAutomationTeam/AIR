@@ -16,7 +16,7 @@ import glob
 # Import required classes
 from ai.code_analyzer import AICodeAnalyzer
 from ai.report_generator import ReportGenerator
-from api.workflow_analyzer import analyze_project_files
+from api.workflow_analyzer import analyze_workflow_files
 
 
 
@@ -70,7 +70,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
 
     try:
         logging.info("Running workflow analysis...")
-        analysis_results = analyze_project_files(project_files, changed_files)
+        analysis_results = analyze_workflow_files(project_files, changed_files)
         logging.info("Running AI enhancement...")
         ai_results = ai_analyzer.analyze_workflow_results(analysis_results)
         logging.info("Generating report...")
@@ -107,6 +107,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
                 key = (v.get('RuleId'), v.get('RuleName'), v.get('Severity'), v.get('Recommendation'))
                 if key not in grouped:
                     grouped[key] = {'count': 0, 'files': set()}
+                grouped[key]['count'] += 1
                 grouped[key]['files'].add(v.get('FilePath'))
             for (rule_id, rule_name, severity, recommendation), data in grouped.items():
                 files_str = ', '.join(sorted(data['files']))
