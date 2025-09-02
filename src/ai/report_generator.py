@@ -6,10 +6,12 @@ from jinja2 import Template
 from typing import Dict, Any, List
 
 class ReportGenerator:
-    def __init__(self, template_path: str = "templates/report_template.html"):
+    def __init__(self, template_path: str = "templates/report_template.html", config: Dict = None, metrics: Dict = None):
         logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
         self.template_path = template_path
-        
+        self.config = config or {}
+        self.metrics = metrics or {}
+
     def generate_report(self, analysis_results: Dict[str, Any], 
                        project_info: Dict[str, Any], repo_path: str = None) -> Dict[str, Any]:
         """Generate comprehensive code review report"""
@@ -22,7 +24,8 @@ class ReportGenerator:
                 except Exception:
                     return path
             return path
-        # Update violations file paths
+
+        # Update violations file paths (top-level)
         if 'rules_violations' in analysis_results:
             for v in analysis_results['rules_violations']:
                 if 'FilePath' in v:
@@ -31,16 +34,47 @@ class ReportGenerator:
                     v['File'] = make_relative(v['File'])
         if 'files_analyzed' in analysis_results:
             analysis_results['files_analyzed'] = [make_relative(f) for f in analysis_results['files_analyzed']]
+
+        # Update violations file paths (nested original_analysis)
+        if 'original_analysis' in analysis_results and 'rules_violations' in analysis_results['original_analysis']:
+            for v in analysis_results['original_analysis']['rules_violations']:
+                if 'FilePath' in v:
+                    v['FilePath'] = make_relative(v['FilePath'])
+                if 'File' in v:
+                    v['File'] = make_relative(v['File'])
+        if 'original_analysis' in analysis_results and 'files_analyzed' in analysis_results['original_analysis']:
+            analysis_results['original_analysis']['files_analyzed'] = [make_relative(f) for f in analysis_results['original_analysis']['files_analyzed']]
+        # Enforce thresholds from config
+        quality_score = analysis_results.get('quality_score', 0)
+        confidence = analysis_results.get('confidence', 0)
+        min_conf = self.config.get('min_confidence', 0.7)
+        quality_threshold = self.config.get('quality_threshold', 80)
+        auto_approve_threshold = self.config.get('auto_approve_threshold', 95)
+        max_errors_for_go = self.config.get('max_errors_for_go', 0)
+        critical_rules = set(self.config.get('critical_rules', []))
+        violations = analysis_results.get('original_analysis', {}).get('rules_violations', [])
+        critical_issues = [v for v in violations if v.get('RuleId') in critical_rules or v.get('Severity') == 'Error']
+
+        # Decision logic
+        if quality_score >= auto_approve_threshold and confidence >= min_conf and len(critical_issues) <= max_errors_for_go:
+            decision = 'GO'
+        elif len(critical_issues) > max_errors_for_go:
+            decision = 'NO_GO'
+        elif quality_score >= quality_threshold and confidence >= min_conf:
+            decision = 'GO'
+        else:
+            decision = 'REVIEW_REQUIRED'
+
         report_data = {
             'timestamp': datetime.now().isoformat(),
             'project_info': project_info,
             'analysis_summary': self._create_summary(analysis_results),
             'detailed_results': analysis_results,
-            'go_no_go_decision': analysis_results.get('go_no_go_decision', 'REVIEW_REQUIRED'),
+            'go_no_go_decision': decision,
             'quality_metrics': self._calculate_metrics(analysis_results),
             'recommendations': analysis_results.get('recommendations', []),
             'ai_insights': analysis_results.get('ai_insights', []),
-            'next_steps': self._generate_next_steps(analysis_results)
+            'next_steps': self._generate_next_steps({'go_no_go_decision': decision})
         }
         logging.info("Generating HTML report...")
         html_report = self._generate_html_report(report_data)
@@ -277,7 +311,20 @@ class ReportGenerator:
     def _generate_json_summary(self, report_data: Dict[str, Any]) -> Dict[str, Any]:
         """Generate JSON summary for API responses"""
         # Only include warnings and errors in JSON output
-        filtered_violations = [v for v in report_data['detailed_results']['original_analysis'].get('rules_violations', []) if v.get('Severity') in ('Warning', 'Error')]
+        repo_path = report_data['project_info'].get('repo_path') if 'project_info' in report_data else None
+        def make_relative(path):
+            if repo_path and path:
+                try:
+                    return os.path.relpath(path, repo_path)
+                except Exception:
+                    return path
+            return path
+        filtered_violations = [v.copy() for v in report_data['detailed_results']['original_analysis'].get('rules_violations', []) if v.get('Severity') in ('Warning', 'Error')]
+        for v in filtered_violations:
+            if 'FilePath' in v:
+                v['FilePath'] = make_relative(v['FilePath'])
+            if 'File' in v:
+                v['File'] = make_relative(v['File'])
         return {
             'decision': report_data['go_no_go_decision'],
             'quality_score': report_data['analysis_summary']['quality_score'],

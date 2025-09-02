@@ -22,7 +22,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r src/requirements.txt
 
       - name: Set environment variables
         env:
@@ -38,5 +38,5 @@ jobs:
         with:
           name: ai-code-review-reports
           path: |
-            AI Reports/*.html
-            AI Reports/*.json
+            src/AI Reports/*.html
+            src/AI Reports/*.json

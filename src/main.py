@@ -1,13 +1,14 @@
+
 import sys
 import logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
-import logging
 import argparse
 import os
 import git
 from pathlib import Path
 import json
 import glob
+import yaml
 # Environment variable mapping (see README for details)
 # UiPath: UIPATH_APP_ID, UIPATH_APP_SECRET, UIPATH_BASE_URL, UIPATH_SCOPE, UIPATH_TENANT, UIPATH_FOLDER, UIPATH_IDENTITY_URL
 # TR Arena: AI_ARENA_API_KEY, AI_ARENA_ENDPOINT, AI_ARENA_MODEL_NAME
@@ -30,10 +31,17 @@ from api.workflow_analyzer import analyze_workflow_files
 def analyze_repository(repo_path: str, commit_sha: str = None):
     logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
     """Analyzes entire repository for UiPath files"""
-    
+
+    # Load config from settings.txt (now in src/config)
+    config_path = os.path.join(repo_path, 'src', 'config', 'settings.txt')
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+    analysis_cfg = config.get('analysis', {})
+    metrics_cfg = config.get('metrics', {})
+
     logging.info(f"Analying repository at {repo_path}")
     repo = git.Repo(repo_path)
-    
+
     # Get changed files if commit_sha provided
     changed_files = []
     if commit_sha:
@@ -45,7 +53,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
                 changed_files = [item.a_path for item in commit.diff(None)]
         except Exception as e:
             logging.warning(f"Could not get changed files: {e}")
-    
+
     # Find all UiPath project files
     logging.info("Finding UiPath project files...")
     # Scan only the TR_Sanity_TaxCaddy folder for UiPath files
@@ -59,16 +67,22 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     logging.info(f"Found {len(project_files)} UiPath files to analyze.")
     for idx, file_path in enumerate(project_files.keys(), 1):
         logging.info(f"Analyzing file {idx}/{len(project_files)}: {file_path}")
-    ai_arena_api_key = os.environ.get("AI_ARENA_API_KEY")
-    ai_arena_endpoint = os.environ.get("AI_ARENA_ENDPOINT")
+    # Load AI Arena config from settings
+    ai_arena_cfg = config.get('ai_arena', {})
+    ai_arena_api_key = ai_arena_cfg.get('api_key')
+    ai_arena_endpoint = ai_arena_cfg.get('endpoint')
+    model_name = "openai_gpt-4-turbo"
     logging.info("Initializing AI analyzer and report generator...")
 
-    # Hardcode model name
-    model_name = "openai_gpt-4-turbo"
-
-    # Initialize analyzers with env vars and hardcoded model name
-    ai_analyzer = AICodeAnalyzer(ai_endpoint=ai_arena_endpoint, api_key=ai_arena_api_key, model_name=model_name)
-    report_generator = ReportGenerator()
+    # Pass config to analyzer and report generator
+    ai_analyzer = AICodeAnalyzer(
+        ai_endpoint=ai_arena_endpoint,
+        api_key=ai_arena_api_key,
+        model_name=model_name,
+        config=analysis_cfg,
+        metrics=metrics_cfg
+    )
+    report_generator = ReportGenerator(config=analysis_cfg, metrics=metrics_cfg)
 
     try:
         logging.info("Running workflow analysis...")
@@ -81,8 +95,8 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
             'commit_sha': commit_sha,
             'changed_files': changed_files[:10] if changed_files else None  # Limit for display
         }
-        report = report_generator.generate_report(ai_results, project_info)
-        reports_dir = os.path.join(repo_path, 'AI Reports')
+        report = report_generator.generate_report(ai_results, project_info, repo_path=repo_path)
+        reports_dir = os.path.join(repo_path, 'src', 'AI Reports')
         if not os.path.exists(reports_dir):
             os.makedirs(reports_dir, exist_ok=True)
         timestamp = report['report_data']['timestamp'].replace(':', '').replace('-', '').replace('T', '_').split('.')[0]
@@ -137,28 +151,6 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     except Exception as e:
         logging.error(f"Analysis failed: {e}")
         sys.exit(1)
-        violations = report['json_summary'].get('violations', [])
-        if violations:
-            print("\nRule Violations Summary (Warnings & Errors Only):")
-            print("| Rule ID | Rule Name | Severity | Count | Recommendation | Files |")
-            print("|---------|-----------|----------|-------|----------------|-------|")
-            # Group by RuleId, RuleName, Severity, Recommendation
-            grouped = {}
-            for v in violations:
-                key = (v.get('RuleId'), v.get('RuleName'), v.get('Severity'), v.get('Recommendation'))
-                if key not in grouped:
-                    grouped[key] = {'count': 0, 'files': set()}
-                grouped[key]['count'] += 1
-                grouped[key]['files'].add(v.get('FilePath'))
-            for (rule_id, rule_name, severity, recommendation), data in grouped.items():
-                files_str = ', '.join(sorted(data['files']))
-                print(f"| {rule_id} | {rule_name} | {severity} | {data['count']} | {recommendation} | {files_str} |")
-        else:
-            print("No warnings or errors found.")
-        # Removed any code that uploads or pushes reports to Git
-    except Exception as e:
-        logging.error(f"Analysis failed: {e}")
-        sys.exit(1)
 
 def find_uipath_files(repo_path: str) -> dict:
     """Find all UiPath-related files in repository"""
@@ -187,6 +179,6 @@ def cleanup_old_reports(report_dir):
 
 if __name__ == "__main__":
     repo_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    report_dir = os.path.join(repo_path, 'AI Reports')
+    report_dir = os.path.join(repo_path, 'src', 'AI Reports')
     cleanup_old_reports(report_dir)
     analyze_repository(repo_path)

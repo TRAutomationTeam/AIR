@@ -6,37 +6,39 @@ def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
     """Analyze XAML content for UiPath best practices and rules."""
     import re
     violations = []
-    # 1. Missing annotation/comment
-    if '<Annotation>' not in xaml_content:
-        violations.append({
-            'RuleId': 'XAML001',
-            'RuleName': 'Missing Annotation',
-            'Severity': 'Warning',
-            'FilePath': file_path,
-            'Description': 'Workflow is missing <Annotation> for documentation.',
-            'Recommendation': 'Add an <Annotation> element to describe workflow purpose.'
-        })
-    # 2. Excessive workflow complexity (too many activities)
-    activity_count = len(re.findall(r'<ui:Sequence|<ui:Flowchart|<ui:StateMachine|<ui:Activity', xaml_content))
-    if activity_count > 50:
-        violations.append({
-            'RuleId': 'XAML002',
-            'RuleName': 'Excessive Workflow Complexity',
-            'Severity': 'Warning',
-            'FilePath': file_path,
-            'Description': f'Workflow contains {activity_count} activities, which may be too complex.',
-            'Recommendation': 'Consider refactoring into smaller workflows.'
-        })
-    # 3. Hardcoded values
-    if re.search(r'>([0-9]{4,}|true|false|"[^"]+")<', xaml_content):
-        violations.append({
-            'RuleId': 'XAML003',
-            'RuleName': 'Hardcoded Value Detected',
-            'Severity': 'Warning',
-            'FilePath': file_path,
-            'Description': 'Potential hardcoded value found in workflow.',
-            'Recommendation': 'Replace hardcoded values with arguments or config settings.'
-        })
+    # Load official rules from settings.txt
+    import yaml
+    import os
+    config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'settings.txt')
+    with open(config_path, 'r', encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+    official_rules = config.get('official_rules', [])
+
+    for rule in official_rules:
+        pattern = rule.get('pattern')
+        threshold = rule.get('threshold')
+        if pattern:
+            import re
+            matches = re.findall(pattern, xaml_content)
+            if threshold is not None:
+                if len(matches) > threshold:
+                    violations.append({
+                        'RuleId': rule['id'],
+                        'RuleName': rule['name'],
+                        'Severity': rule['severity'],
+                        'Description': f"{len(matches)} matches for pattern '{pattern}' (threshold: {threshold})",
+                        'Recommendation': rule.get('recommendation', ''),
+                        'File': file_path
+                    })
+            elif matches:
+                violations.append({
+                    'RuleId': rule['id'],
+                    'RuleName': rule['name'],
+                    'Severity': rule['severity'],
+                    'Description': f"Pattern '{pattern}' found in workflow.",
+                    'Recommendation': rule.get('recommendation', ''),
+                    'File': file_path
+                })
     # Official UiPath Rule IDs and severities (Error/Warning only)
     # Delay Activity Usage (ST-DBP-026, Error)
     if re.search(r'<ui:Delay', xaml_content):

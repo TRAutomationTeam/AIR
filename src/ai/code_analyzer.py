@@ -7,15 +7,12 @@ from typing import Dict, List, Any
 import logging
 
 class AICodeAnalyzer:
-    def __init__(self, ai_endpoint: str = None, api_key: str = None, model_name: str = None):
-        # Load AI Arena config from settings.txt
-        config_path = os.path.join(os.path.dirname(__file__), '../../config/settings.txt')
-        with open(config_path, 'r', encoding='utf-8') as f:
-            settings = yaml.safe_load(f)
-        ai_config = settings.get('ai_arena', {})
-        self.ai_endpoint = ai_config.get('endpoint', ai_endpoint)
-        self.api_key = ai_config.get('api_key', api_key)
+    def __init__(self, ai_endpoint: str = None, api_key: str = None, model_name: str = None, config: dict = None, metrics: dict = None):
+        self.ai_endpoint = ai_endpoint
+        self.api_key = api_key
         self.model_name = model_name or 'openai_gpt-4-turbo'
+        self.config = config or {}
+        self.metrics = metrics or {}
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
         """Send workflow analyzer results to AI for enhanced analysis"""
@@ -84,27 +81,38 @@ class AICodeAnalyzer:
         violations = analysis_results.get('rules_violations', [])
         
         # Simple rule-based scoring
-        critical_count = len([v for v in violations if v.get('Severity') == 'Error'])
+        # Load thresholds from config
+        quality_threshold = self.config.get('quality_threshold', 80)
+        min_confidence = self.config.get('min_confidence', 0.7)
+        auto_approve_threshold = self.config.get('auto_approve_threshold', 95)
+        max_errors_for_go = self.config.get('max_errors_for_go', 0)
+        critical_rules = set(self.config.get('critical_rules', []))
+
+        critical_issues = [v for v in violations if v.get('RuleId') in critical_rules or v.get('Severity') == 'Error']
+        critical_count = len(critical_issues)
         warning_count = len([v for v in violations if v.get('Severity') == 'Warning'])
-        
         quality_score = max(0, 100 - (critical_count * 20) - (warning_count * 5))
-        
-        if critical_count > 0:
+        confidence = 0.6
+
+        # Decision logic
+        if quality_score >= auto_approve_threshold and confidence >= min_confidence and critical_count <= max_errors_for_go:
+            decision = 'GO'
+        elif critical_count > max_errors_for_go:
             decision = 'NO_GO'
-        elif quality_score >= 80:
+        elif quality_score >= quality_threshold and confidence >= min_confidence:
             decision = 'GO'
         else:
             decision = 'REVIEW_REQUIRED'
-            
+
         return {
             'original_analysis': analysis_results,
             'ai_insights': ['AI service unavailable - using rule-based analysis'],
             'recommendations': self._generate_basic_recommendations(violations),
             'quality_score': quality_score,
             'go_no_go_decision': decision,
-            'confidence': 0.6,
+            'confidence': confidence,
             'summary': f'Found {critical_count} critical and {warning_count} warning issues',
-            'critical_issues': [v for v in violations if v.get('Severity') == 'Error'],
+            'critical_issues': critical_issues,
             'improvement_suggestions': []
         }
         
