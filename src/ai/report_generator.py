@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 from datetime import datetime
 from jinja2 import Template
 from typing import Dict, Any, List
@@ -10,9 +11,26 @@ class ReportGenerator:
         self.template_path = template_path
         
     def generate_report(self, analysis_results: Dict[str, Any], 
-                       project_info: Dict[str, Any]) -> Dict[str, Any]:
+                       project_info: Dict[str, Any], repo_path: str = None) -> Dict[str, Any]:
         """Generate comprehensive code review report"""
         logging.info("Generating report data...")
+        # Make all file paths relative to repo_path
+        def make_relative(path):
+            if repo_path and path:
+                try:
+                    return os.path.relpath(path, repo_path)
+                except Exception:
+                    return path
+            return path
+        # Update violations file paths
+        if 'rules_violations' in analysis_results:
+            for v in analysis_results['rules_violations']:
+                if 'FilePath' in v:
+                    v['FilePath'] = make_relative(v['FilePath'])
+                if 'File' in v:
+                    v['File'] = make_relative(v['File'])
+        if 'files_analyzed' in analysis_results:
+            analysis_results['files_analyzed'] = [make_relative(f) for f in analysis_results['files_analyzed']]
         report_data = {
             'timestamp': datetime.now().isoformat(),
             'project_info': project_info,

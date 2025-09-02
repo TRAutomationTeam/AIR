@@ -1,4 +1,6 @@
 import requests
+import yaml
+import os
 # Environment variable mapping (see README for details)
 # AI_ARENA_API_KEY, AI_ARENA_ENDPOINT, AI_ARENA_MODEL_NAME
 from typing import Dict, List, Any
@@ -6,10 +8,14 @@ import logging
 
 class AICodeAnalyzer:
     def __init__(self, ai_endpoint: str = None, api_key: str = None, model_name: str = None):
-        # Always use hardcoded values
-        self.ai_endpoint = "https://aiopenarena.gcs.int.thomsonreuters.com/"
-        self.api_key = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJERTBPVEF3UVVVMk16Z3hPRUpGTkVSRk5qUkRNakkzUVVFek1qZEZOVEJCUkRVMlJrTTRSZyJ9.eyJodHRwczovL3RyLmNvbS9mZWRlcmF0ZWRfdXNlcl9pZCI6IkMyOTE4MjUiLCJodHRwczovL3RyLmNvbS9mZWRlcmF0ZWRfcHJvdmlkZXJfaWQiOiJUUlNTTyIsImh0dHBzOi8vdHIuY29tL2xpbmtlZF9kYXRhIjpbeyJzdWIiOiJvaWRjfHNzby1hdXRofFRSU1NPfGMyOTE4MjUifV0sImh0dHBzOi8vdHIuY29tL2V1aWQiOiIxNjY2YzdlMC0yYWJiLTQ3YzgtYWFlYi03ZTAxZGJhMmFmMDYiLCJodHRwczovL3RyLmNvbS9hc3NldElEIjoiYTIwODE5OSIsImlzcyI6Imh0dHBzOi8vYXV0aC50aG9tc29ucmV1dGVycy5jb20vIiwic3ViIjoiYXV0aDB8NjU3OTZiZmU2NGI3OWEyY2RjZDRlZjBhIiwiYXVkIjpbIjQ5ZDcwYTU4LTk1MDktNDhhMi1hZTEyLTRmNmUwMGNlYjI3MCIsImh0dHBzOi8vbWFpbi5jaWFtLnRob21zb25yZXV0ZXJzLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE3NTY3MTkzMzgsImV4cCI6MTc1NjgwNTczOCwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImF6cCI6InRnVVZad1hBcVpXV0J5dXM5UVNQaTF5TnlvTjJsZmxJIn0.DeTs6Gtej7ZBUeKoIts-RZ8UTtq-RU5kkYSIXoPukqcrG8hbd5MtKrBYgS1vm0H7y35H75AiGkL1Nm9viGsIjq4wvBUe99txExBgi4-N_gTZg-Iq94nTUuR2Tfv2hVpeAGRA5tnaOAEIofgj6qqskVxLEd1FBBGb6TR_AUo6_RASswiSdhLXlMjbqPoW_MDwGgxpoVhurUufKeOvLsUgDbRN-53ibU7y9K2XKfT6l61_r7DGC6MWf9xehVEryCSLFHeCRI5ccb74ZQB11E0YRmjYqRE2W2qTcfvmTmRA5FNqNq2tu2deo_GUswUlxLtqEz4y5R5E4VfMoHv8Ec-_Kg"
-        self.model_name = "openai_gpt-4-turbo"
+        # Load AI Arena config from settings.txt
+        config_path = os.path.join(os.path.dirname(__file__), '../../config/settings.txt')
+        with open(config_path, 'r', encoding='utf-8') as f:
+            settings = yaml.safe_load(f)
+        ai_config = settings.get('ai_arena', {})
+        self.ai_endpoint = ai_config.get('endpoint', ai_endpoint)
+        self.api_key = ai_config.get('api_key', api_key)
+        self.model_name = model_name or 'openai_gpt-4-turbo'
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
         """Send workflow analyzer results to AI for enhanced analysis"""
