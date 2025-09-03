@@ -6,7 +6,7 @@
   "confidence": 0.6,
   "summary": "Found 56 critical and 51 warning issues",
   "recommendations_count": 8,
-  "timestamp": "2025-09-02T19:37:37.183430",
+  "timestamp": "2025-09-03T20:17:13.482579",
   "violations": [
     {
       "RuleId": "UI-DBP-006",
