@@ -1,0 +1,3 @@
+# AI Review Settings
+# Add custom rule thresholds and other configuration here
+max_workflows: 20

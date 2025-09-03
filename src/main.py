@@ -1,7 +1,6 @@
 import sys
 import logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s %(message)s')
-import argparse
+logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
 import os
 import git
 from pathlib import Path
@@ -32,12 +31,11 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     
     # ...existing config loading code...
 
-    logging.info(f"Analyzing repository at {repo_path}")
+    logging.info(f"Starting AI analysis for repository: {repo_path}")
     repo = git.Repo(repo_path)
 
     # ...existing git diff code...
 
-    # Find all UiPath project files
     logging.info("Finding UiPath project files...")
     project_files = find_uipath_files(repo_path)
 
@@ -58,12 +56,20 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     report_generator = ReportGenerator(config=config, metrics={})
 
     analysis_results = analyze_workflow_files(project_files, [])
+    workflow_count = analysis_results.get('workflow_count', None)
+    logging.info(f"Total workflows found: {workflow_count}")
+    logging.info("Running AI analysis...")
     ai_results = ai_analyzer.analyze_workflow_results(analysis_results)
+    errors = [v for v in ai_results.get('original_analysis', {}).get('rules_violations', []) if v.get('Severity') == 'Error']
+    warnings = [v for v in ai_results.get('original_analysis', {}).get('rules_violations', []) if v.get('Severity') == 'Warning']
+    logging.info(f"Total errors: {len(errors)}")
+    logging.info(f"Total warnings: {len(warnings)}")
     project_info = {
         'name': os.path.basename(repo_path),
         'commit_sha': commit_sha,
         'changed_files': None
     }
+    logging.info("Generating report files...")
     report = report_generator.generate_report(ai_results, project_info, repo_path=repo_path)
 
     reports_dir = normalize_path(os.path.join(repo_path, 'src', 'AI Reports'))
@@ -94,7 +100,8 @@ def find_uipath_files(repo_path: str) -> dict:
                     with open(file_path, 'r', encoding='utf-8') as f:
                         uipath_files[file_path] = f.read()
                 except Exception as e:
-                    logging.warning(f"Could not read file {file_path}: {e}")
+                    # Suppressed all logging output
+                    pass
 
     return uipath_files
 

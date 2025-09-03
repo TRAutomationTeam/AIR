@@ -98,6 +98,8 @@ class ReportGenerator:
         rule_violations = {}
         for v in violations:
             rule_id = v.get('RuleId', '')
+            if rule_id == 'AT-WFC-001':
+                logging.info(f"[DEBUG] Including AT-WFC-001 in report summary: {v}")
             if rule_id not in rule_violations:
                 rule_violations[rule_id] = {
                     'name': v.get('RuleName', ''),
@@ -217,13 +219,34 @@ class ReportGenerator:
             <title>UiPath Code Review Report</title>
             <style>
                 body { font-family: Arial, sans-serif; margin: 20px; }
-                .header { background-color: #f0f0f0; padding: 20px; border-radius: 5px; }
+                .header {
+                    background: linear-gradient(90deg, #4b9cd3 0%, #6dd5ed 100%);
+                    color: #fff;
+                    padding: 32px 24px 24px 24px;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 16px rgba(75,156,211,0.15);
+                    margin-bottom: 16px;
+                    position: relative;
+                }
+                .header h1 {
+                    font-size: 2.5em;
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                    letter-spacing: 1px;
+                    text-shadow: 1px 2px 8px rgba(0,0,0,0.08);
+                }
+                .header p {
+                    font-size: 1.15em;
+                    margin: 4px 0;
+                    font-weight: 400;
+                    text-shadow: 1px 1px 6px rgba(0,0,0,0.05);
+                }
                 .summary { margin: 20px 0; }
                 .metrics { display: flex; gap: 20px; margin: 20px 0; }
                 .metric { background-color: #e8f4f8; padding: 15px; border-radius: 5px; flex: 1; }
                 .decision-go { color: green; font-weight: bold; }
                 .decision-no-go { color: red; font-weight: bold; }
-                .decision-review { color: orange; font-weight: bold; }
+                .decision-review { color: red; font-weight: bold; }
                 .violations { margin: 20px 0; }
                 table { border-collapse: collapse; width: 100%; margin-bottom: 20px; }
                 th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
@@ -239,15 +262,19 @@ class ReportGenerator:
         <body>
             <div class="header">
                 <h1>UiPath Code Review Report</h1>
-                <p>Generated: {{ timestamp }}</p>
-                <p>Project: {{ project_info.name or 'Unknown' }}</p>
+                <p>Generated: <span style="font-weight:600;">{{ timestamp }}</span></p>
+                <p>Project: <span style="font-weight:600;">{{ project_info.name or 'Unknown' }}</span></p>
             </div>
             <div class="summary">
                 <h2>Summary</h2>
                 <p><strong>Decision:</strong> 
-                    <span class="decision-{{ analysis_summary.decision.lower().replace('_', '-') }}">
-                        {{ analysis_summary.decision }}
-                    </span>
+                    {% if analysis_summary.decision == 'REVIEW_REQUIRED' %}
+                        <span style="color:red;font-weight:bold;">REVIEW_REQUIRED</span>
+                    {% elif analysis_summary.decision == 'GO' %}
+                        <span style="color:green;font-weight:bold;">GO</span>
+                    {% else %}
+                        <span style="color:red;font-weight:bold;">NO_GO</span>
+                    {% endif %}
                 </p>
                 <p><strong>Quality Score:</strong> {{ analysis_summary.quality_score }}/100</p>
                 <p><strong>Total Violations:</strong> {{ analysis_summary.total_violations }}</p>
@@ -271,32 +298,45 @@ class ReportGenerator:
                     <p>{{ quality_metrics.security_score }}/100</p>
                 </div>
             </div>
-            {% if ai_insights %}
+            {% set filtered_violations = detailed_results.original_analysis.rules_violations | selectattr('Severity', 'in', ['Warning', 'Error']) | list %}
+            {% if filtered_violations %}
             <div class="ai-insights">
-                <h2>AI Arena Insights</h2>
-                <ul>
-                {% for insight in ai_insights %}
-                    <li>{{ insight }}</li>
-                {% endfor %}
-                </ul>
+                <h2>TR AI Suggestions</h2>
+                <table style="width:100%; border-collapse: collapse;">
+                    <tr style="background-color:#f2f2f2;"><th>#</th><th>Suggestion</th></tr>
+                    {% set seen_rules = [] %}
+                    {% set suggestion_count = namespace(value=1) %}
+                    {% for v in filtered_violations %}
+                        {% set base_rec = v.RuleId == 'AT-WFC-002' and 'Reduce the number of activities in each workflow to improve maintainability.' or v.Recommendation.split(' has ')[0].split('Current count')[0].strip() %}
+                        {% if v.RuleId not in seen_rules and base_rec %}
+                            <tr><td>{{ suggestion_count.value }}.</td><td>{{ base_rec }}</td></tr>
+                            {% set _ = seen_rules.append(v.RuleId) %}
+                            {% set suggestion_count.value = suggestion_count.value + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                </table>
             </div>
             {% endif %}
             {% set filtered_violations = detailed_results.original_analysis.rules_violations | selectattr('Severity', 'in', ['Warning', 'Error']) | list %}
             {% if filtered_violations %}
             <div class="violations">
-                <h2>Rule Violations Summary (Errors)</h2>
+                <h2>Rule Violations Summary</h2>
                 {% set grouped = {} %}
                 {% for v in filtered_violations %}
-                    {% set key = v.RuleId ~ '|' ~ v.RuleName ~ '|' ~ v.Severity ~ '|' ~ v.Recommendation %}
+                    {% set key = v.RuleId ~ '|' ~ v.RuleName ~ '|' ~ v.Severity %}
+                    {% set base_rec = v.RuleId == 'AT-WFC-002' and 'Reduce the number of activities in each workflow to improve maintainability.' or v.Recommendation.split(' has ')[0].split('Current count')[0].strip() %}
                     {% if key not in grouped %}
-                        {% set _ = grouped.update({key: {'count': 0, 'files': [], 'rule_id': v.RuleId, 'rule_name': v.RuleName, 'severity': v.Severity, 'recommendation': v.Recommendation}}) %}
+                        {% set _ = grouped.update({key: {'count': 0, 'files': [], 'rule_id': v.RuleId, 'rule_name': v.RuleName, 'severity': v.Severity, 'recommendation': base_rec}}) %}
                     {% endif %}
                     {% set _ = grouped[key].update({'count': grouped[key]['count'] + 1}) %}
-                    {% if v.get('FilePath') and v.FilePath not in grouped[key]['files'] %}
-                        {% set _ = grouped[key]['files'].append(v.FilePath) %}
-                    {% endif %}
-                    {% if v.get('File') and v.File not in grouped[key]['files'] %}
-                        {% set _ = grouped[key]['files'].append(v.File) %}
+                    {% if v.get('FilePath') %}
+                        {% if v.FilePath not in grouped[key]['files'] %}
+                            {% set _ = grouped[key]['files'].append(v.FilePath) %}
+                        {% endif %}
+                    {% elif v.get('File') %}
+                        {% if v.File not in grouped[key]['files'] %}
+                            {% set _ = grouped[key]['files'].append(v.File) %}
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
                 {% set errors = [] %}
@@ -311,35 +351,26 @@ class ReportGenerator:
                 <table>
                     <tr><th>Rule ID</th><th>Rule Name</th><th>Severity</th><th>Count</th><th>Recommendation</th><th>Files</th></tr>
                     {% for data in errors|sort(attribute='rule_id') %}
-                        <tr class="violation-error">
+                        <tr style="background-color:#ffe6e6;">
                             <td>{{ data.rule_id }}</td>
                             <td>{{ data.rule_name }}</td>
                             <td>{{ data.severity }}</td>
                             <td>{{ data.count }}</td>
                             <td>{{ data.recommendation }}</td>
-                            <td><ul class="file-list">{% for f in data.files|sort %}<li>{{ f }}</li>{% endfor %}</ul></td>
+                            <td><ul class="file-list">{% for f in data.files %}<li>{{ f }}</li>{% endfor %}</ul></td>
                         </tr>
                     {% endfor %}
-                </table>
-
-                <h2>Rule Violations Summary (Warnings)</h2>
-                <table>
-                    <tr><th>Rule ID</th><th>Rule Name</th><th>Severity</th><th>Count</th><th>Recommendation</th><th>Files</th></tr>
                     {% for data in warnings|sort(attribute='rule_id') %}
-                        <tr class="violation-warning">
+                        <tr style="background-color:#fffbe6;">
                             <td>{{ data.rule_id }}</td>
                             <td>{{ data.rule_name }}</td>
                             <td>{{ data.severity }}</td>
                             <td>{{ data.count }}</td>
                             <td>{{ data.recommendation }}</td>
-                            <td><ul class="file-list">{% for f in data.files|sort %}<li>{{ f }}</li>{% endfor %}</ul></td>
+                            <td><ul class="file-list">{% for f in data.files %}<li>{{ f }}</li>{% endfor %}</ul></td>
                         </tr>
                     {% endfor %}
                 </table>
-            </div>
-            {% endif %}
-            {% if recommendations %}
-            <div class="recommendations">
                 <h2>AI Recommendations</h2>
                 <ul>
                 {% for recommendation in recommendations %}

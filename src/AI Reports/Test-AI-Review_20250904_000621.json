@@ -1,12 +1,12 @@
 {
   "decision": "NO_GO",
   "quality_score": 0,
-  "total_violations": 107,
-  "critical_issues": 56,
-  "confidence": 0.6,
-  "summary": "Found 56 critical and 51 warning issues",
-  "recommendations_count": 8,
-  "timestamp": "2025-09-03T20:17:13.482579",
+  "total_violations": 122,
+  "critical_issues": 71,
+  "confidence": 0,
+  "summary": "",
+  "recommendations_count": 0,
+  "timestamp": "2025-09-04T00:06:21.233619",
   "violations": [
     {
       "RuleId": "UI-DBP-006",
@@ -863,19 +863,153 @@
       "Description": "Pattern '<Variable' found in workflow.",
       "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
       "File": "TR_Sanity_TaxCaddy\\Tests\\WorkflowTestCaseTemplate.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Main.xaml has 90 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Main.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Main.xaml",
+      "Count": 90
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml has 86 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Count": 86
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml has 14 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml",
+      "Count": 14
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml has 12 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "Count": 12
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\Process.xaml has 16 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Count": 16
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml has 53 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Count": 53
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml has 36 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Count": 36
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml has 23 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Count": 23
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml has 28 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Count": 28
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml has 32 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Count": 32
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml has 38 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Count": 38
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml has 28 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Count": 28
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml has 29 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Count": 29
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability. \\\\?\\c:\\Users\\C291825\\Desktop\\Rajesh\\AI\\Test-AI-Review\\TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml has 13 activities (Threshold: 10)",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml",
+      "FilePath": "TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml",
+      "Count": 13
+    },
+    {
+      "RuleId": "AT-WFC-001",
+      "RuleName": "High Workflow Count",
+      "Severity": "Error",
+      "Recommendation": "Reduce the number of workflows to improve maintainability. Current count: 25 (Threshold: 5)",
+      "File": "",
+      "FilePath": "",
+      "Count": 25
     }
   ],
-  "recommendations": [
-    "Multiple violations of rule UI-DBP-006 detected (11 instances)",
-    "Multiple violations of rule UI-DBP-013 detected (25 instances)",
-    "Multiple violations of rule UI-DBP-007 detected (10 instances)",
-    "Multiple violations of rule UI-DBP-008 detected (8 instances)",
-    "Multiple violations of rule ST-NMG-001 detected (25 instances)",
-    "Multiple violations of rule ST-USG-002 detected (20 instances)",
-    "Multiple violations of rule UI-PRF-001 detected (3 instances)",
-    "Multiple violations of rule ST-DBP-021 detected (4 instances)"
-  ],
+  "recommendations": [],
   "ai_insights": [
-    "AI service unavailable - using rule-based analysis"
+    "### Suggestions to Resolve UiPath Workflow Issues\n\nBelow is a numbered list of actionable suggestions mapped to each identified issue:\n\n---\n\n#### **Error: UI-DBP-006 (Missing Exception Handling)**",
+    "**Add TryCatch Blocks**: Enclose critical activities and sequences within `TryCatch` blocks. Ensure that exceptions are logged using `LogMessage` activities and handled gracefully (e.g., retry logic or marking transactions as failed).\n   - Example:\n     ```xml\n     Try {\n         Perform critical activity\n     } Catch {\n         Log exception details\n         Handle exception (e.g., retry or stop process)\n     }\n     ```\n\n---\n\n#### **Warning: UI-DBP-013 (Missing Logging)**",
+    "**Add LogMessage Activities**: Use `LogMessage` activities to log key events, decisions, and exceptions. Include details such as transaction ID, timestamps, and specific process steps.\n   - Example:\n     ```xml\n     LogMessage Level=\"Info\" Message=\"Transaction ID: 12345 - Starting Process\"\n     ```\n\n---\n\n#### **Warning: UI-DBP-007 (Missing Comments)**",
+    "**Add Comments for Complex Logic**: Add inline comments to describe the purpose and logic of complex workflows and activities. This helps maintain code readability and assists future developers in understanding the workflow.\n   - Example:\n     ```xml\n     <!-- Check if transaction status is valid before proceeding -->\n     ```\n\n---\n\n#### **Warning: UI-DBP-008 (Hardcoded Values)**",
+    "**Move Hardcoded Values to Configuration Files**: Replace hardcoded values with dynamic values sourced from `Config.xlsx` or Orchestrator assets. Use `Dictionary<String, Object>` for accessing config values.\n   - Example:\n     ```xml\n     Assign Variable=\"Timeout\" Value=\"Config(\"Timeout\").ToString\"\n     ```\n\n---\n\n#### **Error: ST-NMG-001 (Missing Naming Convention)**",
+    "**Follow Naming Conventions**: Rename variables, arguments, and activities following UiPath best practices. Use clear, consistent names such as:\n   - Variables: `v_TransactionStatus`, `v_ClientName`\n   - Arguments: `in_TransactionID`, `out_TransactionResult`\n   - Activities: `Assign_TransactionStatus`, `Log_ProcessStart`\n   - Example: Ensure all variables start with prefixes like `v_`, arguments with `in_` or `out_`, etc.\n\n---\n\n#### **Error: ST-USG-002 (Unused Variable Detected)**",
+    "**Remove Unused Variables**: Delete variables that are declared but never used. Use the UiPath Studio `Analyze Workflow` feature to identify unused variables automatically.\n\n---\n\n#### **Warning: UI-PRF-001 (Performance Impact)**",
+    "**Optimize Delay Times**: Review `Delay` activities and ensure they are set to the minimum required duration. Avoid excessive delays by using dynamic wait mechanisms like `Element Exists` or `WaitForReady`.\n   - Example:\n     ```xml\n     Element Exists Timeout=\"Config(\"ElementTimeout\").ToString\"\n     ```\n\n---\n\n#### **Warning: ST-DBP-021 (Hardcoded Timeout)**",
+    "**Use Config/Arguments for Timeout Values**: Replace hardcoded timeouts in activities like `Delay`, `Element Exists`, and `Click` with values sourced from configuration files or arguments.\n   - Example:\n     ```xml\n     Timeout=\"Config(\"DefaultTimeout\").ToString\"\n     ```\n\n---\n\n### **Workflow-Specific Recommendations**\n\nBelow are targeted suggestions for specific workflows mentioned in the query:\n\n#### **Main.xaml**\n- Add `TryCatch` blocks around critical sequences.\n- Log key workflow steps and decisions using `LogMessage`.\n- Move hardcoded values (e.g., timeouts, file paths) to configuration files.\n- Rename variables and activities to follow naming conventions.\n- Delete unused variables.\n\n---\n\n#### **Framework Workflows**\n- **CloseAllApplications.xaml, GetTransactionData.xaml, InitAllApplications.xaml, InitAllProcessInputs.xaml, InitAllSettings.xaml, KillAllProcesses.xaml, Process.xaml, RetryCurrentTransaction.xaml, SetTransactionStatus.xaml, TakeScreenshot.xaml**:\n  - Ensure exception handling (`TryCatch`) for critical activities.\n  - Log workflow steps and decisions using `LogMessage`.\n  - Replace hardcoded values with config values.\n  - Follow naming conventions for variables and activities.\n  - Remove unused variables.\n\n---\n\n#### **Performer Workflows**\n- **Client Creation.xaml, GetBinderStatus.xaml, IndexTree_Exxon mobil page.xaml, Sanity_IndexTreeAssociation.xaml, SubmissionWizard.xaml, ThumbnailPageAssociation.xaml, Wizards.xaml**:\n  - Add `TryCatch` blocks for exception handling.\n  - Optimize delay times and replace hardcoded timeouts with config values.\n  - Add logging for better traceability.\n  - Add comments to explain complex logic.\n  - Ensure all variables and activities adhere to naming conventions.\n  - Remove unused variables.\n\n---\n\n#### **Test Workflows**\n- **GetTransactionDataTestCase.xaml, InitAllApplicationsTestCase.xaml, InitAllSettingsTestCase.xaml, MainTestCase.xaml, ProcessTestCase.xaml, WorkflowTestCaseTemplate.xaml**:\n  - Include `LogMessage` activities for traceability.\n  - Add comments explaining complex logic.\n  - Replace hardcoded values with config values.\n  - Follow naming conventions for variables and activities.\n  - Remove unused variables.\n\n---\n\n### **General Best Practices**\n- **Exception Handling**: Ensure all workflows have proper exception handling to prevent runtime failures.\n- **Logging**: Use consistent logging throughout workflows to enable debugging and monitoring.\n- **Configuration Management**: Centralize configuration values (e.g., timeouts, file paths) to improve maintainability.\n- **Naming Conventions**: Ensure all variables, arguments, and activities follow clear and consistent naming conventions.\n- **Performance Optimization**:"
   ]
 }

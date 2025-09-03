@@ -190,14 +190,24 @@ def _analyze_project_json(json_content: str, file_path: str) -> List[Dict]:
 def analyze_workflow_files(project_files: Dict[str, str], changed_files: List[str] = None) -> Dict[str, Any]:
     analysis_results = {
         'rules_violations': [],
-        'files_analyzed': []
+        'files_analyzed': [],
+        'activities_count': {}  # file_path -> count
     }
     files_to_analyze = {
         path: content for path, content in project_files.items()
         if not changed_files or any(path.endswith(changed.split('/')[-1]) for changed in changed_files)
     }
+    # Count all .xaml files for workflow_count metric
+    workflow_count = sum(1 for file_path in files_to_analyze if file_path.endswith('.xaml'))
+    analysis_results['workflow_count'] = workflow_count
     for file_path, content in files_to_analyze.items():
         if file_path.endswith('.xaml'):
+            # Count activities: look for <ui:Activity or <ui:Sequence or <ui:Assign etc.
+            import re
+            # This regex matches most UiPath activities (customize as needed)
+            activity_tags = re.findall(r'<ui:[A-Za-z0-9_]+', content)
+            activity_count = len(activity_tags)
+            analysis_results['activities_count'][file_path] = activity_count
             violations = _analyze_xaml_content(content, file_path)
             analysis_results['rules_violations'].extend(violations)
             analysis_results['files_analyzed'].append(file_path)
