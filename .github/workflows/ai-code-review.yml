@@ -22,24 +22,6 @@ jobs:
           # Ignore profile loading errors
           $ErrorActionPreference = 'SilentlyContinue'
           
-          function Wait-ForPath {
-              param(
-                  [string]$Path,
-                  [int]$TimeoutSeconds = 60,
-                  [int]$RetryIntervalSeconds = 5
-              )
-              
-              $timer = [System.Diagnostics.Stopwatch]::StartNew()
-              while (-not (Test-Path $Path)) {
-                  if ($timer.Elapsed.TotalSeconds -gt $TimeoutSeconds) {
-                      throw "Timeout waiting for path: $Path"
-                  }
-                  Write-Host "Waiting for path to exist: $Path"
-                  Start-Sleep -Seconds $RetryIntervalSeconds
-              }
-              $timer.Stop()
-          }
-          
           # Install 7-Zip
           Write-Host "Installing 7-Zip..."
           $7zipUrl = "https://www.7-zip.org/a/7z2301-x64.exe"
@@ -48,8 +30,8 @@ jobs:
           Start-Process -FilePath $7zipInstaller -Args "/S" -Wait
           $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
 
-          # Install Git
-          Write-Host "Installing Git..."
+          # Setup Git
+          Write-Host "Setting up Git..."
           $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.42.0.windows.2/Git-2.42.0.2-64-bit.exe"
           $gitInstaller = "$env:TEMP\GitInstaller.exe"
           $gitPath = "C:\Program Files\Git"
@@ -223,21 +205,49 @@ jobs:
         env:
           AI_ARENA_API_KEY: ${{ secrets.AI_ARENA_API_KEY }}
           AI_ARENA_ENDPOINT: ${{ secrets.AI_ARENA_ENDPOINT }}
-          GIT_PYTHON_GIT_EXECUTABLE: 'C:\Program Files\Git\cmd\git.exe'
         run: |
-          # Verify Git is properly set up
-          $gitExe = 'C:\Program Files\Git\cmd\git.exe'
-          if (-not (Test-Path $gitExe)) {
-              Write-Error "Git executable not found at expected location: $gitExe"
+          # Find Git in common locations
+          $commonGitPaths = @(
+              "C:\Program Files\Git\cmd\git.exe",
+              "C:\Program Files (x86)\Git\cmd\git.exe",
+              "C:\Windows\System32\git.exe",
+              "${env:ProgramFiles}\Git\cmd\git.exe",
+              "${env:ProgramFiles(x86)}\Git\cmd\git.exe",
+              "${env:LOCALAPPDATA}\Programs\Git\cmd\git.exe",
+              "C:\actions\Git\cmd\git.exe"
+          )
+
+          $gitExe = $null
+          foreach ($path in $commonGitPaths) {
+              if (Test-Path $path) {
+                  $gitExe = $path
+                  Write-Host "Found Git at: $path"
+                  break
+              }
+          }
+
+          # If Git not found in common locations, check PATH
+          if (-not $gitExe) {
+              try {
+                  $gitCmd = Get-Command git -ErrorAction Stop
+                  $gitExe = $gitCmd.Source
+                  Write-Host "Found Git in PATH: $gitExe"
+              } catch {
+                  Write-Host "Git not found in PATH"
+              }
+          }
+
+          if (-not $gitExe) {
+              Write-Error "Git not found in any location"
               exit 1
           }
-          
-          # Set required Git environment variables
+
+          # Set Git environment variables
           $env:GIT_PYTHON_GIT_EXECUTABLE = $gitExe
-          $env:PATH = "C:\Program Files\Git\cmd;$env:PATH"
+          $env:PATH = "$(Split-Path $gitExe -Parent);$env:PATH"
           
           Write-Host "Using Git from: $gitExe"
-          Write-Host "Git version: $(git --version)"
+          Write-Host "Git version: $((& $gitExe --version) 2>&1)"
           
           # Activate venv and run script
           . "$env:VENV_PATH/Scripts/Activate.ps1"
