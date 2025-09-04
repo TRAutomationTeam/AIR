@@ -9,7 +9,21 @@ def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
     # Load official rules from settings.txt
     import yaml
     import os
-    config_path = os.path.join(os.path.dirname(__file__), '..', 'config', 'settings.txt')
+    from pathlib import Path
+    
+    # First try to get config from the project root
+    repo_root = Path(file_path).resolve()
+    while repo_root.parent != repo_root:
+        if (repo_root / '.git').exists():
+            break
+        repo_root = repo_root.parent
+
+    config_path = repo_root / 'src' / 'config' / 'settings.txt'
+    if not config_path.exists():
+        # Fallback to relative path from module
+        config_path = Path(os.path.join(os.path.dirname(__file__), '..', 'config', 'settings.txt'))
+    
+    logging.info(f"Loading rules from: {config_path}")
     with open(config_path, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
     official_rules = config.get('official_rules', [])
@@ -41,6 +55,30 @@ def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
                 })
     # All rules are loaded from settings.txt, no hardcoded rules here
     # Only include Error and Warning severity in output
+    # Process workflow and activity count metrics
+    metrics = {
+        'workflow_count': sum(1 for _ in re.finditer(r'<Activity[^>]*>', xaml_content)),
+        'activities_count': len(re.findall(r'<ui:[A-Za-z0-9_]+', xaml_content))
+    }
+    
+    # Check metric-based rules
+    for rule in official_rules:
+        if rule.get('type') == 'custom':
+            metric_name = rule.get('metric')
+            threshold = rule.get('threshold')
+            if metric_name and threshold is not None and metric_name in metrics:
+                metric_value = metrics[metric_name]
+                if metric_value > threshold:
+                    violations.append({
+                        'RuleId': rule['id'],
+                        'RuleName': rule['name'],
+                        'Severity': rule['severity'],
+                        'Description': f"{rule['name']} check failed. Found {metric_value}, threshold is {threshold}",
+                        'Recommendation': rule.get('recommendation', ''),
+                        'File': file_path,
+                        'Count': metric_value
+                    })
+
     violations[:] = [v for v in violations if v['Severity'] in ('Error', 'Warning')]
     return violations
 

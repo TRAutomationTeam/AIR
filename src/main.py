@@ -113,15 +113,37 @@ def find_uipath_files(repo_path: str) -> dict:
     return uipath_files
 
 def cleanup_old_reports(report_dir):
+    """Only keep the latest 5 reports"""
     report_dir = normalize_path(report_dir)
+    if not os.path.exists(report_dir):
+        return
+        
     html_files = glob.glob(normalize_path(os.path.join(report_dir, '*.html')))
     json_files = glob.glob(normalize_path(os.path.join(report_dir, '*.json')))
     
-    for f in html_files + json_files:
-        try:
-            os.remove(normalize_path(f))
-        except Exception as e:
-            print(f"Failed to remove {f}: {e}")
+    # Sort files by modification time
+    all_files = [(f, os.path.getmtime(f)) for f in html_files + json_files]
+    all_files.sort(key=lambda x: x[1], reverse=True)
+    
+    # Keep only the latest 5 sets of reports (HTML + JSON)
+    files_to_keep = set()
+    report_count = 0
+    for f, _ in all_files:
+        base_name = os.path.splitext(f)[0]
+        if base_name not in files_to_keep:
+            files_to_keep.add(base_name)
+            report_count += 1
+            if report_count >= 5:
+                break
+    
+    # Remove older files
+    for f, _ in all_files:
+        base_name = os.path.splitext(f)[0]
+        if base_name not in files_to_keep:
+            try:
+                os.remove(normalize_path(f))
+            except Exception as e:
+                logging.warning(f"Failed to remove {f}: {e}")
 
 if __name__ == "__main__":
     repo_path = normalize_path(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
