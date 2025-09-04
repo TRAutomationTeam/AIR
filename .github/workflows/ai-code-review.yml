@@ -18,26 +18,45 @@ jobs:
       GIT_PYTHON_GIT_EXECUTABLE: 'git'  # Let the system find git in PATH
     steps:
       - name: Setup Tools
-        shell: pwsh
+        shell: 'pwsh -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command'
         run: |
-          # Ignore profile loading errors
-          $ErrorActionPreference = 'SilentlyContinue'
-          Remove-Item Function:\Prompt -ErrorAction SilentlyContinue
+          Write-Host "Setting up tools..."
           
           # Install 7-Zip
           Write-Host "Installing 7-Zip..."
           $7zipUrl = "https://www.7-zip.org/a/7z2301-x64.exe"
           $7zipInstaller = "$env:TEMP\7z2301-x64.exe"
-          Invoke-WebRequest -Uri $7zipUrl -OutFile $7zipInstaller
-          Start-Process -FilePath $7zipInstaller -Args "/S" -Wait
-          $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
           
-          # Verify Git is available
           try {
-              $gitVersion = git --version
-              Write-Host "Git is available: $gitVersion"
+              Invoke-WebRequest -Uri $7zipUrl -OutFile $7zipInstaller
+              Start-Process -FilePath $7zipInstaller -Args "/S" -Wait -NoNewWindow
+              $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
           } catch {
-              Write-Error "Git is not available in PATH. Please ensure Git is installed on the runner."
+              Write-Error "Failed to install 7-Zip: $_"
+              exit 1
+          }
+          
+          # Verify Git is available (using full path to avoid profile issues)
+          $commonGitPaths = @(
+              "C:\Program Files\Git\cmd\git.exe",
+              "C:\Program Files (x86)\Git\cmd\git.exe",
+              "${env:ProgramFiles}\Git\cmd\git.exe"
+          )
+          
+          $gitPath = $null
+          foreach ($path in $commonGitPaths) {
+              if (Test-Path $path) {
+                  $gitPath = $path
+                  break
+              }
+          }
+          
+          if ($gitPath) {
+              Write-Host "Using Git from: $gitPath"
+              $version = & $gitPath --version
+              Write-Host "Git version: $version"
+          } else {
+              Write-Error "Git not found in common locations. Please ensure Git is installed on the runner."
               exit 1
           }
       - name: Prepare Workspace
