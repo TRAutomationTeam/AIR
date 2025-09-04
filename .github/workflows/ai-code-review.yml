@@ -80,18 +80,54 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "Looking for Python 3.8+..."
-          $pythonExe = $(
-            @(Get-Command python -ErrorAction SilentlyContinue).Source,
-            "C:\Python*\python.exe",
-            "$env:LOCALAPPDATA\Programs\Python\Python*\python.exe",
-            "C:\Program Files\Python*\python.exe"
-          ) |
-          Get-ChildItem -ErrorAction SilentlyContinue |
-          Where-Object {
-            $version = & $_.FullName --version 2>&1
-            $version -match "Python (3\.[89]|3\.[1-9][0-9])"
-          } |
-          Select-Object -First 1 -ExpandProperty FullName
+          
+          function Test-PythonVersion {
+              param([string]$pythonPath)
+              try {
+                  if (Test-Path $pythonPath) {
+                      $version = & $pythonPath --version 2>&1
+                      return $version -match "Python (3\.[89]|3\.[1-9][0-9])"
+                  }
+              } catch {
+                  return $false
+              }
+              return $false
+          }
+          
+          # First try: Check if python command is available
+          $pythonExe = $null
+          try {
+              $pythonCmd = Get-Command python -ErrorAction Stop
+              if (Test-PythonVersion $pythonCmd.Source) {
+                  $pythonExe = $pythonCmd.Source
+                  Write-Host "Found Python in PATH: $pythonExe"
+              }
+          } catch {
+              Write-Host "Python not found in PATH"
+          }
+          
+          # Second try: Search in common locations
+          if (-not $pythonExe) {
+              $commonPaths = @(
+                  "C:\Python*\python.exe",
+                  "$env:LOCALAPPDATA\Programs\Python\Python*\python.exe",
+                  "C:\Program Files\Python*\python.exe",
+                  "${env:ProgramFiles}\Python*\python.exe",
+                  "${env:ProgramFiles(x86)}\Python*\python.exe"
+              )
+              
+              foreach ($pattern in $commonPaths) {
+                  try {
+                      Get-ChildItem -Path $pattern -ErrorAction Stop | ForEach-Object {
+                          if (-not $pythonExe -and (Test-PythonVersion $_.FullName)) {
+                              $pythonExe = $_.FullName
+                              Write-Host "Found Python in common location: $pythonExe"
+                          }
+                      }
+                  } catch {
+                      Write-Host "No Python found in $pattern"
+                  }
+              }
           if (-not $pythonExe) {
             Write-Error "No Python 3.8+ found"
             exit 1
