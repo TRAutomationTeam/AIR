@@ -25,9 +25,23 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r src/requirements.txt
-      
+
+    - name: Configure DNS resolution
+      run: |
+        Add-DnsClientNrptRule -Namespace ".thomsonreuters.com" -NameServers "10.173.12.233","10.173.12.234"
+        Write-Host "Added DNS servers for thomsonreuters.com domain"
+        ipconfig /flushdns
+        Write-Host "Flushed DNS cache"
+        
     - name: Run AI code review
-      run: python src/main.py
+      run: |
+        # Test DNS resolution before running
+        Write-Host "Testing DNS resolution..."
+        Resolve-DnsName -Name "aiopenarena.gcs.int.thomsonreuters.com" -Type A
+        # Enable debug logging
+        $env:LOG_LEVEL = "DEBUG"
+        # Run the analysis
+        python src/main.py
         
     - name: Upload Analysis Reports
       if: always()
