@@ -134,10 +134,38 @@ jobs:
             $extractedDir = Get-ChildItem $extractPath -Directory | Select-Object -First 1
             if ($extractedDir) {
               Write-Host "Moving files from $($extractedDir.FullName) to D:/w"
-              Get-ChildItem $extractedDir.FullName | ForEach-Object {
-                Write-Host "Moving $_..."
-                Move-Item -Path $_.FullName -Destination "D:/w" -Force
+              
+              # Clean up destination directory first
+              Write-Host "Cleaning up destination directory..."
+              Get-ChildItem "D:/w" -Force | Where-Object { $_.Name -ne "temp" -and $_.Name -ne "ext" } | ForEach-Object {
+                Write-Host "Removing $_..."
+                Remove-Item -Path $_.FullName -Recurse -Force
               }
+              
+              # Move files with robocopy (handles long paths better)
+              Write-Host "Moving files using robocopy..."
+              $robocopyArgs = @(
+                $extractedDir.FullName,
+                "D:/w",
+                "/E",        # Copy subdirectories, including empty ones
+                "/MOVE",     # Move files (delete from source)
+                "/NFL",      # No file list - don't log file names
+                "/NDL",      # No directory list - don't log directory names
+                "/NJH",      # No job header
+                "/NJS",      # No job summary
+                "/NC",       # No class - don't log file classes
+                "/NS",       # No size - don't log file sizes
+                "/MT:16"     # Multi-threaded, 16 threads
+              )
+              
+              $result = Start-Process "robocopy" -ArgumentList $robocopyArgs -NoNewWindow -Wait -PassThru
+              
+              # Robocopy returns specific exit codes, 0-7 are considered success
+              if ($result.ExitCode -gt 7) {
+                throw "Robocopy failed with exit code $($result.ExitCode)"
+              }
+              
+              Write-Host "Files moved successfully"
             } else {
               throw "Could not find extracted directory in $extractPath"
             }
