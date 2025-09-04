@@ -23,64 +23,55 @@ jobs:
           Start-Process -FilePath $7zipInstaller -Args "/S" -Wait
           $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
 
-      - name: Install and Configure Git
+      - name: Configure Git Long Paths
         shell: pwsh
         run: |
-          Write-Host "Installing Git..."
-          $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.42.0.windows.2/Git-2.42.0.2-64-bit.exe"
-          $gitInstaller = "$env:TEMP\GitInstaller.exe"
+          Write-Host "Searching for Git installation..."
+          $gitPaths = @(
+            "C:\Program Files\Git\cmd\git.exe",
+            "C:\Program Files (x86)\Git\cmd\git.exe",
+            "$env:PROGRAMFILES\Git\cmd\git.exe",
+            "$env:LOCALAPPDATA\Programs\Git\cmd\git.exe",
+            "C:\actions\git\Git\cmd\git.exe"
+          )
           
-          # Download Git installer
-          try {
-            Invoke-WebRequest -Uri $gitUrl -OutFile $gitInstaller -ErrorAction Stop
-          } catch {
-            Write-Error "Failed to download Git installer: $_"
-            exit 1
-          }
-          
-          # Install Git
-          try {
-            $process = Start-Process -FilePath $gitInstaller -Args "/VERYSILENT /NORESTART" -Wait -PassThru
-            if ($process.ExitCode -ne 0) {
-              throw "Git installer failed with exit code $($process.ExitCode)"
-            }
-          } catch {
-            Write-Error "Failed to install Git: $_"
-            exit 1
-          }
-          
-          # Wait for Git to be available
-          $retryCount = 0
-          $maxRetries = 5
-          $gitPath = 'C:\Program Files\Git\cmd\git.exe'
-          
-          Write-Host "Waiting for Git installation to complete..."
-          do {
-            if (Test-Path $gitPath) {
+          $gitExe = $null
+          foreach ($path in $gitPaths) {
+            if (Test-Path $path) {
+              $gitExe = $path
+              Write-Host "Found Git at: $gitExe"
               break
             }
-            $retryCount++
-            if ($retryCount -eq $maxRetries) {
-              Write-Error "Git installation not found after $maxRetries attempts"
-              exit 1
-            }
-            Write-Host "Waiting for Git installation (attempt $retryCount of $maxRetries)..."
-            Start-Sleep -Seconds 10
-          } while ($true)
+          }
           
-          # Refresh environment variables
-          $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+          if (-not $gitExe) {
+            Write-Host "Checking system Git..."
+            $gitExe = (Get-Command git -ErrorAction SilentlyContinue).Source
+          }
+          
+          if (-not $gitExe) {
+            Write-Error "Git not found in any standard location"
+            exit 1
+          }
           
           Write-Host "Configuring Git long paths..."
           try {
-            & $gitPath config --system core.longpaths true
+            # Try to enable long paths directly in the registry first
+            if (-not (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem")) {
+              New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Force | Out-Null
+            }
+            Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Type DWord -Force
+            Write-Host "Enabled long paths in Windows registry"
+            
+            # Configure Git to handle long paths
+            & $gitExe config --system core.longpaths true
             if ($LASTEXITCODE -ne 0) {
               throw "Git config failed with exit code $LASTEXITCODE"
             }
             Write-Host "Git long paths configured successfully"
           } catch {
-            Write-Error "Failed to configure Git long paths: $_"
-            exit 1
+            Write-Warning "Could not configure Git long paths: $_"
+            Write-Host "Continuing anyway as this might not be critical..."
           }
           
       - name: Checkout code
