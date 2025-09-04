@@ -28,19 +28,21 @@ jobs:
 
     - name: Configure DNS resolution
       run: |
-        Add-DnsClientNrptRule -Namespace ".thomsonreuters.com" -NameServers "10.173.12.233","10.173.12.234"
+        # Add both internal and public DNS servers for redundancy
+        Add-DnsClientNrptRule -Namespace ".thomsonreuters.com" -NameServers "10.173.12.233","10.173.12.234","8.8.8.8","8.8.4.4"
         Write-Host "Added DNS servers for thomsonreuters.com domain"
         ipconfig /flushdns
         Write-Host "Flushed DNS cache"
+        # Wait for DNS changes to propagate
+        Start-Sleep -Seconds 10
         
     - name: Run AI code review
       run: |
-        # Test DNS resolution before running
-        Write-Host "Testing DNS resolution..."
-        Resolve-DnsName -Name "aiopenarena.gcs.int.thomsonreuters.com" -Type A
         # Enable debug logging
         $env:LOG_LEVEL = "DEBUG"
-        # Run the analysis
+        # Set DNS timeout
+        $env:DNS_TIMEOUT = "30"
+        # Run the analysis with fallback mode enabled
         python src/main.py
         
     - name: Upload Analysis Reports
@@ -48,7 +50,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ai-code-review-reports
-        path: |
-            src/AI Reports/*.html
-            src/AI Reports/*.json
-            **/*.log
+        path: src/AI Reports/
+        if-no-files-found: error
