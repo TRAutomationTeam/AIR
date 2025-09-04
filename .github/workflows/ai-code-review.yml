@@ -12,7 +12,7 @@ jobs:
   review:
     runs-on: self-hosted
     env:
-      EXTRACT_PATH: C:/temp/ai-review
+      EXTRACT_PATH: D:/wrk
     steps:
       - name: Setup 7-Zip
         shell: pwsh
@@ -23,6 +23,10 @@ jobs:
           Start-Process -FilePath $7zipInstaller -Args "/S" -Wait
           $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
 
+      - name: Configure Git
+        run: |
+          git config --system core.longpaths true
+          
       - name: Checkout code
         uses: actions/checkout@v3
         with:
@@ -35,11 +39,27 @@ jobs:
       - name: Extract if needed
         shell: pwsh
         run: |
-          if (Test-Path "${{ github.workspace }}/*.tar.gz") {
-            $extractPath = "C:/temp/ai-review"
-            New-Item -ItemType Directory -Path $extractPath -Force
-            & "C:\Program Files\7-Zip\7z.exe" x "${{ github.workspace }}/*.tar.gz" -o"$extractPath" -y
-            Get-ChildItem $extractPath | Move-Item -Destination ${{ github.workspace }} -Force
+          $ErrorActionPreference = 'Stop'
+          try {
+            if (Test-Path "${{ github.workspace }}/*.tar.gz") {
+              $extractPath = "D:/wrk"
+              Write-Host "Creating extraction directory at $extractPath"
+              New-Item -ItemType Directory -Path $extractPath -Force
+              
+              Write-Host "Enabling long path support"
+              Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Type DWord
+              
+              Write-Host "Extracting archive..."
+              & "C:\Program Files\7-Zip\7z.exe" x "${{ github.workspace }}/*.tar.gz" -o"$extractPath" -y
+              if ($LASTEXITCODE -ne 0) { throw "7-Zip extraction failed" }
+              
+              Write-Host "Moving extracted files..."
+              Get-ChildItem $extractPath | Move-Item -Destination ${{ github.workspace }} -Force
+            }
+          }
+          catch {
+            Write-Error "Extraction failed: $_"
+            throw
           }
 
       - name: Set up Python
