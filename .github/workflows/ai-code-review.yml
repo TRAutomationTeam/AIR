@@ -12,7 +12,8 @@ jobs:
   review:
     runs-on: self-hosted
     env:
-      EXTRACT_PATH: D:/wrk
+      GITHUB_WORKSPACE: D:/w
+      EXTRACT_PATH: D:/w/ext
     steps:
       - name: Setup 7-Zip
         shell: pwsh
@@ -22,6 +23,24 @@ jobs:
           Invoke-WebRequest -Uri $7zipUrl -OutFile $7zipInstaller
           Start-Process -FilePath $7zipInstaller -Args "/S" -Wait
           $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
+
+      - name: Prepare Workspace
+        shell: pwsh
+        run: |
+          # Create short workspace directory
+          New-Item -ItemType Directory -Force -Path "D:/w" | Out-Null
+          New-Item -ItemType Directory -Force -Path "D:/w/ext" | Out-Null
+          
+          # Enable long paths in Windows and registry
+          try {
+            if (-not (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem")) {
+              New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Force | Out-Null
+            }
+            Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Type DWord -Force
+            Write-Host "Enabled long paths in Windows registry"
+          } catch {
+            Write-Warning "Could not enable long paths in registry: $_"
+          }
 
       - name: Configure Git Long Paths
         shell: pwsh
@@ -74,14 +93,36 @@ jobs:
             Write-Host "Continuing anyway as this might not be critical..."
           }
           
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-          sparse-checkout: |
-            TR_Sanity_TaxCaddy
-            src
-            config
+      - name: Download Repository
+        shell: pwsh
+        run: |
+          try {
+            $headers = @{
+              'Authorization' = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+              'Accept' = 'application/vnd.github.v3.raw'
+            }
+            
+            $downloadUrl = "https://api.github.com/repos/${{ github.repository }}/tarball/${{ github.sha }}"
+            $archivePath = "D:/w/repo.tar.gz"
+            
+            Write-Host "Downloading repository archive..."
+            Invoke-WebRequest -Uri $downloadUrl -Headers $headers -OutFile $archivePath
+            
+            Write-Host "Extracting with 7-Zip..."
+            & "C:\Program Files\7-Zip\7z.exe" x "$archivePath" -o"D:/w/ext" -y
+            if ($LASTEXITCODE -ne 0) { throw "7-Zip extraction failed" }
+            
+            # Move contents from the extracted directory to workspace
+            $extractedDir = Get-ChildItem "D:/w/ext" -Directory | Select-Object -First 1
+            if ($extractedDir) {
+              Get-ChildItem $extractedDir.FullName | Move-Item -Destination "D:/w" -Force
+            } else {
+              throw "Could not find extracted directory"
+            }
+          } catch {
+            Write-Error "Repository download/extraction failed: $_"
+            exit 1
+          }
 
       - name: Extract if needed
         shell: pwsh
