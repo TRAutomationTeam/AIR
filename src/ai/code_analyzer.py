@@ -2,10 +2,9 @@ import requests
 import yaml
 import os
 import json
-# Environment variable mapping (see README for details)
-# AI_ARENA_API_KEY, AI_ARENA_ENDPOINT, AI_ARENA_MODEL_NAME
 from typing import Dict, List, Any
 import logging
+import re
 
 class AICodeAnalyzer:
     def __init__(self, ai_endpoint: str = None, api_key: str = None, model_name: str = None, config: dict = None, metrics: dict = None):
@@ -17,10 +16,9 @@ class AICodeAnalyzer:
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
         """Send workflow analyzer results to AI for enhanced analysis with targeted suggestions"""
-        import pprint
         workflow_id = "80f448d2-fd59-440f-ba24-ebc3014e1fdf"
         endpoint = f"{self.ai_endpoint.rstrip('/')}/v1/inference"
-        logging.info(f"Connecting to TR Arena API at {self.ai_endpoint}")
+        logging.info(f"Making request to TR Arena API endpoint: {endpoint}")
 
         # Prepare a detailed prompt listing all violations
         violations = analysis_results.get('rules_violations', [])
@@ -64,7 +62,6 @@ class AICodeAnalyzer:
             'Content-Type': 'application/json'
         }
         try:
-            logging.info(f"Making request to TR Arena API endpoint: {endpoint}")
             logging.debug(f"Request payload: {json.dumps(payload, indent=2)}")
             logging.debug(f"Request headers: Authorization: Bearer ***{self.api_key[-4:] if self.api_key else 'None'}")
             
@@ -84,20 +81,16 @@ class AICodeAnalyzer:
                 logging.debug(f"API Response: {json.dumps(ai_results, indent=2)}")
                 result = self._process_ai_results(ai_results, analysis_results)
                 logging.info("TR Arena API results processed and combined with local analysis")
-                return result
-            
-            logging.error(f"TR Arena API request failed with status {response.status_code}")
-            logging.error(f"Response text: {response.text[:500]}...")  # Log first 500 chars of error
-            return self._fallback_analysis(analysis_results)
-                # Always append custom rule violations if not present
+                
+                # Process custom rules
                 custom_rules = [rule for rule in self.config.get('official_rules', []) if rule.get('type') == 'custom']
                 violations_list = result['original_analysis'].setdefault('rules_violations', [])
+                
                 for rule in custom_rules:
                     metric = rule.get('metric')
                     threshold = rule.get('threshold')
                     if metric and threshold is not None:
                         metric_value = analysis_results.get(metric, 0)
-                        # Special handling for activities_count (dict of file_path -> count)
                         if metric == "activities_count" and isinstance(metric_value, dict):
                             for file_path, count in metric_value.items():
                                 if count > threshold:
@@ -125,9 +118,11 @@ class AICodeAnalyzer:
                                     'Count': metric_value
                                 })
                 return result
-            else:
-                # Suppressed all logging output
-                return self._fallback_analysis(analysis_results)
+            
+            logging.error(f"TR Arena API request failed with status {response.status_code}")
+            logging.error(f"Response text: {response.text[:500]}...")
+            return self._fallback_analysis(analysis_results)
+            
         except requests.exceptions.RequestException as e:
             logging.error(f"Network error connecting to TR Arena API: {str(e)}")
             return self._fallback_analysis(analysis_results)
@@ -137,14 +132,9 @@ class AICodeAnalyzer:
         except Exception as e:
             logging.error(f"Unexpected error in TR Arena API call: {str(e)}")
             return self._fallback_analysis(analysis_results)
-            
-    def _process_ai_results(self, ai_results: Dict, original_results: Dict) -> Dict[str, Any]:
-        """Process AI analysis results and log full response for debugging"""
-        import pprint
-        # Suppressed all logging output
 
-        # Try to extract suggestions from possible fields
-        # Typical structure: {'result': {'answer': {model_name: ...}}}
+    def _process_ai_results(self, ai_results: Dict, original_results: Dict) -> Dict[str, Any]:
+        """Process AI analysis results and combine with original analysis"""
         insights = []
         recommendations = []
         improvements = []
@@ -156,22 +146,15 @@ class AICodeAnalyzer:
 
         result = ai_results.get('result', {})
         answer = result.get('answer', {})
-        # Try model-specific key first
         model_data = answer.get(self.model_name, {}) if self.model_name in answer else answer
 
-        # Try to extract fields
         def split_suggestions(text):
             if not isinstance(text, str):
                 return text
-            # Split by numbered items or newlines
-            import re
-            # Try numbered list split first
             items = re.split(r'\n\s*\d+\.\s*', text)
-            # Remove empty and strip
             items = [i.strip() for i in items if i.strip()]
             if len(items) > 1:
                 return items
-            # Fallback: split by newlines
             return [line.strip() for line in text.split('\n') if line.strip()]
 
         if isinstance(model_data, dict):
@@ -183,7 +166,7 @@ class AICodeAnalyzer:
             confidence = model_data.get('confidence', 0)
             summary = model_data.get('summary', '')
             critical_issues = model_data.get('critical_issues', [])
-            # If suggestions are in a single string, split into list
+            
             if isinstance(insights, str):
                 insights = split_suggestions(insights)
             if isinstance(recommendations, str):
@@ -191,10 +174,8 @@ class AICodeAnalyzer:
             if isinstance(improvements, str):
                 improvements = split_suggestions(improvements)
         elif isinstance(model_data, str):
-            # If only a string is returned, split into list
             insights = split_suggestions(model_data)
 
-        # Fallback: check top-level keys if not found
         if not insights:
             insights = ai_results.get('insights', [])
             if isinstance(insights, str):
@@ -216,92 +197,19 @@ class AICodeAnalyzer:
             'go_no_go_decision': decision,
             'confidence': confidence,
             'summary': summary,
-            'critical_issues': critical_issues,
-            'improvement_suggestions': improvements
+            'critical_issues': critical_issues
         }
-        
-    def _fallback_analysis(self, analysis_results: Dict) -> Dict[str, Any]:
-        """Fallback analysis when AI is unavailable"""
-        
-        violations = analysis_results.get('rules_violations', [])
-        # Process all custom rules from settings.txt (config)
-        for rule in self.config.get('official_rules', []):
-            if rule.get('type', 'custom') == 'custom':
-                metric = rule.get('metric')
-                threshold = rule.get('threshold')
-                if metric and threshold is not None:
-                    metric_value = analysis_results.get(metric, 0)
-                    if metric == "activities_count" and isinstance(metric_value, dict):
-                        for file_path, count in metric_value.items():
-                            if count > threshold:
-                                violations.append({
-                                    'RuleId': rule['id'],
-                                    'RuleName': rule.get('name', rule['id']),
-                                    'Severity': rule.get('severity', 'Error'),
-                                    'Recommendation': rule.get('recommendation', ''),
-                                    'File': file_path,
-                                    'FilePath': file_path,
-                                    'Count': count
-                                })
-                    elif isinstance(metric_value, (int, float)) and metric_value > threshold:
-                        violations.append({
-                            'RuleId': rule['id'],
-                            'RuleName': rule.get('name', rule['id']),
-                            'Severity': rule.get('severity', 'Error'),
-                            'Recommendation': rule.get('recommendation', ''),
-                            'File': '',
-                            'FilePath': '',
-                            'Count': metric_value
-                        })
-        
-        # Simple rule-based scoring
-        # Load thresholds from config
-        quality_threshold = self.config.get('quality_threshold', 80)
-        min_confidence = self.config.get('min_confidence', 0.7)
-        auto_approve_threshold = self.config.get('auto_approve_threshold', 95)
-        max_errors_for_go = self.config.get('max_errors_for_go', 0)
-        critical_rules = set(self.config.get('critical_rules', []))
 
-        critical_issues = [v for v in violations if v.get('RuleId') in critical_rules or v.get('Severity') == 'Error']
-        critical_count = len(critical_issues)
-        warning_count = len([v for v in violations if v.get('Severity') == 'Warning'])
-        quality_score = max(0, 100 - (critical_count * 20) - (warning_count * 5))
-        confidence = 0.6
-
-        # Decision logic
-        if quality_score >= auto_approve_threshold and confidence >= min_confidence and critical_count <= max_errors_for_go:
-            decision = 'GO'
-        elif critical_count > max_errors_for_go:
-            decision = 'NO_GO'
-        elif quality_score >= quality_threshold and confidence >= min_confidence:
-            decision = 'GO'
-        else:
-            decision = 'REVIEW_REQUIRED'
-
+    def _fallback_analysis(self, analysis_results: Dict) -> Dict:
+        """Return local analysis results when AI analysis fails"""
+        logging.info("Using fallback analysis (local results only)")
         return {
             'original_analysis': analysis_results,
-            'ai_insights': ['AI service unavailable - using rule-based analysis'],
-            'recommendations': self._generate_basic_recommendations(violations),
-            'quality_score': quality_score,
-            'go_no_go_decision': decision,
-            'confidence': confidence,
-            'summary': f'Found {critical_count} critical and {warning_count} warning issues',
-            'critical_issues': critical_issues,
-            'improvement_suggestions': []
+            'ai_insights': [],
+            'recommendations': [],
+            'quality_score': 0,
+            'go_no_go_decision': 'REVIEW_REQUIRED',
+            'confidence': 0,
+            'summary': 'Analysis based on local rules only',
+            'critical_issues': []
         }
-        
-    def _generate_basic_recommendations(self, violations: List[Dict]) -> List[str]:
-        """Generate basic recommendations based on violations"""
-        
-        recommendations = []
-        
-        rule_counts = {}
-        for violation in violations:
-            rule_id = violation.get('RuleId', 'Unknown')
-            rule_counts[rule_id] = rule_counts.get(rule_id, 0) + 1
-            
-        for rule_id, count in rule_counts.items():
-            if count > 1:
-                recommendations.append(f"Multiple violations of rule {rule_id} detected ({count} instances)")
-                
-        return recommendations
