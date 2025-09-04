@@ -16,14 +16,31 @@ jobs:
       ARCHIVE_PATH: 'D:/w/repo.tar.gz'
       TEMP_PATH: 'D:/w/temp'
     steps:
-      - name: Setup 7-Zip
+      - name: Setup Tools
         shell: pwsh
         run: |
+          # Install 7-Zip
+          Write-Host "Installing 7-Zip..."
           $7zipUrl = "https://www.7-zip.org/a/7z2301-x64.exe"
           $7zipInstaller = "$env:TEMP\7z2301-x64.exe"
           Invoke-WebRequest -Uri $7zipUrl -OutFile $7zipInstaller
           Start-Process -FilePath $7zipInstaller -Args "/S" -Wait
           $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
+
+          # Install Git if not present
+          Write-Host "Setting up Git..."
+          if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
+              Write-Host "Git not found. Installing Git..."
+              $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.42.0.windows.2/Git-2.42.0.2-64-bit.exe"
+              $gitInstaller = "$env:TEMP\GitInstaller.exe"
+              Invoke-WebRequest -Uri $gitUrl -OutFile $gitInstaller
+              Start-Process -FilePath $gitInstaller -Args "/VERYSILENT /NORESTART /NOCANCEL /SP- /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS" -Wait
+              $env:PATH = "C:\Program Files\Git\cmd;$env:PATH"
+          }
+          
+          # Verify Git installation
+          $gitVersion = git --version
+          Write-Host "Git version: $gitVersion"
       - name: Prepare Workspace
         shell: pwsh
         run: |
@@ -157,40 +174,19 @@ jobs:
           AI_ARENA_ENDPOINT: ${{ secrets.AI_ARENA_ENDPOINT }}
           GIT_PYTHON_GIT_EXECUTABLE: 'C:\Program Files\Git\cmd\git.exe'
         run: |
-          # Find Git executable
-          $gitPaths = @(
-              "C:\Program Files\Git\cmd\git.exe",
-              "C:\Program Files (x86)\Git\cmd\git.exe",
-              "$env:ProgramFiles\Git\cmd\git.exe",
-              "C:\actions\git\Git\cmd\git.exe"
-          )
-          
-          $gitExe = $null
-          foreach ($path in $gitPaths) {
-              if (Test-Path $path) {
-                  $gitExe = $path
-                  Write-Host "Found Git at: $gitExe"
-                  break
-              }
-          }
-          
-          if (-not $gitExe) {
-              Write-Host "Checking system Git..."
-              $gitExe = (Get-Command git -ErrorAction SilentlyContinue).Source
-          }
-          
-          if (-not $gitExe) {
-              Write-Error "Git not found in any standard location"
+          # Verify Git is properly set up
+          $gitExe = 'C:\Program Files\Git\cmd\git.exe'
+          if (-not (Test-Path $gitExe)) {
+              Write-Error "Git executable not found at expected location: $gitExe"
               exit 1
           }
           
-          # Add Git to PATH and set environment variable
-          $env:PATH = "$(Split-Path $gitExe -Parent);$env:PATH"
+          # Set required Git environment variables
           $env:GIT_PYTHON_GIT_EXECUTABLE = $gitExe
+          $env:PATH = "C:\Program Files\Git\cmd;$env:PATH"
           
-          # Verify Git is accessible
-          Write-Host "Git version:"
-          git --version
+          Write-Host "Using Git from: $gitExe"
+          Write-Host "Git version: $(git --version)"
           
           # Activate venv and run script
           . "$env:VENV_PATH/Scripts/Activate.ps1"
