@@ -10,10 +10,32 @@ on:
 
 jobs:
   review:
-    runs-on: self-hosted
+    runs-on: windows-latest
+    env:
+      EXTRACT_PATH: C:/temp/ai-review
     steps:
+      - name: Install 7-Zip
+        run: |
+          choco install 7zip.install -y
+
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            TR_Sanity_TaxCaddy
+            src
+            config
+
+      - name: Extract if needed
+        shell: pwsh
+        run: |
+          if (Test-Path "${{ github.workspace }}/*.tar.gz") {
+            $extractPath = "C:/temp/ai-review"
+            New-Item -ItemType Directory -Path $extractPath -Force
+            7z x "${{ github.workspace }}/*.tar.gz" -o"$extractPath" -y
+            Get-ChildItem $extractPath | Move-Item -Destination ${{ github.workspace }} -Force
+          }
 
       - name: Set up Python
         uses: actions/setup-python@v4
