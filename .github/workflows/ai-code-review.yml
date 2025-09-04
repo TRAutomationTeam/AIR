@@ -28,13 +28,48 @@ jobs:
 
     - name: Configure DNS resolution
       run: |
-        # Add both internal and public DNS servers for redundancy
-        Add-DnsClientNrptRule -Namespace ".thomsonreuters.com" -NameServers "10.173.12.233","10.173.12.234","8.8.8.8","8.8.4.4"
-        Write-Host "Added DNS servers for thomsonreuters.com domain"
+        # Remove any existing DNS rules for the domain
+        Get-DnsClientNrptRule | Where-Object {$_.Namespace -eq ".thomsonreuters.com"} | Remove-DnsClientNrptRule -Force
+        
+        # Configure primary TR DNS servers
+        Add-DnsClientNrptRule -Namespace ".thomsonreuters.com" -NameServers "10.173.12.233","10.173.12.234" -ErrorAction Continue
+        Write-Host "Added TR DNS servers"
+        
+        # Add fallback DNS servers
+        Set-DnsClientServerAddress -InterfaceIndex (Get-NetAdapter | Where-Object {$_.Status -eq "Up"}).InterfaceIndex -ServerAddresses "10.173.12.233","10.173.12.234","8.8.8.8","8.8.4.4"
+        Write-Host "Added fallback DNS servers"
+        
+        # Clear and display DNS cache
         ipconfig /flushdns
         Write-Host "Flushed DNS cache"
-        # Wait for DNS changes to propagate
-        Start-Sleep -Seconds 10
+        
+        # Verify DNS settings
+        Get-DnsClientServerAddress | Format-List
+        Get-DnsClientNrptRule | Format-List
+        
+        # Test DNS resolution multiple times
+        Write-Host "Testing DNS resolution..."
+        $maxAttempts = 3
+        $delaySeconds = 5
+        $success = $false
+        
+        for ($i = 1; $i -le $maxAttempts; $i++) {
+            try {
+                $result = Resolve-DnsName -Name "aiopenarena.gcs.int.thomsonreuters.com" -Type A -ErrorAction Stop
+                Write-Host "DNS resolution successful on attempt $i"
+                Write-Host "Resolved IP: $($result.IPAddress)"
+                $success = $true
+                break
+            } catch {
+                Write-Host "DNS resolution attempt $i failed: $_"
+                if ($i -lt $maxAttempts) {
+                    Write-Host "Waiting $delaySeconds seconds before next attempt..."
+                    Start-Sleep -Seconds $delaySeconds
+                }
+            }
+        }
+        
+        # Continue even if DNS fails - we have local fallback
         
     - name: Clean old reports
       run: |
