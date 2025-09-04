@@ -18,15 +18,8 @@ jobs:
       GIT_PYTHON_GIT_EXECUTABLE: 'git'  # Let the system find git in PATH
     steps:
       - name: Setup Tools
-        shell: pwsh
-        env:
-          # Prevent PowerShell from loading profiles
-          POWERSHELL_NOPROFILE: "1"
-          # Skip module auto-loading
-          PSModulePath: ""
+        shell: "pwsh -NoProfile -NonInteractive -Command"
         run: |
-          # Clear any existing error preference
-          $ErrorActionPreference = 'Stop'
           Write-Host "Setting up tools..."
           
           # Install 7-Zip
@@ -43,28 +36,47 @@ jobs:
               exit 1
           }
           
-          # Verify Git is available (using full path to avoid profile issues)
-          $commonGitPaths = @(
-              "C:\Program Files\Git\cmd\git.exe",
-              "C:\Program Files (x86)\Git\cmd\git.exe",
-              "${env:ProgramFiles}\Git\cmd\git.exe"
-          )
-          
-          $gitPath = $null
-          foreach ($path in $commonGitPaths) {
-              if (Test-Path $path) {
-                  $gitPath = $path
-                  break
+          # Find Git using where.exe (Windows equivalent of which)
+          Write-Host "Locating Git..."
+          try {
+              $gitPath = & where.exe git 2>$null
+              if ($gitPath) {
+                  $gitVersion = & git --version
+                  Write-Host "Found Git: $gitPath"
+                  Write-Host "Git version: $gitVersion"
+                  
+                  # Set Git environment variable for python-git
+                  $env:GIT_PYTHON_GIT_EXECUTABLE = $gitPath
+              } else {
+                  throw "Git not found in PATH"
               }
-          }
-          
-          if ($gitPath) {
-              Write-Host "Using Git from: $gitPath"
-              $version = & $gitPath --version
-              Write-Host "Git version: $version"
-          } else {
-              Write-Error "Git not found in common locations. Please ensure Git is installed on the runner."
-              exit 1
+          } catch {
+              # Fallback to common installation paths
+              $commonPaths = @(
+                  "${env:ProgramFiles}\Git\cmd\git.exe",
+                  "${env:ProgramFiles(x86)}\Git\cmd\git.exe",
+                  "C:\Program Files\Git\cmd\git.exe",
+                  "C:\Program Files (x86)\Git\cmd\git.exe"
+              )
+              
+              $found = $false
+              foreach ($path in $commonPaths) {
+                  if (Test-Path $path) {
+                      $gitPath = $path
+                      $env:GIT_PYTHON_GIT_EXECUTABLE = $path
+                      $env:PATH = "$(Split-Path $path -Parent);$env:PATH"
+                      $gitVersion = & $path --version
+                      Write-Host "Found Git in: $path"
+                      Write-Host "Git version: $gitVersion"
+                      $found = $true
+                      break
+                  }
+              }
+              
+              if (-not $found) {
+                  Write-Error "Git not found in PATH or common locations. Please install Git."
+                  exit 1
+              }
           }
       - name: Prepare Workspace
         shell: pwsh
@@ -194,11 +206,13 @@ jobs:
         shell: pwsh
         run: |
           . "$env:VENV_PATH/Scripts/Activate.ps1"
+          Write-Host "Python location: $(Get-Command python | Select-Object -ExpandProperty Source)"
+          python -m pip install --upgrade pip
           $reqFile = "$env:GITHUB_WORKSPACE/src/requirements.txt"
           if (Test-Path $reqFile) {
             python -m pip install -r $reqFile --no-cache-dir
           } else {
-            python -m pip install requests pandas openpyxl --no-cache-dir
+            python -m pip install requests pandas openpyxl gitpython --no-cache-dir
           }
       - name: Run Review
         shell: pwsh
