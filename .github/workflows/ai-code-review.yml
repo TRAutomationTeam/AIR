@@ -195,14 +195,118 @@ jobs:
             throw
           }
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
+      - name: Setup Python Environment
+        shell: pwsh
         run: |
-          pip install -r src/requirements.txt
+          Write-Host "Detecting Python installation..."
+          
+          function Get-PythonVersionNumber {
+            param([string]$Version)
+            if ($Version -match '(\d+\.\d+\.\d+)') {
+              return [version]$matches[1]
+            }
+            return $null
+          }
+          
+          function Test-PythonVersion {
+            param([string]$PythonPath)
+            try {
+              $versionOutput = & $PythonPath --version 2>&1
+              $version = Get-PythonVersionNumber $versionOutput
+              if ($version -and $version -ge [version]"3.8.0") {
+                return $true
+              }
+            } catch { }
+            return $false
+          }
+          
+          # Find all potential Python installations
+          $pythonLocations = @(
+            "C:\Python*\python.exe",
+            "C:\Program Files\Python*\python.exe",
+            "C:\Program Files (x86)\Python*\python.exe",
+            "$env:LOCALAPPDATA\Programs\Python\Python*\python.exe",
+            "$env:PROGRAMFILES\Python*\python.exe"
+          )
+          
+          $pythonExe = $null
+          $foundVersion = $null
+          
+          # First try system Python
+          Write-Host "Checking system Python..."
+          $systemPython = (Get-Command python -ErrorAction SilentlyContinue).Source
+          if ($systemPython -and (Test-PythonVersion $systemPython)) {
+            $pythonExe = $systemPython
+            $foundVersion = & $pythonExe --version
+            Write-Host "Found suitable system Python: $foundVersion"
+          }
+          
+          # If system Python not found or not suitable, search other locations
+          if (-not $pythonExe) {
+            Write-Host "Searching for Python installations..."
+            foreach ($pattern in $pythonLocations) {
+              Get-ChildItem -Path $pattern -ErrorAction SilentlyContinue | 
+              Sort-Object -Property FullName -Descending | 
+              ForEach-Object {
+                if (-not $pythonExe -and (Test-PythonVersion $_.FullName)) {
+                  $pythonExe = $_.FullName
+                  $foundVersion = & $pythonExe --version
+                  Write-Host "Found suitable Python at $pythonExe : $foundVersion"
+                  break
+                }
+              }
+              if ($pythonExe) { break }
+            }
+          }
+          
+          if (-not $pythonExe) {
+            Write-Error "No suitable Python installation found (requires Python 3.8 or higher)"
+            exit 1
+          }
+          
+          # Add Python to PATH
+          $pythonDir = Split-Path -Parent $pythonExe
+          $env:Path = "$pythonDir;$pythonDir\Scripts;$env:Path"
+          
+          # Create virtual environment
+          Write-Host "Creating virtual environment..."
+          $venvPath = "D:/w/venv"
+          & $pythonExe -m venv $venvPath
+          
+          # Activate virtual environment
+          $activateScript = "$venvPath\Scripts\Activate.ps1"
+          if (Test-Path $activateScript) {
+            . $activateScript
+            Write-Host "Virtual environment activated"
+          } else {
+            Write-Error "Failed to create virtual environment"
+            exit 1
+          }
+          
+          # Upgrade pip in virtual environment
+          Write-Host "Upgrading pip..."
+          python -m pip install --upgrade pip
+          
+          Write-Host "Python setup complete using $foundVersion"
+
+      - name: Install Dependencies
+        shell: pwsh
+        run: |
+          Write-Host "Installing Python dependencies..."
+          $requirementsFile = "D:/w/src/requirements.txt"
+          
+          if (Test-Path $requirementsFile) {
+            Write-Host "Found requirements.txt at $requirementsFile"
+            python -m pip install -r $requirementsFile --no-cache-dir
+            if ($LASTEXITCODE -ne 0) {
+              Write-Error "Failed to install dependencies from requirements.txt"
+              exit 1
+            }
+          } else {
+            Write-Warning "requirements.txt not found at $requirementsFile"
+            # Install minimum required packages
+            python -m pip install requests pandas openpyxl --no-cache-dir
+          }
 
       - name: Set environment variables
         env:
