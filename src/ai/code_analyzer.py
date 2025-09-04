@@ -72,9 +72,11 @@ class AICodeAnalyzer:
             )
             # Suppressed all logging output
             if response.status_code == 200:
-                logging.info("TR Arena API connection successful.")
+                logging.info("TR Arena API request successful")
                 ai_results = response.json()
+                logging.info("TR Arena API response received")
                 result = self._process_ai_results(ai_results, analysis_results)
+                logging.info("TR Arena API results processed and combined with local analysis")
                 # Always append custom rule violations if not present
                 custom_rules = [rule for rule in self.config.get('official_rules', []) if rule.get('type') == 'custom']
                 violations_list = result['original_analysis'].setdefault('rules_violations', [])
