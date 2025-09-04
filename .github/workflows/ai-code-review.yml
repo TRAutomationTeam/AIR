@@ -14,9 +14,14 @@ jobs:
     env:
       EXTRACT_PATH: C:/temp/ai-review
     steps:
-      - name: Install 7-Zip
+      - name: Setup 7-Zip
+        shell: pwsh
         run: |
-          choco install 7zip.install -y
+          $7zipUrl = "https://www.7-zip.org/a/7z2301-x64.exe"
+          $7zipInstaller = "$env:TEMP\7z2301-x64.exe"
+          Invoke-WebRequest -Uri $7zipUrl -OutFile $7zipInstaller
+          Start-Process -FilePath $7zipInstaller -Args "/S" -Wait
+          $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -33,7 +38,7 @@ jobs:
           if (Test-Path "${{ github.workspace }}/*.tar.gz") {
             $extractPath = "C:/temp/ai-review"
             New-Item -ItemType Directory -Path $extractPath -Force
-            7z x "${{ github.workspace }}/*.tar.gz" -o"$extractPath" -y
+            & "C:\Program Files\7-Zip\7z.exe" x "${{ github.workspace }}/*.tar.gz" -o"$extractPath" -y
             Get-ChildItem $extractPath | Move-Item -Destination ${{ github.workspace }} -Force
           }
 
