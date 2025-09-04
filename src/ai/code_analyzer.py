@@ -65,11 +65,30 @@ class AICodeAnalyzer:
             logging.debug(f"Request payload: {json.dumps(payload, indent=2)}")
             logging.debug(f"Request headers: Authorization: Bearer ***{self.api_key[-4:] if self.api_key else 'None'}")
             
+            # Get proxy settings from environment variables
+            proxies = {
+                'http': os.environ.get('HTTP_PROXY'),
+                'https': os.environ.get('HTTPS_PROXY')
+            }
+            
+            # Try to resolve the host first
+            import socket
+            try:
+                host = self.ai_endpoint.split('://')[1].split('/')[0]
+                logging.info(f"Attempting to resolve host: {host}")
+                ip = socket.gethostbyname(host)
+                logging.info(f"Host resolves to IP: {ip}")
+            except socket.gaierror as e:
+                logging.error(f"Failed to resolve host {host}: {str(e)}")
+                raise
+                
             response = requests.post(
                 endpoint,
                 json=payload,
                 headers=headers,
-                timeout=120
+                timeout=120,
+                proxies=proxies,
+                verify=True  # Enable SSL verification
             )
             
             logging.info(f"TR Arena API response status: {response.status_code}")

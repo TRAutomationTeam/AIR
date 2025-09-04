@@ -7,109 +7,34 @@ on:
   pull_request:
     paths:
       - 'TR_Sanity_TaxCaddy/**/*.xaml'
+  workflow_dispatch:
 
 jobs:
   review:
     runs-on: windows-latest
-    env:
-      GITHUB_WORKSPACE: 'D:/w'
-      EXTRACT_PATH: 'D:/w/ext'
-      VENV_PATH: 'D:/w/venv'
-      ARCHIVE_PATH: 'D:/w/repo.tar.gz'
-      TEMP_PATH: 'D:/w/temp'
-      GIT_PYTHON_GIT_EXECUTABLE: 'git'
-
+    
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Setup Tools
-        shell: pwsh
-        run: |
-          Write-Host "Setting up tools..."
-          
-          # Install 7-Zip
-          Write-Host "Installing 7-Zip..."
-          $7zipUrl = "https://www.7-zip.org/a/7z2301-x64.exe"
-          $7zipInstaller = "$env:TEMP\7z2301-x64.exe"
-          
-          try {
-              Invoke-WebRequest -Uri $7zipUrl -OutFile $7zipInstaller
-              Start-Process -FilePath $7zipInstaller -Args "/S" -Wait -NoNewWindow
-              $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
-          } catch {
-              Write-Error "Failed to install 7-Zip: $_"
-              exit 1
-          }
-          
-          # Find Git using where.exe (Windows equivalent of which)
-          Write-Host "Locating Git..."
-          try {
-              $gitPath = & where.exe git 2>$null
-              if ($gitPath) {
-                  $gitVersion = & git --version
-                  Write-Host "Found Git: $gitPath"
-                  Write-Host "Git version: $gitVersion"
-                  
-                  # Set Git environment variable for python-git
-                  $env:GIT_PYTHON_GIT_EXECUTABLE = $gitPath
-              } else {
-                  throw "Git not found in PATH"
-              }
-          } catch {
-              # Fallback to common installation paths
-              $commonPaths = @(
-                  "${env:ProgramFiles}\Git\cmd\git.exe",
-                  "${env:ProgramFiles(x86)}\Git\cmd\git.exe",
-                  "C:\Program Files\Git\cmd\git.exe",
-                  "C:\Program Files (x86)\Git\cmd\git.exe"
-              )
-              
-              $found = $false
-              foreach ($path in $commonPaths) {
-                  if (Test-Path $path) {
-                      $gitPath = $path
-                      $env:GIT_PYTHON_GIT_EXECUTABLE = $path
-                      $env:PATH = "$(Split-Path $path -Parent);$env:PATH"
-                      $gitVersion = & $path --version
-                      Write-Host "Found Git in: $path"
-                      Write-Host "Git version: $gitVersion"
-                      $found = $true
-                      break
-                  }
-              }
-              
-              if (-not $found) {
-                  Write-Error "Git not found in PATH or common locations. Please install Git."
-                  exit 1
-              }
-          }
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-          cache: 'pip'
-
-      - name: Install dependencies
-        shell: pwsh
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r src/requirements.txt
-          pip install gitpython
-
-      - name: Run AI code review
-        shell: pwsh
-        env:
-          AI_ARENA_API_KEY: ${{ secrets.AI_ARENA_API_KEY }}
-          AI_ARENA_ENDPOINT: ${{ secrets.AI_ARENA_ENDPOINT }}
-        run: python src/main.py
-
-      - name: Upload AI code review reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ai-code-review-reports
-          path: |
+    - uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r src/requirements.txt
+      
+    - name: Run AI code review
+      run: python src/main.py
+        
+    - name: Upload Analysis Reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ai-code-review-reports
+        path: |
             src/AI Reports/*.html
             src/AI Reports/*.json
+            **/*.log
