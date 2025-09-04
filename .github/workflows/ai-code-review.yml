@@ -1,4 +1,5 @@
 name: AI Code Review
+
 on:
   push:
     paths:
@@ -6,19 +7,24 @@ on:
   pull_request:
     paths:
       - 'TR_Sanity_TaxCaddy/**/*.xaml'
+
 jobs:
   review:
-    runs-on: self-hosted
+    runs-on: windows-latest
     env:
       GITHUB_WORKSPACE: 'D:/w'
       EXTRACT_PATH: 'D:/w/ext'
       VENV_PATH: 'D:/w/venv'
       ARCHIVE_PATH: 'D:/w/repo.tar.gz'
       TEMP_PATH: 'D:/w/temp'
-      GIT_PYTHON_GIT_EXECUTABLE: 'git'  # Let the system find git in PATH
+      GIT_PYTHON_GIT_EXECUTABLE: 'git'
+
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Setup Tools
-        shell: "pwsh -NoProfile -NonInteractive -Command"
+        shell: pwsh
         run: |
           Write-Host "Setting up tools..."
           
@@ -78,155 +84,32 @@ jobs:
                   exit 1
               }
           }
-      - name: Prepare Workspace
-        shell: pwsh
-        env:
-          POWERSHELL_NOPROFILE: "1"
-          PSModulePath: ""
-        run: |
-          $ErrorActionPreference = 'Stop'
-          Write-Host "Creating workspace directories..."
-          New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE" | Out-Null
-          New-Item -ItemType Directory -Force -Path "$env:EXTRACT_PATH" | Out-Null
-          Write-Host "Enabling long path support..."
-          try {
-            if (-not (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem")) {
-              New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Force | Out-Null
-            }
-            Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Type DWord -Force
-            Write-Host "Long paths enabled"
-          } catch {
-            Write-Warning "Could not enable long paths: $_"
-          }
-      - name: Download and Extract
-        shell: pwsh
-        env:
-          POWERSHELL_NOPROFILE: "1"
-          PSModulePath: ""
-        run: |
-          $ErrorActionPreference = 'Stop'
-          try {
-            Write-Host "Downloading repository..."
-            $headers = @{
-              "Authorization" = "Bearer ${{ secrets.GITHUB_TOKEN }}"
-              "Accept" = "application/vnd.github.v3.raw"
-            }
-            Invoke-WebRequest -Uri "https://api.github.com/repos/${{ github.repository }}/tarball/${{ github.sha }}" -Headers $headers -OutFile "$env:ARCHIVE_PATH"
-            Write-Host "Extracting archives..."
-            & "C:\Program Files\7-Zip\7z.exe" x "$env:ARCHIVE_PATH" -o"$env:TEMP_PATH" -y
-            if ($LASTEXITCODE -ne 0) { throw "Failed to extract .gz" }
-            $tarFile = Get-ChildItem "$env:TEMP_PATH" -Filter "*.tar" | Select-Object -First 1
-            if (-not $tarFile) { throw "No .tar file found" }
-            & "C:\Program Files\7-Zip\7z.exe" x $tarFile.FullName -o"$env:EXTRACT_PATH" -y
-            if ($LASTEXITCODE -ne 0) { throw "Failed to extract .tar" }
-            $extractedDir = Get-ChildItem "$env:EXTRACT_PATH" -Directory | Select-Object -First 1
-            if (-not $extractedDir) { throw "No extracted directory found" }
-            Write-Host "Moving files..."
-            Get-ChildItem "$env:GITHUB_WORKSPACE" -Force | 
-              Where-Object { $_.Name -notin @("temp", "ext", "venv") } |
-              Remove-Item -Recurse -Force
-            $robocopyResult = Start-Process "robocopy" -ArgumentList @(
-              $extractedDir.FullName,
-              "$env:GITHUB_WORKSPACE",
-              "/E", "/MOVE", "/NFL", "/NDL", "/NJH", "/NJS", "/NC", "/NS", "/MT:16"
-            ) -NoNewWindow -Wait -PassThru
-            if ($robocopyResult.ExitCode -gt 7) { throw "Robocopy failed: $($robocopyResult.ExitCode)" }
-          } catch {
-            Write-Error $_
-            exit 1
-          } finally {
-            Get-ChildItem -Path @("$env:TEMP_PATH", "$env:EXTRACT_PATH", "$env:ARCHIVE_PATH") -ErrorAction SilentlyContinue |
-              Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-          }
-      - name: Setup Python
-        shell: pwsh
-        run: |
-          Write-Host "Looking for Python 3.8+..."
-          
-          function Test-PythonVersion {
-              param([string]$pythonPath)
-              try {
-                  if (Test-Path $pythonPath) {
-                      $version = & $pythonPath --version 2>&1
-                      return $version -match "Python (3\.[89]|3\.[1-9][0-9])"
-                  }
-              } catch {
-                  return $false
-              }
-              return $false
-          }
-          
-          # First try: Check if python command is available
-          $pythonExe = $null
-          try {
-              $pythonCmd = Get-Command python -ErrorAction Stop
-              if (Test-PythonVersion $pythonCmd.Source) {
-                  $pythonExe = $pythonCmd.Source
-                  Write-Host "Found Python in PATH: $pythonExe"
-              }
-          } catch {
-              Write-Host "Python not found in PATH"
-          }
-          
-          # Second try: Search in common locations
-          if (-not $pythonExe) {
-              $commonPaths = @(
-                  "C:\Python*\python.exe",
-                  "$env:LOCALAPPDATA\Programs\Python\Python*\python.exe",
-                  "C:\Program Files\Python*\python.exe",
-                  "${env:ProgramFiles}\Python*\python.exe",
-                  "${env:ProgramFiles(x86)}\Python*\python.exe"
-              )
-              
-              foreach ($pattern in $commonPaths) {
-                  try {
-                      Get-ChildItem -Path $pattern -ErrorAction Stop | ForEach-Object {
-                          if (-not $pythonExe -and (Test-PythonVersion $_.FullName)) {
-                              $pythonExe = $_.FullName
-                              Write-Host "Found Python in common location: $pythonExe"
-                              break
-                          }
-                      }
-                  } catch {
-                      Write-Host "No Python found in $pattern"
-                  }
-              }
-          }
 
-          if (-not $pythonExe) {
-              Write-Error "No Python 3.8+ found"
-              exit 1
-          }
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
 
-          Write-Host "Creating venv..."
-          & $pythonExe -m venv "$env:VENV_PATH"
-          . "$env:VENV_PATH/Scripts/Activate.ps1"
-          python -m pip install --upgrade pip
-      - name: Install Dependencies
+      - name: Install dependencies
         shell: pwsh
         run: |
-          . "$env:VENV_PATH/Scripts/Activate.ps1"
-          Write-Host "Python location: $(Get-Command python | Select-Object -ExpandProperty Source)"
           python -m pip install --upgrade pip
-          $reqFile = "$env:GITHUB_WORKSPACE/src/requirements.txt"
-          if (Test-Path $reqFile) {
-            python -m pip install -r $reqFile --no-cache-dir
-          } else {
-            python -m pip install requests pandas openpyxl gitpython --no-cache-dir
-          }
-      - name: Run Review
+          pip install -r src/requirements.txt
+          pip install gitpython
+
+      - name: Run AI code review
         shell: pwsh
         env:
           AI_ARENA_API_KEY: ${{ secrets.AI_ARENA_API_KEY }}
           AI_ARENA_ENDPOINT: ${{ secrets.AI_ARENA_ENDPOINT }}
-        run: |
-          . "$env:VENV_PATH/Scripts/Activate.ps1"
-          python "$env:GITHUB_WORKSPACE/src/main.py"
-      - name: Upload Reports
+        run: python src/main.py
+
+      - name: Upload AI code review reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ai-code-review-reports
           path: |
-            ${{ env.GITHUB_WORKSPACE }}/src/AI Reports/*.html
-            ${{ env.GITHUB_WORKSPACE }}/src/AI Reports/*.json
+            src/AI Reports/*.html
+            src/AI Reports/*.json
