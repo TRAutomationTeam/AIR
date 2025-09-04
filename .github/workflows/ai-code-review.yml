@@ -122,16 +122,20 @@ jobs:
                           if (-not $pythonExe -and (Test-PythonVersion $_.FullName)) {
                               $pythonExe = $_.FullName
                               Write-Host "Found Python in common location: $pythonExe"
+                              break
                           }
                       }
                   } catch {
                       Write-Host "No Python found in $pattern"
                   }
               }
-          if (-not $pythonExe) {
-            Write-Error "No Python 3.8+ found"
-            exit 1
           }
+
+          if (-not $pythonExe) {
+              Write-Error "No Python 3.8+ found"
+              exit 1
+          }
+
           Write-Host "Creating venv..."
           & $pythonExe -m venv "$env:VENV_PATH"
           . "$env:VENV_PATH/Scripts/Activate.ps1"
