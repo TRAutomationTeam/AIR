@@ -23,9 +23,22 @@ jobs:
           Start-Process -FilePath $7zipInstaller -Args "/S" -Wait
           $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
 
-      - name: Configure Git
+      - name: Install and Configure Git
+        shell: pwsh
         run: |
-          git config --system core.longpaths true
+          Write-Host "Installing Git..."
+          $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.42.0.windows.2/Git-2.42.0.2-64-bit.exe"
+          $gitInstaller = "$env:TEMP\GitInstaller.exe"
+          Invoke-WebRequest -Uri $gitUrl -OutFile $gitInstaller
+          Start-Process -FilePath $gitInstaller -Args "/VERYSILENT /NORESTART" -Wait
+          $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
+          
+          Write-Host "Configuring Git long paths..."
+          & 'C:\Program Files\Git\cmd\git.exe' config --system core.longpaths true
+          if ($LASTEXITCODE -ne 0) { 
+            Write-Error "Failed to configure Git long paths"
+            exit 1
+          }
           
       - name: Checkout code
         uses: actions/checkout@v3
@@ -46,15 +59,32 @@ jobs:
               Write-Host "Creating extraction directory at $extractPath"
               New-Item -ItemType Directory -Path $extractPath -Force
               
-              Write-Host "Enabling long path support"
-              Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Type DWord
+              Write-Host "Enabling long path support in Windows..."
+              try {
+                # Try to enable long path support in Windows registry
+                if (-not (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem")) {
+                  New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Force
+                }
+                Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Type DWord -ErrorAction Stop
+              } catch {
+                Write-Warning "Could not enable long paths in Windows registry. Continuing anyway: $_"
+              }
               
               Write-Host "Extracting archive..."
-              & "C:\Program Files\7-Zip\7z.exe" x "${{ github.workspace }}/*.tar.gz" -o"$extractPath" -y
-              if ($LASTEXITCODE -ne 0) { throw "7-Zip extraction failed" }
+              $archivePath = (Get-Item "${{ github.workspace }}/*.tar.gz").FullName
+              Write-Host "Archive path: $archivePath"
+              & "C:\Program Files\7-Zip\7z.exe" x "$archivePath" -o"$extractPath" -y
+              if ($LASTEXITCODE -ne 0) { 
+                throw "7-Zip extraction failed with exit code $LASTEXITCODE" 
+              }
               
               Write-Host "Moving extracted files..."
-              Get-ChildItem $extractPath | Move-Item -Destination ${{ github.workspace }} -Force
+              Get-ChildItem $extractPath -Force | ForEach-Object {
+                Write-Host "Moving $_..."
+                Move-Item -Path $_.FullName -Destination ${{ github.workspace }} -Force
+              }
+            } else {
+              Write-Host "No .tar.gz files found in workspace"
             }
           }
           catch {
