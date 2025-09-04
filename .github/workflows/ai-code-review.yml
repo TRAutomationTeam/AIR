@@ -36,6 +36,13 @@ jobs:
         # Wait for DNS changes to propagate
         Start-Sleep -Seconds 10
         
+    - name: Clean old reports
+      run: |
+        if (Test-Path "src/AI Reports") {
+            Remove-Item -Path "src/AI Reports/*" -Force -Recurse
+            Write-Host "Cleaned AI Reports directory"
+        }
+
     - name: Run AI code review
       run: |
         # Enable debug logging
