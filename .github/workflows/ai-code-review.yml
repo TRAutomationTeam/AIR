@@ -10,7 +10,7 @@ on:
 
 jobs:
   review:
-    runs-on: windows-latest
+    runs-on: self-hosted
     env:
       EXTRACT_PATH: C:/temp/ai-review
     steps:
