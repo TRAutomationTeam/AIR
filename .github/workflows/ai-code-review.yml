@@ -1,5 +1,4 @@
 name: AI Code Review
-
 on:
   push:
     paths:
@@ -7,13 +6,15 @@ on:
   pull_request:
     paths:
       - 'TR_Sanity_TaxCaddy/**/*.xaml'
-
 jobs:
   review:
     runs-on: self-hosted
     env:
-      GITHUB_WORKSPACE: D:/w
-      EXTRACT_PATH: D:/w/ext
+      GITHUB_WORKSPACE: 'D:/w'
+      EXTRACT_PATH: 'D:/w/ext'
+      VENV_PATH: 'D:/w/venv'
+      ARCHIVE_PATH: 'D:/w/repo.tar.gz'
+      TEMP_PATH: 'D:/w/temp'
     steps:
       - name: Setup 7-Zip
         shell: pwsh
@@ -23,332 +24,105 @@ jobs:
           Invoke-WebRequest -Uri $7zipUrl -OutFile $7zipInstaller
           Start-Process -FilePath $7zipInstaller -Args "/S" -Wait
           $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
-
       - name: Prepare Workspace
         shell: pwsh
         run: |
-          # Create short workspace directory
-          New-Item -ItemType Directory -Force -Path "D:/w" | Out-Null
-          New-Item -ItemType Directory -Force -Path "D:/w/ext" | Out-Null
-          
-          # Enable long paths in Windows and registry
+          Write-Host "Creating workspace directories..."
+          New-Item -ItemType Directory -Force -Path "$env:GITHUB_WORKSPACE" | Out-Null
+          New-Item -ItemType Directory -Force -Path "$env:EXTRACT_PATH" | Out-Null
+          Write-Host "Enabling long path support..."
           try {
             if (-not (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem")) {
               New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Force | Out-Null
             }
             Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Type DWord -Force
-            Write-Host "Enabled long paths in Windows registry"
+            Write-Host "Long paths enabled"
           } catch {
-            Write-Warning "Could not enable long paths in registry: $_"
+            Write-Warning "Could not enable long paths: $_"
           }
-
-      - name: Configure Git Long Paths
+      - name: Download and Extract
         shell: pwsh
         run: |
-          Write-Host "Searching for Git installation..."
-          $gitPaths = @(
-            "C:\Program Files\Git\cmd\git.exe",
-            "C:\Program Files (x86)\Git\cmd\git.exe",
-            "$env:PROGRAMFILES\Git\cmd\git.exe",
-            "$env:LOCALAPPDATA\Programs\Git\cmd\git.exe",
-            "C:\actions\git\Git\cmd\git.exe"
-          )
-          
-          $gitExe = $null
-          foreach ($path in $gitPaths) {
-            if (Test-Path $path) {
-              $gitExe = $path
-              Write-Host "Found Git at: $gitExe"
-              break
-            }
-          }
-          
-          if (-not $gitExe) {
-            Write-Host "Checking system Git..."
-            $gitExe = (Get-Command git -ErrorAction SilentlyContinue).Source
-          }
-          
-          if (-not $gitExe) {
-            Write-Error "Git not found in any standard location"
-            exit 1
-          }
-          
-          Write-Host "Configuring Git long paths..."
           try {
-            # Try to enable long paths directly in the registry first
-            if (-not (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem")) {
-              New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Force | Out-Null
-            }
-            Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Type DWord -Force
-            Write-Host "Enabled long paths in Windows registry"
-            
-            # Configure Git to handle long paths
-            & $gitExe config --system core.longpaths true
-            if ($LASTEXITCODE -ne 0) {
-              throw "Git config failed with exit code $LASTEXITCODE"
-            }
-            Write-Host "Git long paths configured successfully"
-          } catch {
-            Write-Warning "Could not configure Git long paths: $_"
-            Write-Host "Continuing anyway as this might not be critical..."
-          }
-          
-      - name: Download Repository
-        shell: pwsh
-        run: |
-          # Ignore module import errors
-          $ErrorActionPreference = 'SilentlyContinue'
-          Import-Module \helpers\chocolateyProfile.psm1
-          $ErrorActionPreference = 'Stop'
-          
-          try {
+            Write-Host "Downloading repository..."
             $headers = @{
-              'Authorization' = "Bearer ${{ secrets.GITHUB_TOKEN }}"
-              'Accept' = 'application/vnd.github.v3.raw'
+              "Authorization" = "Bearer ${{ secrets.GITHUB_TOKEN }}"
+              "Accept" = "application/vnd.github.v3.raw"
             }
-            
-            $downloadUrl = "https://api.github.com/repos/${{ github.repository }}/tarball/${{ github.sha }}"
-            $archivePath = "D:/w/repo.tar.gz"
-            $tempPath = "D:/w/temp"
-            $extractPath = "D:/w/ext"
-            
-            # Create temp directory
-            New-Item -ItemType Directory -Force -Path $tempPath | Out-Null
-            New-Item -ItemType Directory -Force -Path $extractPath | Out-Null
-            
-            Write-Host "Downloading repository archive..."
-            Invoke-WebRequest -Uri $downloadUrl -Headers $headers -OutFile $archivePath
-            
-            Write-Host "Extracting .gz archive..."
-            & "C:\Program Files\7-Zip\7z.exe" x "$archivePath" -o"$tempPath" -y
-            if ($LASTEXITCODE -ne 0) { throw "Failed to extract .gz archive" }
-            
-            $tarFile = Get-ChildItem $tempPath -Filter "*.tar" | Select-Object -First 1
-            if (-not $tarFile) { throw "Could not find .tar file after extracting .gz" }
-            
-            Write-Host "Extracting .tar archive..."
-            & "C:\Program Files\7-Zip\7z.exe" x $tarFile.FullName -o"$extractPath" -y
-            if ($LASTEXITCODE -ne 0) { throw "Failed to extract .tar archive" }
-            
-            # Find the repository directory (should be the only directory)
-            $extractedDir = Get-ChildItem $extractPath -Directory | Select-Object -First 1
-            if ($extractedDir) {
-              Write-Host "Moving files from $($extractedDir.FullName) to D:/w"
-              
-              # Clean up destination directory first
-              Write-Host "Cleaning up destination directory..."
-              Get-ChildItem "D:/w" -Force | Where-Object { $_.Name -ne "temp" -and $_.Name -ne "ext" } | ForEach-Object {
-                Write-Host "Removing $_..."
-                Remove-Item -Path $_.FullName -Recurse -Force
-              }
-              
-              # Move files with robocopy (handles long paths better)
-              Write-Host "Moving files using robocopy..."
-              $robocopyArgs = @(
-                $extractedDir.FullName,
-                "D:/w",
-                "/E",        # Copy subdirectories, including empty ones
-                "/MOVE",     # Move files (delete from source)
-                "/NFL",      # No file list - don't log file names
-                "/NDL",      # No directory list - don't log directory names
-                "/NJH",      # No job header
-                "/NJS",      # No job summary
-                "/NC",       # No class - don't log file classes
-                "/NS",       # No size - don't log file sizes
-                "/MT:16"     # Multi-threaded, 16 threads
-              )
-              
-              $result = Start-Process "robocopy" -ArgumentList $robocopyArgs -NoNewWindow -Wait -PassThru
-              
-              # Robocopy returns specific exit codes, 0-7 are considered success
-              if ($result.ExitCode -gt 7) {
-                throw "Robocopy failed with exit code $($result.ExitCode)"
-              }
-              
-              Write-Host "Files moved successfully"
-            } else {
-              throw "Could not find extracted directory in $extractPath"
-            }
-            
-            # Cleanup
-            Write-Host "Cleaning up temporary files..."
-            Remove-Item -Path $tempPath -Recurse -Force
-            Remove-Item -Path $extractPath -Recurse -Force
-            Remove-Item -Path $archivePath -Force
+            Invoke-WebRequest -Uri "https://api.github.com/repos/${{ github.repository }}/tarball/${{ github.sha }}" -Headers $headers -OutFile "$env:ARCHIVE_PATH"
+            Write-Host "Extracting archives..."
+            & "C:\Program Files\7-Zip\7z.exe" x "$env:ARCHIVE_PATH" -o"$env:TEMP_PATH" -y
+            if ($LASTEXITCODE -ne 0) { throw "Failed to extract .gz" }
+            $tarFile = Get-ChildItem "$env:TEMP_PATH" -Filter "*.tar" | Select-Object -First 1
+            if (-not $tarFile) { throw "No .tar file found" }
+            & "C:\Program Files\7-Zip\7z.exe" x $tarFile.FullName -o"$env:EXTRACT_PATH" -y
+            if ($LASTEXITCODE -ne 0) { throw "Failed to extract .tar" }
+            $extractedDir = Get-ChildItem "$env:EXTRACT_PATH" -Directory | Select-Object -First 1
+            if (-not $extractedDir) { throw "No extracted directory found" }
+            Write-Host "Moving files..."
+            Get-ChildItem "$env:GITHUB_WORKSPACE" -Force | 
+              Where-Object { $_.Name -notin @("temp", "ext", "venv") } |
+              Remove-Item -Recurse -Force
+            $robocopyResult = Start-Process "robocopy" -ArgumentList @(
+              $extractedDir.FullName,
+              "$env:GITHUB_WORKSPACE",
+              "/E", "/MOVE", "/NFL", "/NDL", "/NJH", "/NJS", "/NC", "/NS", "/MT:16"
+            ) -NoNewWindow -Wait -PassThru
+            if ($robocopyResult.ExitCode -gt 7) { throw "Robocopy failed: $($robocopyResult.ExitCode)" }
           } catch {
-            Write-Error "Repository download/extraction failed: $_"
+            Write-Error $_
             exit 1
+          } finally {
+            Get-ChildItem -Path @("$env:TEMP_PATH", "$env:EXTRACT_PATH", "$env:ARCHIVE_PATH") -ErrorAction SilentlyContinue |
+              Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
           }
-
-      - name: Extract if needed
+      - name: Setup Python
         shell: pwsh
         run: |
-          $ErrorActionPreference = 'Stop'
-          try {
-            if (Test-Path "${{ github.workspace }}/*.tar.gz") {
-              $extractPath = "D:/wrk"
-              Write-Host "Creating extraction directory at $extractPath"
-              New-Item -ItemType Directory -Path $extractPath -Force
-              
-              Write-Host "Enabling long path support in Windows..."
-              try {
-                # Try to enable long path support in Windows registry
-                if (-not (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem")) {
-                  New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Force
-                }
-                Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -Type DWord -ErrorAction Stop
-              } catch {
-                Write-Warning "Could not enable long paths in Windows registry. Continuing anyway: $_"
-              }
-              
-              Write-Host "Extracting archive..."
-              $archivePath = (Get-Item "${{ github.workspace }}/*.tar.gz").FullName
-              Write-Host "Archive path: $archivePath"
-              & "C:\Program Files\7-Zip\7z.exe" x "$archivePath" -o"$extractPath" -y
-              if ($LASTEXITCODE -ne 0) { 
-                throw "7-Zip extraction failed with exit code $LASTEXITCODE" 
-              }
-              
-              Write-Host "Moving extracted files..."
-              Get-ChildItem $extractPath -Force | ForEach-Object {
-                Write-Host "Moving $_..."
-                Move-Item -Path $_.FullName -Destination ${{ github.workspace }} -Force
-              }
-            } else {
-              Write-Host "No .tar.gz files found in workspace"
-            }
-          }
-          catch {
-            Write-Error "Extraction failed: $_"
-            throw
-          }
-
-      - name: Setup Python Environment
-        shell: pwsh
-        run: |
-          Write-Host "Detecting Python installation..."
-          
-          function Get-PythonVersionNumber {
-            param([string]$Version)
-            if ($Version -match '(\d+\.\d+\.\d+)') {
-              return [version]$matches[1]
-            }
-            return $null
-          }
-          
-          function Test-PythonVersion {
-            param([string]$PythonPath)
-            try {
-              $versionOutput = & $PythonPath --version 2>&1
-              $version = Get-PythonVersionNumber $versionOutput
-              if ($version -and $version -ge [version]"3.8.0") {
-                return $true
-              }
-            } catch { }
-            return $false
-          }
-          
-          # Find all potential Python installations
-          $pythonLocations = @(
+          Write-Host "Looking for Python 3.8+..."
+          $pythonExe = $(
+            @(Get-Command python -ErrorAction SilentlyContinue).Source,
             "C:\Python*\python.exe",
-            "C:\Program Files\Python*\python.exe",
-            "C:\Program Files (x86)\Python*\python.exe",
             "$env:LOCALAPPDATA\Programs\Python\Python*\python.exe",
-            "$env:PROGRAMFILES\Python*\python.exe"
-          )
-          
-          $pythonExe = $null
-          $foundVersion = $null
-          
-          # First try system Python
-          Write-Host "Checking system Python..."
-          $systemPython = (Get-Command python -ErrorAction SilentlyContinue).Source
-          if ($systemPython -and (Test-PythonVersion $systemPython)) {
-            $pythonExe = $systemPython
-            $foundVersion = & $pythonExe --version
-            Write-Host "Found suitable system Python: $foundVersion"
-          }
-          
-          # If system Python not found or not suitable, search other locations
+            "C:\Program Files\Python*\python.exe"
+          ) |
+          Get-ChildItem -ErrorAction SilentlyContinue |
+          Where-Object {
+            $version = & $_.FullName --version 2>&1
+            $version -match "Python (3\.[89]|3\.[1-9][0-9])"
+          } |
+          Select-Object -First 1 -ExpandProperty FullName
           if (-not $pythonExe) {
-            Write-Host "Searching for Python installations..."
-            foreach ($pattern in $pythonLocations) {
-              Get-ChildItem -Path $pattern -ErrorAction SilentlyContinue | 
-              Sort-Object -Property FullName -Descending | 
-              ForEach-Object {
-                if (-not $pythonExe -and (Test-PythonVersion $_.FullName)) {
-                  $pythonExe = $_.FullName
-                  $foundVersion = & $pythonExe --version
-                  Write-Host "Found suitable Python at $pythonExe : $foundVersion"
-                  break
-                }
-              }
-              if ($pythonExe) { break }
-            }
-          }
-          
-          if (-not $pythonExe) {
-            Write-Error "No suitable Python installation found (requires Python 3.8 or higher)"
+            Write-Error "No Python 3.8+ found"
             exit 1
           }
-          
-          # Add Python to PATH
-          $pythonDir = Split-Path -Parent $pythonExe
-          $env:Path = "$pythonDir;$pythonDir\Scripts;$env:Path"
-          
-          # Create virtual environment
-          Write-Host "Creating virtual environment..."
-          $venvPath = "D:/w/venv"
-          & $pythonExe -m venv $venvPath
-          
-          # Activate virtual environment
-          $activateScript = "$venvPath\Scripts\Activate.ps1"
-          if (Test-Path $activateScript) {
-            . $activateScript
-            Write-Host "Virtual environment activated"
-          } else {
-            Write-Error "Failed to create virtual environment"
-            exit 1
-          }
-          
-          # Upgrade pip in virtual environment
-          Write-Host "Upgrading pip..."
+          Write-Host "Creating venv..."
+          & $pythonExe -m venv "$env:VENV_PATH"
+          . "$env:VENV_PATH/Scripts/Activate.ps1"
           python -m pip install --upgrade pip
-          
-          Write-Host "Python setup complete using $foundVersion"
-
       - name: Install Dependencies
         shell: pwsh
         run: |
-          Write-Host "Installing Python dependencies..."
-          $requirementsFile = "D:/w/src/requirements.txt"
-          
-          if (Test-Path $requirementsFile) {
-            Write-Host "Found requirements.txt at $requirementsFile"
-            python -m pip install -r $requirementsFile --no-cache-dir
-            if ($LASTEXITCODE -ne 0) {
-              Write-Error "Failed to install dependencies from requirements.txt"
-              exit 1
-            }
+          . "$env:VENV_PATH/Scripts/Activate.ps1"
+          $reqFile = "$env:GITHUB_WORKSPACE/src/requirements.txt"
+          if (Test-Path $reqFile) {
+            python -m pip install -r $reqFile --no-cache-dir
           } else {
-            Write-Warning "requirements.txt not found at $requirementsFile"
-            # Install minimum required packages
             python -m pip install requests pandas openpyxl --no-cache-dir
           }
-
-      - name: Set environment variables
+      - name: Run Review
+        shell: pwsh
         env:
           AI_ARENA_API_KEY: ${{ secrets.AI_ARENA_API_KEY }}
           AI_ARENA_ENDPOINT: ${{ secrets.AI_ARENA_ENDPOINT }}
-        run: echo "Environment variables set"
-
-      - name: Run AI code review
-        run: python src/main.py
-
-      - name: Upload AI code review reports
+        run: |
+          . "$env:VENV_PATH/Scripts/Activate.ps1"
+          python "$env:GITHUB_WORKSPACE/src/main.py"
+      - name: Upload Reports
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ai-code-review-reports
           path: |
-            src/AI Reports/*.html
-            src/AI Reports/*.json
+            ${{ env.GITHUB_WORKSPACE }}/src/AI Reports/*.html
+            ${{ env.GITHUB_WORKSPACE }}/src/AI Reports/*.json
