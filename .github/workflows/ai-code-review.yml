@@ -19,6 +19,9 @@ jobs:
       - name: Setup Tools
         shell: pwsh
         run: |
+          # Remove any attempted module imports from profile
+          $ErrorActionPreference = 'SilentlyContinue'
+          
           # Install 7-Zip
           Write-Host "Installing 7-Zip..."
           $7zipUrl = "https://www.7-zip.org/a/7z2301-x64.exe"
@@ -27,20 +30,42 @@ jobs:
           Start-Process -FilePath $7zipInstaller -Args "/S" -Wait
           $env:PATH = "C:\Program Files\7-Zip;$env:PATH"
 
-          # Install Git if not present
-          Write-Host "Setting up Git..."
-          if (-not (Get-Command git -ErrorAction SilentlyContinue)) {
-              Write-Host "Git not found. Installing Git..."
-              $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.42.0.windows.2/Git-2.42.0.2-64-bit.exe"
-              $gitInstaller = "$env:TEMP\GitInstaller.exe"
-              Invoke-WebRequest -Uri $gitUrl -OutFile $gitInstaller
-              Start-Process -FilePath $gitInstaller -Args "/VERYSILENT /NORESTART /NOCANCEL /SP- /SUPPRESSMSGBOXES /CLOSEAPPLICATIONS" -Wait
-              $env:PATH = "C:\Program Files\Git\cmd;$env:PATH"
-          }
+          # Install Git
+          Write-Host "Installing Git..."
+          $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.42.0.windows.2/Git-2.42.0.2-64-bit.exe"
+          $gitInstaller = "$env:TEMP\GitInstaller.exe"
           
-          # Verify Git installation
-          $gitVersion = git --version
-          Write-Host "Git version: $gitVersion"
+          try {
+              Write-Host "Downloading Git installer..."
+              Invoke-WebRequest -Uri $gitUrl -OutFile $gitInstaller
+              
+              Write-Host "Installing Git..."
+              $process = Start-Process -FilePath $gitInstaller -Args "/VERYSILENT /NORESTART /NOCANCEL /SP- /CLOSEAPPLICATIONS" -Wait -PassThru
+              
+              if ($process.ExitCode -ne 0) {
+                  throw "Git installer failed with exit code: $($process.ExitCode)"
+              }
+              
+              # Add Git to PATH
+              $gitPath = "C:\Program Files\Git\cmd"
+              $env:PATH = "$gitPath;$env:PATH"
+              
+              # Verify Git is accessible
+              $ErrorActionPreference = 'Stop'
+              $gitExe = Join-Path $gitPath "git.exe"
+              
+              if (-not (Test-Path $gitExe)) {
+                  throw "Git executable not found at: $gitExe"
+              }
+              
+              Write-Host "Running Git version check..."
+              $version = & $gitExe --version
+              Write-Host "Git installed successfully: $version"
+              
+          } catch {
+              Write-Error "Failed to install Git: $_"
+              exit 1
+          }
       - name: Prepare Workspace
         shell: pwsh
         run: |
