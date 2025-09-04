@@ -29,14 +29,57 @@ jobs:
           Write-Host "Installing Git..."
           $gitUrl = "https://github.com/git-for-windows/git/releases/download/v2.42.0.windows.2/Git-2.42.0.2-64-bit.exe"
           $gitInstaller = "$env:TEMP\GitInstaller.exe"
-          Invoke-WebRequest -Uri $gitUrl -OutFile $gitInstaller
-          Start-Process -FilePath $gitInstaller -Args "/VERYSILENT /NORESTART" -Wait
+          
+          # Download Git installer
+          try {
+            Invoke-WebRequest -Uri $gitUrl -OutFile $gitInstaller -ErrorAction Stop
+          } catch {
+            Write-Error "Failed to download Git installer: $_"
+            exit 1
+          }
+          
+          # Install Git
+          try {
+            $process = Start-Process -FilePath $gitInstaller -Args "/VERYSILENT /NORESTART" -Wait -PassThru
+            if ($process.ExitCode -ne 0) {
+              throw "Git installer failed with exit code $($process.ExitCode)"
+            }
+          } catch {
+            Write-Error "Failed to install Git: $_"
+            exit 1
+          }
+          
+          # Wait for Git to be available
+          $retryCount = 0
+          $maxRetries = 5
+          $gitPath = 'C:\Program Files\Git\cmd\git.exe'
+          
+          Write-Host "Waiting for Git installation to complete..."
+          do {
+            if (Test-Path $gitPath) {
+              break
+            }
+            $retryCount++
+            if ($retryCount -eq $maxRetries) {
+              Write-Error "Git installation not found after $maxRetries attempts"
+              exit 1
+            }
+            Write-Host "Waiting for Git installation (attempt $retryCount of $maxRetries)..."
+            Start-Sleep -Seconds 10
+          } while ($true)
+          
+          # Refresh environment variables
           $env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
           
           Write-Host "Configuring Git long paths..."
-          & 'C:\Program Files\Git\cmd\git.exe' config --system core.longpaths true
-          if ($LASTEXITCODE -ne 0) { 
-            Write-Error "Failed to configure Git long paths"
+          try {
+            & $gitPath config --system core.longpaths true
+            if ($LASTEXITCODE -ne 0) {
+              throw "Git config failed with exit code $LASTEXITCODE"
+            }
+            Write-Host "Git long paths configured successfully"
+          } catch {
+            Write-Error "Failed to configure Git long paths: $_"
             exit 1
           }
           
