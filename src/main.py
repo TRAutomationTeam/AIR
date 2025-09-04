@@ -1,6 +1,13 @@
 import sys
 import logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
+import os
+
+# Set logging level from environment variable or default to INFO
+log_level = os.environ.get('LOG_LEVEL', 'INFO').upper()
+logging.basicConfig(
+    level=getattr(logging, log_level),
+    format='%(asctime)s %(levelname)s %(message)s'
+)
 import os
 import git
 from pathlib import Path

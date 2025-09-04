@@ -1,6 +1,7 @@
 import requests
 import yaml
 import os
+import json
 # Environment variable mapping (see README for details)
 # AI_ARENA_API_KEY, AI_ARENA_ENDPOINT, AI_ARENA_MODEL_NAME
 from typing import Dict, List, Any
@@ -63,20 +64,31 @@ class AICodeAnalyzer:
             'Content-Type': 'application/json'
         }
         try:
-            # Suppressed all logging output
+            logging.info(f"Making request to TR Arena API endpoint: {endpoint}")
+            logging.debug(f"Request payload: {json.dumps(payload, indent=2)}")
+            logging.debug(f"Request headers: Authorization: Bearer ***{self.api_key[-4:] if self.api_key else 'None'}")
+            
             response = requests.post(
                 endpoint,
                 json=payload,
                 headers=headers,
                 timeout=120
             )
-            # Suppressed all logging output
+            
+            logging.info(f"TR Arena API response status: {response.status_code}")
+            
             if response.status_code == 200:
                 logging.info("TR Arena API request successful")
                 ai_results = response.json()
                 logging.info("TR Arena API response received")
+                logging.debug(f"API Response: {json.dumps(ai_results, indent=2)}")
                 result = self._process_ai_results(ai_results, analysis_results)
                 logging.info("TR Arena API results processed and combined with local analysis")
+                return result
+            
+            logging.error(f"TR Arena API request failed with status {response.status_code}")
+            logging.error(f"Response text: {response.text[:500]}...")  # Log first 500 chars of error
+            return self._fallback_analysis(analysis_results)
                 # Always append custom rule violations if not present
                 custom_rules = [rule for rule in self.config.get('official_rules', []) if rule.get('type') == 'custom']
                 violations_list = result['original_analysis'].setdefault('rules_violations', [])
@@ -116,8 +128,14 @@ class AICodeAnalyzer:
             else:
                 # Suppressed all logging output
                 return self._fallback_analysis(analysis_results)
+        except requests.exceptions.RequestException as e:
+            logging.error(f"Network error connecting to TR Arena API: {str(e)}")
+            return self._fallback_analysis(analysis_results)
+        except json.JSONDecodeError as e:
+            logging.error(f"Failed to parse TR Arena API response: {str(e)}")
+            return self._fallback_analysis(analysis_results)
         except Exception as e:
-            # Suppressed all logging output
+            logging.error(f"Unexpected error in TR Arena API call: {str(e)}")
             return self._fallback_analysis(analysis_results)
             
     def _process_ai_results(self, ai_results: Dict, original_results: Dict) -> Dict[str, Any]:
