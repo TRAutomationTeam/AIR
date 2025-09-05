@@ -46,23 +46,159 @@ jobs:
         Write-Host "VS Build Tools installation complete"
       shell: pwsh
 
+    - name: Cache Ollama Model
+      id: cache-ollama
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.ollama/models
+          OllamaSetup.exe
+        key: ollama-codellama-3b-${{ runner.os }}
+        restore-keys: |
+          ollama-codellama-3b-
+
     - name: Setup Ollama
       run: |
         Write-Host "Setting up Ollama..."
-        # Download Ollama
-        $ollamaUrl = "https://ollama.ai/download/OllamaSetup.exe"
-        Invoke-WebRequest -Uri $ollamaUrl -OutFile "OllamaSetup.exe"
+        $maxWaitMinutes = 15  # Increased timeout to 15 minutes for slower networks
+        $setupTimeout = (Get-Date).AddMinutes($maxWaitMinutes)
+        Write-Host "Setup will timeout at: $($setupTimeout.ToString('HH:mm:ss'))"
         
-        # Install Ollama
-        Start-Process -Wait -FilePath .\OllamaSetup.exe -ArgumentList "/S"
+        # Download Ollama if not cached
+        if (-not (Test-Path "OllamaSetup.exe")) {
+            Write-Host "Downloading Ollama..."
+            $ollamaUrl = "https://ollama.ai/download/OllamaSetup.exe"
+            try {
+                $wc = New-Object System.Net.WebClient
+                $wc.DownloadFile($ollamaUrl, "OllamaSetup.exe")
+            } catch {
+                Write-Error "Failed to download Ollama: $_"
+                exit 1
+            }
+        } else {
+            Write-Host "Using cached Ollama installer"
+        }
         
-        # Start Ollama service and wait for it to be ready
+        # Install Ollama with timeout
+        Write-Host "Installing Ollama..."
+        $process = Start-Process -FilePath .\OllamaSetup.exe -ArgumentList "/S" -PassThru
+        $timeoutSeconds = 300
+        if (-not $process.WaitForExit($timeoutSeconds * 1000)) {
+            Write-Error "Ollama installation timed out after $timeoutSeconds seconds"
+            Stop-Process -Id $process.Id -Force
+            exit 1
+        }
+        if ($process.ExitCode -ne 0) {
+            Write-Error "Ollama installation failed with exit code $($process.ExitCode)"
+            exit 1
+        }
+        
+        # Start and verify Ollama service
+        Write-Host "Starting Ollama service..."
         Start-Service -Name Ollama
-        Start-Sleep -Seconds 10
+        $retryCount = 0
+        $maxRetries = 6
+        $serviceStarted = $false
         
-        # Pull required model
-        ollama pull codellama:7b-code
-        Write-Host "Ollama setup complete"
+        while ($retryCount -lt $maxRetries) {
+            $service = Get-Service -Name Ollama -ErrorAction SilentlyContinue
+            if ($service.Status -eq 'Running') {
+                $serviceStarted = $true
+                break
+            }
+            Write-Host "Waiting for Ollama service to start... Attempt $($retryCount + 1) of $maxRetries"
+            Start-Sleep -Seconds 10
+            $retryCount++
+        }
+        
+        if (-not $serviceStarted) {
+            Write-Error "Failed to start Ollama service after $maxRetries attempts"
+            exit 1
+        }
+        
+        # Create Ollama models directory if it doesn't exist
+        $ollamaModelsDir = "$env:USERPROFILE\.ollama\models"
+        if (-not (Test-Path $ollamaModelsDir)) {
+            New-Item -Path $ollamaModelsDir -ItemType Directory -Force
+        }
+
+        # Check if model is already in cache
+        $modelFiles = Get-ChildItem -Path $ollamaModelsDir -Filter "codellama*"
+        if ($modelFiles.Count -eq 0) {
+            Write-Host "Pulling smaller CodeLlama model (3B variant)..."
+            $startTime = Get-Date
+            
+            # Start download with progress monitoring
+            $job = Start-Job -ScriptBlock {
+                $processInfo = New-Object System.Diagnostics.ProcessStartInfo
+                $processInfo.FileName = "ollama"
+                $processInfo.Arguments = "pull codellama:3b"
+                $processInfo.RedirectStandardOutput = $true
+                $processInfo.RedirectStandardError = $true
+                $processInfo.UseShellExecute = $false
+                
+                $process = New-Object System.Diagnostics.Process
+                $process.StartInfo = $processInfo
+                $process.Start() | Out-Null
+                
+                while (-not $process.StandardOutput.EndOfStream) {
+                    $line = $process.StandardOutput.ReadLine()
+                    if ($line -match "(\d+\.\d+)%") {
+                        $progress = [math]::Round([double]$matches[1], 2)
+                        $elapsed = [math]::Round(((Get-Date) - $using:startTime).TotalMinutes, 1)
+                        Write-Output "Progress: $progress% (${elapsed} minutes elapsed)"
+                    }
+                }
+                $process.WaitForExit()
+                return $process.ExitCode
+            }
+            
+            # Monitor progress with timeout
+            while (-not $job.HasMoreData -and (Get-Date) -lt $setupTimeout) {
+                $output = Receive-Job -Job $job
+                if ($output) {
+                    Write-Host $output
+                }
+                
+                # Show remaining time
+                $remainingMinutes = [math]::Round(($setupTimeout - (Get-Date)).TotalMinutes, 1)
+                if ($remainingMinutes -gt 0) {
+                    Write-Host "Time remaining before timeout: $remainingMinutes minutes"
+                }
+                
+                Start-Sleep -Seconds 30  # Update status every 30 seconds
+            }
+            
+            # Get final status
+            $exitCode = Receive-Job -Job $job -Wait
+            Remove-Job -Job $job
+            
+            if ($exitCode -ne 0) {
+                Write-Error "Model download failed with exit code $exitCode"
+                exit 1
+            }
+            
+            $totalTime = [math]::Round(((Get-Date) - $startTime).TotalMinutes, 1)
+            Write-Host "Download completed in $totalTime minutes"
+            
+            if ($pullProcess.ExitCode -ne 0) {
+                Write-Error "Model pull failed with exit code $($pullProcess.ExitCode)"
+                Get-Content "ollama_pull.log"
+                exit 1
+            }
+        } else {
+            Write-Host "Using cached CodeLlama model"
+        }
+        
+        # Verify Ollama is working
+        Write-Host "Verifying Ollama installation..."
+        $testResult = ollama list
+        if ($LASTEXITCODE -ne 0 -or -not ($testResult -match "codellama")) {
+            Write-Error "Ollama verification failed. Model not found in list: $testResult"
+            exit 1
+        }
+        
+        Write-Host "Ollama setup completed successfully"
       shell: pwsh
     
     - name: Set up Python

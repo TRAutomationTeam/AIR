@@ -11,7 +11,7 @@ class AICodeAnalyzer:
         self.config = config or {}
         self.metrics = metrics or {}
         self.ollama_endpoint = "http://localhost:11434/api/generate"
-        self.model = "codellama:7b-code"
+        self.model = "codellama:3b"  # Using smaller 3B variant for faster processing
         
     def _convert_ollama_results(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Convert Ollama analysis results to our expected format."""
