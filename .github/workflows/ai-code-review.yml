@@ -12,364 +12,71 @@ on:
 jobs:
   review:
     runs-on: windows-latest
-    
     steps:
     - uses: actions/checkout@v3
-      
+
     - name: System Check
-      run: |
-        Write-Host "Checking system requirements..."
-        
-        # Check system resources
-        $memory = (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB
-        $cpuCores = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
-        
-        Write-Host "System Memory: $([math]::Round($memory, 2)) GB"
-        Write-Host "CPU Cores: $cpuCores"
-        
-        # Check if we have enough resources for the model
-        if ($memory -lt 8) {
-            Write-Warning "Low memory detected. Performance might be affected."
-        }
-        
-        # Check for GPU (informational only)
-        $hasNvidiaGPU = Get-WmiObject Win32_VideoController | Where-Object { $_.Name -match 'NVIDIA' }
-        if ($hasNvidiaGPU) {
-            Write-Host "NVIDIA GPU detected: $($hasNvidiaGPU.Name)"
-        } else {
-            Write-Host "No GPU detected. Using CPU mode."
-        }
       shell: pwsh
-
-    - name: Cache Ollama Model
-      id: cache-ollama
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.ollama/models
-          OllamaSetup.exe
-        key: ollama-codellama-3b-${{ runner.os }}
-        restore-keys: |
-          ollama-codellama-3b-
-
-    - name: Setup Ollama
-      run: |
-        Write-Host "Setting up Ollama..."
-        $testUrl = "https://speed.hetzner.de/100MB.bin"
-        
-        Write-Host "Testing download speed..."
-        try {
-            $startTime = Get-Date
-            $wc = New-Object System.Net.WebClient
-            $wc.DownloadFile($testUrl, "$env:TEMP\speedtest.tmp")
-            $downloadTime = ((Get-Date) - $startTime).TotalSeconds
-            $downloadSpeed = (100 / $downloadTime) * 8  # Convert to Mbps
-            Remove-Item "$env:TEMP\speedtest.tmp"
-            Write-Host "Download speed: $([math]::Round($downloadSpeed, 2)) Mbps"
-            
-            # Calculate expected model download time
-            $modelSizeGB = 3.5  # Size of CodeLlama 3B model
-            $expectedMinutes = ($modelSizeGB * 8 * 1024) / ($downloadSpeed * 60)
-            Write-Host "Estimated download time: $([math]::Round($expectedMinutes, 1)) minutes"
-        } catch {
-            Write-Host "Speed test failed: $_"
-            Write-Host "Using default download timeout"
-            $downloadSpeed = 10  # Assume 10 Mbps as fallback
-        }
-        # Set timeout based on download speed
-        if ($downloadSpeed -gt 0) {
-            $maxWaitMinutes = [math]::Max(15, [math]::Min(60, $expectedMinutes * 1.5))
-        } else {
-            $maxWaitMinutes = 30
-        }
-        
-        $setupTimeout = (Get-Date).AddMinutes($maxWaitMinutes)
-        Write-Host "Setup will timeout at: $($setupTimeout.ToString('HH:mm:ss'))"
-        Write-Host "Maximum wait time: $maxWaitMinutes minutes"
-        
-        # Check system state before installation
-        Write-Host "Checking system state..."
-        Get-Process -Name "ollama*" -ErrorAction SilentlyContinue | Stop-Process -Force
-        Get-Service -Name "ollama" -ErrorAction SilentlyContinue | Stop-Service -Force
-        
-        # Clean up any existing installation files
-        Remove-Item -Path "$env:ProgramFiles\Ollama" -Recurse -Force -ErrorAction SilentlyContinue
-        
-        # Download Ollama if not cached
-        if (-not (Test-Path "OllamaSetup.exe")) {
-            Write-Host "Downloading Ollama..."
-            $ollamaUrl = "https://ollama.ai/download/OllamaSetup.exe"
-            try {
-                $wc = New-Object System.Net.WebClient
-                $wc.DownloadFile($ollamaUrl, "OllamaSetup.exe")
-                
-                # Verify download
-                if (-not (Test-Path "OllamaSetup.exe")) {
-                    throw "Installer file not found after download"
-                }
-                $fileSize = (Get-Item "OllamaSetup.exe").Length
-                if ($fileSize -lt 1MB) {
-                    throw "Downloaded file is too small: $([math]::Round($fileSize/1MB, 2)) MB"
-                }
-                Write-Host "Successfully downloaded Ollama installer: $([math]::Round($fileSize/1MB, 2)) MB"
-            } catch {
-                Write-Error "Failed to download Ollama: $_"
-                exit 1
-            }
-        } else {
-            Write-Host "Using cached Ollama installer"
-        }
-        
-        # Install Ollama with enhanced monitoring
-        Write-Host "Installing Ollama..."
-        $installStartTime = Get-Date
-        $installTimeout = 900  # 15 minutes timeout
-        
-        # Start installation process
-        Write-Host "Starting installer with $([math]::Round($installTimeout/60, 0)) minute timeout..."
-        $process = Start-Process -FilePath .\OllamaSetup.exe -ArgumentList "/S" -PassThru
-        
-        # Monitor installation
-        while (-not $process.HasExited) {
-            $elapsed = ((Get-Date) - $installStartTime).TotalSeconds
-            if ($elapsed -gt $installTimeout) {
-                Write-Error "Ollama installation timed out after $([math]::Round($elapsed/60, 1)) minutes"
-                Stop-Process -Id $process.Id -Force -ErrorAction SilentlyContinue
-                exit 1
-            }
-            
-            # Check if installer is still running
-            try {
-                $installerProcess = Get-Process -Id $process.Id -ErrorAction SilentlyContinue
-                if ($installerProcess) {
-                    $minutesElapsed = [math]::Round($elapsed/60, 1)
-                    $minutesRemaining = [math]::Round(($installTimeout - $elapsed)/60, 1)
-                    Write-Host "Installation in progress... ${minutesElapsed} minutes elapsed, ${minutesRemaining} minutes remaining"
-                }
-            } catch {
-                Write-Host "Installation process completed"
-                break
-            }
-            Start-Sleep -Seconds 30  # Report progress every 30 seconds
-        }
-        
-        # Verify installation result
-        if ($process.ExitCode -ne 0) {
-            Write-Error "Ollama installation failed with exit code $($process.ExitCode)"
-            exit 1
-        }
-        
-        Write-Host "Ollama installation completed in $([math]::Round(((Get-Date) - $installStartTime).TotalSeconds, 0)) seconds"
-        
-        # Start and verify Ollama service
-        Write-Host "Starting Ollama service..."
-        Start-Service -Name Ollama
-        $retryCount = 0
-        $maxRetries = 6
-        $serviceStarted = $false
-        
-        while ($retryCount -lt $maxRetries) {
-            $service = Get-Service -Name Ollama -ErrorAction SilentlyContinue
-            if ($service.Status -eq 'Running') {
-                $serviceStarted = $true
-                break
-            }
-            Write-Host "Waiting for Ollama service to start... Attempt $($retryCount + 1) of $maxRetries"
-            Start-Sleep -Seconds 10
-            $retryCount++
-        }
-        
-        if (-not $serviceStarted) {
-            Write-Error "Failed to start Ollama service after $maxRetries attempts"
-            exit 1
-        }
-        
-        # Create Ollama models directory if it doesn't exist
-        $ollamaModelsDir = "$env:USERPROFILE\.ollama\models"
-        if (-not (Test-Path $ollamaModelsDir)) {
-            New-Item -Path $ollamaModelsDir -ItemType Directory -Force
+      run: >-
+        Write-Host "Checking system requirements...";
+        $memory = (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB;
+        $cpuCores = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors;
+        Write-Host "System Memory: $([math]::Round($memory, 2)) GB";
+        Write-Host "CPU Cores: $cpuCores";
+        if ($memory -lt 4) {
+            Write-Warning "Low memory detected. Performance might be affected.";
         }
 
-        # Check if model is already in cache
-        $modelFiles = Get-ChildItem -Path $ollamaModelsDir -Filter "codellama*"
-        if ($modelFiles.Count -eq 0) {
-            Write-Host "Downloading CodeLlama model (3B variant)..."
-            $startTime = Get-Date
-            
-            # Download with progress monitoring
-            $progressFile = "ollama_progress.txt"
-            $modelProcess = Start-Process -FilePath "ollama" -ArgumentList "pull", "codellama:3b" -PassThru -RedirectStandardOutput $progressFile -NoNewWindow
-            
-            # Monitor progress until complete or timeout
-            while (-not $modelProcess.HasExited -and (Get-Date) -lt $setupTimeout) {
-                if (Test-Path $progressFile) {
-                    $lastLine = Get-Content $progressFile -Tail 1
-                    if ($lastLine -match "(\d+\.\d+)%") {
-                        $percent = [double]$matches[1]
-                        $elapsed = ((Get-Date) - $startTime).TotalMinutes
-                        $eta = ($elapsed / $percent) * (100 - $percent)
-                        Write-Host "Progress: $([math]::Round($percent, 2))% | ETA: $([math]::Round($eta, 1)) min"
-                    }
-                }
-                Start-Sleep -Seconds 10
-            }
-            
-            # Check results
-            if (-not $modelProcess.HasExited) {
-                Write-Error "Model download timed out after $maxWaitMinutes minutes"
-                Stop-Process -Id $modelProcess.Id -Force -ErrorAction SilentlyContinue
-                exit 1
-            }
-            if ($modelProcess.ExitCode -ne 0) {
-                Write-Error "Model download failed with exit code $($modelProcess.ExitCode)"
-                Get-Content $progressFile
-                exit 1
-            }
-            
-            Write-Host "Download completed in $([math]::Round(((Get-Date) - $startTime).TotalMinutes, 1)) minutes"
-            Remove-Item $progressFile -ErrorAction SilentlyContinue
-            
-        } else {
-            Write-Host "Using cached CodeLlama model"
-        }
-        
-        # Verify Ollama is working
-        Write-Host "Verifying Ollama installation..."
-        try {
-            $testResult = ollama list
-            if ($LASTEXITCODE -eq 0 -and $testResult -match "codellama") {
-                Write-Host "Ollama verification successful"
-            } else {
-                throw "Model not found in list: $testResult"
-            }
-        } catch {
-            Write-Error "Ollama verification failed: $_"
-            exit 1
-        }
-        
-        Write-Host "Ollama setup completed successfully"
-      shell: pwsh
-    
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-        
-    - name: Setup Python Environment
-      run: |
-        Write-Host "Setting up Python environment..."
-        
-        # Upgrade pip
-        python -m pip install --upgrade pip
-        
-        # Install only required packages (removed ML packages since Ollama handles that)
-        Write-Host "Installing Python dependencies..."
-        pip install -r src/requirements.txt
-        
-        # Verify installations
-        Write-Host "Verifying Python packages..."
-        pip list
 
-    - name: Configure DNS resolution
-      run: |
-        Write-Host "Starting enhanced DNS configuration..."
-        
-        # Remove existing DNS configurations
-        Get-DnsClientNrptRule | Remove-DnsClientNrptRule -Force
-        Write-Host "Cleared existing DNS rules"
-        
-        # Configure specific DNS rules for different TR domains
-        $rules = @(
-            @{
-                Namespace = ".thomsonreuters.com"
-                Servers = @("10.173.12.233", "10.173.12.234")
-            },
-            @{
-                Namespace = ".int.thomsonreuters.com"
-                Servers = @("10.173.12.233", "10.173.12.234")
-            },
-            @{
-                Namespace = ".gcs.int.thomsonreuters.com"
-                Servers = @("10.173.12.233", "10.173.12.234")
-            }
-        )
-        
-        foreach ($rule in $rules) {
-            try {
-                Add-DnsClientNrptRule -Namespace $rule.Namespace -NameServers $rule.Servers -ErrorAction Stop
-                Write-Host "Added DNS rule for $($rule.Namespace)"
-            } catch {
-                Write-Host "Warning: Failed to add rule for $($rule.Namespace): $_"
-            }
+    - name: Cache GPT4All Model
+      id: cache-model
+      uses: actions/cache@v3
+      with:
+        path: src/ai/models
+        key: gpt4all-j-v1.3-groovy-${{ runner.os }}
+        restore-keys: |
+          gpt4all-j-v1.3-groovy-
+
+    - name: Download Model
+      shell: pwsh
+      if: steps.cache-model.outputs.cache-hit != 'true'
+      run: >-
+        Write-Host "Downloading GPT4All model...";
+        $modelDir = "src/ai/models";
+        if (-not (Test-Path $modelDir)) {
+            New-Item -ItemType Directory -Path $modelDir -Force;
         }
-        
-        # Configure network adapters
-        $adapters = Get-NetAdapter | Where-Object {$_.Status -eq "Up"}
-        foreach ($adapter in $adapters) {
-            try {
-                # Set primary DNS servers
-                Set-DnsClientServerAddress -InterfaceIndex $adapter.InterfaceIndex -ServerAddresses @("10.173.12.233", "10.173.12.234", "8.8.8.8", "8.8.4.4") -ErrorAction Stop
-                Write-Host "Configured DNS servers for adapter: $($adapter.Name)"
-            } catch {
-                Write-Host "Warning: Failed to configure DNS for adapter $($adapter.Name): $_"
-            }
-        }
-        
-        Write-Host "Flushing DNS cache..."
-        ipconfig /flushdns
-        
-        # Add hosts file entry as fallback
-        $hostEntry = "10.173.12.233 aiopenarena.gcs.int.thomsonreuters.com"
-        Add-Content -Path "$env:windir\System32\drivers\etc\hosts" -Value $hostEntry -ErrorAction Continue
-        Write-Host "Added hosts file entry as fallback"
-        
-        Write-Host "Verifying DNS configuration..."
-        Get-DnsClientServerAddress | Where-Object {$_.InterfaceAlias -notlike "*Loopback*"} | Format-Table -AutoSize
-        Get-DnsClientNrptRule | Format-List Namespace, NameServers
-        
-        Write-Host "Testing domain resolution..."
-        $testDomains = @(
-            "aiopenarena.gcs.int.thomsonreuters.com",
-            "gcs.int.thomsonreuters.com",
-            "int.thomsonreuters.com"
-        )
-        
-        foreach ($domain in $testDomains) {
-            Write-Host "`nTesting resolution for: $domain"
-            try {
-                $result = Resolve-DnsName -Name $domain -Type A -Server "10.173.12.233" -ErrorAction Stop
-                Write-Host "Successfully resolved using TR DNS: $($result.IPAddress)"
-            } catch {
-                Write-Host "Failed with TR DNS: $_"
-                try {
-                    $result = Resolve-DnsName -Name $domain -Type A -Server "8.8.8.8" -ErrorAction Stop
-                    Write-Host "Successfully resolved using Google DNS: $($result.IPAddress)"
-                } catch {
-                    Write-Host "Failed with Google DNS: $_"
-                }
-            }
-        }
-        
-        # Final validation
-        Write-Host "`nFinal connection test..."
-        Test-NetConnection -ComputerName aiopenarena.gcs.int.thomsonreuters.com -Port 443 -WarningAction SilentlyContinue
-        
+        $modelUrl = "https://gpt4all.io/models/ggml-gpt4all-j-v1.3-groovy.bin";
+        $modelPath = Join-Path $modelDir "ggml-gpt4all-j-v1.3-groovy.bin";
+        Invoke-WebRequest -Uri $modelUrl -OutFile $modelPath;
+
+    - name: Setup Python Environment
+      shell: pwsh
+      run: >-
+        Write-Host "Setting up Python environment...";
+        python -m pip install --upgrade pip;
+        pip install -r src/requirements.txt;
+        pip list;
+
     - name: Clean old reports
-      run: |
+      shell: pwsh
+      run: >-
         if (Test-Path "src/AI Reports") {
-            Remove-Item -Path "src/AI Reports/*" -Force -Recurse
-            Write-Host "Cleaned AI Reports directory"
+            Remove-Item -Path "src/AI Reports/*" -Force -Recurse;
+            Write-Host "Cleaned AI Reports directory";
         }
 
     - name: Run AI code review
-      run: |
-        # Enable debug logging
-        $env:LOG_LEVEL = "DEBUG"
-        # Set DNS timeout
-        $env:DNS_TIMEOUT = "30"
-        # Run the analysis with fallback mode enabled
-        python src/main.py
-        
+      shell: pwsh
+      run: >-
+        $env:LOG_LEVEL = "DEBUG";
+        $env:DNS_TIMEOUT = "30";
+        python src/main.py;
+
     - name: Upload Analysis Reports
       if: always()
       uses: actions/upload-artifact@v4

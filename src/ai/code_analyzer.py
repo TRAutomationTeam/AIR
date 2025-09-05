@@ -1,26 +1,28 @@
-import requests
-import yaml
 import os
 import json
 from typing import Dict, List, Any
 import logging
 import re
+from gpt4all import GPT4All
 
-class AICodeAnalyzer:
+class CodeAnalyzer:
     def __init__(self, config: dict = None, metrics: dict = None):
         self.config = config or {}
         self.metrics = metrics or {}
-        self.ollama_endpoint = "http://localhost:11434/api/generate"
-        self.model = "codellama:3b"  # Using smaller 3B variant for faster processing
+        model_path = os.path.join(os.path.dirname(__file__), "models", "ggml-gpt4all-j-v1.3-groovy.bin")
         
-    def _convert_ollama_results(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Convert Ollama analysis results to our expected format."""
+        # Initialize lightweight model for code review
+        self.model = GPT4All(model_path)
+        logging.info("Using GPT4All for code analysis")
+        
+    def _convert_analysis_results(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Convert analysis results to our expected format."""
         violations = []
         
         # Convert issues
         for idx, issue in enumerate(analysis.get('issues', [])):
             violations.append({
-                'RuleId': f'OLLM-ISS-{idx:03d}',
+                'RuleId': f'AI-ISS-{idx:03d}',
                 'RuleName': 'Code Issue',
                 'Severity': issue.get('severity', 'Warning'),
                 'Description': issue.get('description', ''),
@@ -31,7 +33,7 @@ class AICodeAnalyzer:
         # Convert violations
         for idx, violation in enumerate(analysis.get('violations', [])):
             violations.append({
-                'RuleId': f'OLLM-VIO-{idx:03d}',
+                'RuleId': f'AI-VIO-{idx:03d}',
                 'RuleName': violation.get('rule', 'Best Practice Violation'),
                 'Severity': 'Warning',
                 'Description': violation.get('description', ''),
@@ -41,7 +43,7 @@ class AICodeAnalyzer:
         # Convert security issues
         for idx, sec in enumerate(analysis.get('security', [])):
             violations.append({
-                'RuleId': f'OLLM-SEC-{idx:03d}',
+                'RuleId': f'AI-SEC-{idx:03d}',
                 'RuleName': 'Security Issue',
                 'Severity': sec.get('severity', 'Error'),
                 'Description': sec.get('description', ''),
@@ -51,7 +53,7 @@ class AICodeAnalyzer:
         # Convert performance issues
         for idx, perf in enumerate(analysis.get('performance', [])):
             violations.append({
-                'RuleId': f'OLLM-PERF-{idx:03d}',
+                'RuleId': f'AI-PERF-{idx:03d}',
                 'RuleName': 'Performance Issue',
                 'Severity': 'Warning' if perf.get('impact') == 'Low' else 'Error',
                 'Description': perf.get('description', ''),
@@ -81,8 +83,8 @@ class AICodeAnalyzer:
         """
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
-        """Analyze workflow results using local Ollama instance"""
-        logging.info("Starting Ollama-based analysis")
+        """Analyze workflow results using local GPT4All model"""
+        logging.info("Starting local model analysis")
 
         try:
             # Prepare violations for analysis
@@ -102,50 +104,43 @@ class AICodeAnalyzer:
                 file = v.get('File', v.get('FilePath', ''))
                 prompt_lines.append(f"- [{severity}] {rule_id} ({rule_name}) in {file}: {recommendation}")
 
-            # Create the Ollama request
-            payload = {
-                "model": self.model,
-                "prompt": f"{prompt}\n\n{chr(10).join(prompt_lines)}",
-                "stream": False,
-                "temperature": 0.7,
-                "top_p": 0.9,
-                "max_tokens": 2000
-            }
+            # Prepare input for the model
+            input_text = f"{prompt}\n\n{chr(10).join(prompt_lines)}"
 
-            # Make request to local Ollama
-            logging.info("Sending request to Ollama")
-            response = requests.post(self.ollama_endpoint, json=payload)
+            # Generate response using GPT4All
+            logging.info("Generating analysis with local model")
+            response = self.model.generate(
+                input_text,
+                max_tokens=2048,
+                temp=0.7,
+                top_p=0.95,
+                n_predict=512,
+                streaming=False
+            )
 
-            if response.status_code == 200:
-                logging.info("Ollama analysis completed successfully")
-                result = response.json()
+            try:
+                # Parse the LLM response
+                analysis = json.loads(response)
                 
-                try:
-                    # Parse the LLM response
-                    analysis = json.loads(result['response'])
-                    
-                    # Convert to our expected format
-                    return {
-                        'enhanced_analysis': True,
-                        'rules_violations': self._convert_ollama_results(analysis),
-                        'original_analysis': analysis_results,
-                        'summary': {
-                            'total_issues': len(analysis.get('issues', [])),
-                            'total_violations': len(analysis.get('violations', [])),
-                            'security_concerns': len(analysis.get('security', [])),
-                            'performance_issues': len(analysis.get('performance', [])),
-                            'quality_recommendations': len(analysis.get('quality', []))
-                        }
+                # Convert to our expected format
+                return {
+                    'enhanced_analysis': True,
+                    'rules_violations': self._convert_analysis_results(analysis),
+                    'original_analysis': analysis_results,
+                    'summary': {
+                        'total_issues': len(analysis.get('issues', [])),
+                        'total_violations': len(analysis.get('violations', [])),
+                        'security_concerns': len(analysis.get('security', [])),
+                        'performance_issues': len(analysis.get('performance', [])),
+                        'quality_recommendations': len(analysis.get('quality', []))
                     }
-                except json.JSONDecodeError as e:
-                    logging.error(f"Failed to parse Ollama response: {str(e)}")
-                    return analysis_results
-            else:
-                logging.error(f"Ollama request failed with status {response.status_code}")
+                }
+            except json.JSONDecodeError as e:
+                logging.error(f"Failed to parse model response: {str(e)}")
                 return analysis_results
 
         except Exception as e:
-            logging.error(f"Error during Ollama analysis: {str(e)}")
+            logging.error(f"Error during local model analysis: {str(e)}")
             return analysis_results
 
                 
