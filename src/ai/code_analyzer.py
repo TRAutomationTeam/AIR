@@ -53,9 +53,13 @@ class AICodeAnalyzer:
                 "Authorization": f"Bearer {OPEN_ARENA_API_KEY}",
                 "Content-Type": "application/json"
             }
+            logging.info(f"[TR Arena API] Endpoint: {OPEN_ARENA_API_URL}")
+            logging.info(f"[TR Arena API] Payload: {json.dumps(payload)}")
             response = requests.post(OPEN_ARENA_API_URL, headers=headers, json=payload, timeout=60)
+            logging.info(f"[TR Arena API] Response status: {response.status_code}")
             if response.status_code == 200:
                 data = response.json()
+                logging.info(f"[TR Arena API] Response data: {json.dumps(data)}")
                 answer = data.get("answer", "")
                 suggestions = [line.strip() for line in answer.split('\n') if line.strip()]
                 return {
@@ -69,10 +73,10 @@ class AICodeAnalyzer:
                     'critical_issues': []
                 }
             else:
-                logging.error(f"Open Arena API call failed: {response.text}")
+                logging.error(f"[TR Arena API] Call failed: {response.text}")
                 return self._fallback_analysis(analysis_results)
         except Exception as e:
-            logging.error(f"Error running Open Arena API: {str(e)}")
+            logging.error(f"[TR Arena API] Exception: {str(e)}")
             return self._fallback_analysis(analysis_results)
 
     def _process_ai_results(self, ai_results: Dict, original_results: Dict) -> Dict[str, Any]:
