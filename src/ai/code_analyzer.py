@@ -8,7 +8,7 @@ import re
 import getpass
 
 # Dynamically set Ollama path for current user
-OLLAMA_PATH = os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Programs', 'Ollama', 'ollama.exe')
+OLLAMA_PATH = os.environ.get('OLLAMA_PATH') or os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Programs', 'Ollama', 'ollama.exe')
 
 class AICodeAnalyzer:
     def __init__(self, config: dict = None, metrics: dict = None):
