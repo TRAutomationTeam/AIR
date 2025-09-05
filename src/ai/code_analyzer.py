@@ -10,6 +10,28 @@ import getpass
 # Dynamically set Ollama path for current user
 OLLAMA_PATH = os.environ.get('OLLAMA_PATH') or r'D:\Rajesh\Ollama\ollama.exe'
 
+def ensure_ollama_installed():
+    import subprocess, urllib.request, os
+    ollama_dir = os.path.dirname(OLLAMA_PATH)
+    installer_url = "https://ollama.com/download/OllamaInstaller.exe"
+    installer_path = os.path.join(ollama_dir, "OllamaInstaller.exe")
+    # Download and install Ollama if not present
+    if not os.path.exists(OLLAMA_PATH):
+        os.makedirs(ollama_dir, exist_ok=True)
+        print(f"[DEBUG] Downloading Ollama installer to {installer_path}")
+        urllib.request.urlretrieve(installer_url, installer_path)
+        print(f"[DEBUG] Running Ollama installer...")
+        subprocess.run([installer_path], check=True)
+    # Pull TinyLlama model if not present
+    try:
+        result = subprocess.run([OLLAMA_PATH, "list"], capture_output=True, text=True)
+        if "tinyllama" not in result.stdout:
+            print("[DEBUG] Pulling TinyLlama model...")
+            subprocess.run([OLLAMA_PATH, "pull", "tinyllama"], check=True)
+    except Exception as e:
+        print(f"[DEBUG] Error checking/pulling TinyLlama model: {e}")
+
+
 class AICodeAnalyzer:
     def __init__(self, config: dict = None, metrics: dict = None):
         self.config = config or {}
@@ -41,6 +63,7 @@ class AICodeAnalyzer:
 
         # Call TinyLlama via Ollama (must be running locally)
         try:
+            ensure_ollama_installed()
             if not os.path.exists(OLLAMA_PATH):
                 logging.error(f"Ollama executable not found at: {OLLAMA_PATH}")
                 return self._fallback_analysis(analysis_results)
