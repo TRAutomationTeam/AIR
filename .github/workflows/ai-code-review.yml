@@ -66,6 +66,8 @@ jobs:
         $env:LOG_LEVEL = "DEBUG"
         # Set DNS timeout
         $env:DNS_TIMEOUT = "30"
+        # Set Ollama path for CI/CD
+        $env:OLLAMA_PATH = "C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Ollama\ollama.exe"
         # Run the analysis with fallback mode enabled
         python src/main.py
         
