@@ -37,7 +37,11 @@ class AICodeAnalyzer:
 
         # Call TinyLlama via Ollama (must be running locally)
         try:
+            import os
             OLLAMA_PATH = r"C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Ollama\ollama.exe"
+            if not os.path.exists(OLLAMA_PATH):
+                logging.error(f"Ollama executable not found at: {OLLAMA_PATH}")
+                return self._fallback_analysis(analysis_results)
             result = subprocess.run([
                 OLLAMA_PATH, "run", "tinyllama", detailed_prompt
             ], capture_output=True, text=True, timeout=120)
