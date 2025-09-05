@@ -8,28 +8,11 @@ import re
 import getpass
 
 # Dynamically set Ollama path for current user
-OLLAMA_PATH = os.environ.get('OLLAMA_PATH') or r'D:\Rajesh\Ollama\ollama.exe'
 
-def ensure_ollama_installed():
-    import subprocess, urllib.request, os
-    ollama_dir = os.path.dirname(OLLAMA_PATH)
-    installer_url = "https://ollama.com/download/OllamaInstaller.exe"
-    installer_path = os.path.join(ollama_dir, "OllamaInstaller.exe")
-    # Download and install Ollama if not present
-    if not os.path.exists(OLLAMA_PATH):
-        os.makedirs(ollama_dir, exist_ok=True)
-        print(f"[DEBUG] Downloading Ollama installer to {installer_path}")
-        urllib.request.urlretrieve(installer_url, installer_path)
-        print(f"[DEBUG] Running Ollama installer...")
-        subprocess.run([installer_path], check=True)
-    # Pull TinyLlama model if not present
-    try:
-        result = subprocess.run([OLLAMA_PATH, "list"], capture_output=True, text=True)
-        if "tinyllama" not in result.stdout:
-            print("[DEBUG] Pulling TinyLlama model...")
-            subprocess.run([OLLAMA_PATH, "pull", "tinyllama"], check=True)
-    except Exception as e:
-        print(f"[DEBUG] Error checking/pulling TinyLlama model: {e}")
+# Open Arena API config
+
+OPEN_ARENA_API_URL = "https://aiopenarena.gcs.int.thomsonreuters.com/v1/inference"
+OPEN_ARENA_API_KEY = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJERTBPVEF3UVVVMk16Z3hPRUpGTkVSRk5qUkRNakkzUVVFek1qZEZOVEJCUkRVMlJrTTRSZyJ9.eyJodHRwczovL3RyLmNvbS9mZWRlcmF0ZWRfdXNlcl9pZCI6IkMyOTE4MjUiLCJodHRwczovL3RyLmNvbS9mZWRlcmF0ZWRfcHJvdmlkZXJfaWQiOiJUUlNTTyIsImh0dHBzOi8vdHIuY29tL2xpbmtlZF9kYXRhIjpbeyJzdWIiOiJvaWRjfHNzby1hdXRofFRSU1NPfGMyOTE4MjUifV0sImh0dHBzOi8vdHIuY29tL2V1aWQiOiIxNjY2YzdlMC0yYWJiLTQ3YzgtYWFlYi03ZTAxZGJhMmFmMDYiLCJodHRwczovL3RyLmNvbS9hc3NldElEIjoiYTIwODE5OSIsImlzcyI6Imh0dHBzOi8vYXV0aC50aG9tc29ucmV1dGVycy5jb20vIiwic3ViIjoiYXV0aDB8NjU3OTZiZmU2NGI3OWEyY2RjZDRlZjBhIiwiYXVkIjpbIjQ5ZDcwYTU4LTk1MDktNDhhMi1hZTEyLTRmNmUwMGNlYjI3MCIsImh0dHBzOi8vbWFpbi5jaWFtLnRob21zb25yZXV0ZXJzLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE3NTcwNjQyNTksImV4cCI6MTc1NzE1MDY1OSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImF6cCI6InRnVVZad1hBcVpXV0J5dXM5UVNQaTF5TnlvTjJsZmxJIn0.LYSIdmaSmJLgO2454RuN71dCTzeeizULt5t1T3DG6rCzbe4AzUtD5JAz0kvZSjchqJzU6e1pvOef0pV6IhSptkzzMf0XOBTqx8QQIaSacoSt_Mzt7DLCA8Byi_dNy5-Oy5n9NU18cDyuxDjAczSJFLO7HF35ewKi_fOVOBJgfo8tkeUeNNCumkI95ltGr2ySQ_GyLJpcJPYx7HIdj_-hazauYYxVy5NODxekHB7i4TU-OwYoHhdd_I_LVxmklUS3-IezbZ1uoFf6vWg6JyyU2s52was4UuoLLVe0sRRF_069P44A1zyghoDRX46P4AF2D6SyY7u4bQ1NLH3_cXKv3w"
 
 
 class AICodeAnalyzer:
@@ -39,8 +22,6 @@ class AICodeAnalyzer:
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
         """Use local TinyLlama (via Ollama) for enhanced analysis and AI suggestions"""
-        import subprocess
-        import sys
         violations = analysis_results.get('rules_violations', [])
         if not violations:
             violations = analysis_results.get('original_analysis', {}).get('rules_violations', [])
@@ -61,18 +42,22 @@ class AICodeAnalyzer:
         prompt_lines.append("For each issue above, provide a specific, actionable suggestion to resolve it. Format your response as a numbered list, mapping each suggestion to the corresponding issue.")
         detailed_prompt = "\n".join(prompt_lines)
 
-        # Call TinyLlama via Ollama (must be running locally)
+        # Call Open Arena API for AI suggestions
         try:
-            ensure_ollama_installed()
-            if not os.path.exists(OLLAMA_PATH):
-                logging.error(f"Ollama executable not found at: {OLLAMA_PATH}")
-                return self._fallback_analysis(analysis_results)
-            result = subprocess.run([
-                OLLAMA_PATH, "run", "tinyllama", detailed_prompt
-            ], capture_output=True, text=True, timeout=120)
-            if result.returncode == 0:
-                ai_text = result.stdout.strip()
-                suggestions = [line.strip() for line in ai_text.split('\n') if line.strip()]
+            payload = {
+                "workflow_id": "80f448d2-fd59-440f-ba24-ebc3014e1fdf",
+                "query": detailed_prompt,
+                "is_persistence_allowed": False
+            }
+            headers = {
+                "Authorization": f"Bearer {OPEN_ARENA_API_KEY}",
+                "Content-Type": "application/json"
+            }
+            response = requests.post(OPEN_ARENA_API_URL, headers=headers, json=payload, timeout=60)
+            if response.status_code == 200:
+                data = response.json()
+                answer = data.get("answer", "")
+                suggestions = [line.strip() for line in answer.split('\n') if line.strip()]
                 return {
                     'original_analysis': analysis_results,
                     'ai_insights': suggestions,
@@ -80,14 +65,14 @@ class AICodeAnalyzer:
                     'quality_score': 0,
                     'go_no_go_decision': 'REVIEW_REQUIRED',
                     'confidence': 0,
-                    'summary': 'AI suggestions generated by TinyLlama',
+                    'summary': 'AI suggestions generated by Open Arena',
                     'critical_issues': []
                 }
             else:
-                logging.error(f"TinyLlama (Ollama) call failed: {result.stderr}")
+                logging.error(f"Open Arena API call failed: {response.text}")
                 return self._fallback_analysis(analysis_results)
         except Exception as e:
-            logging.error(f"Error running TinyLlama (Ollama): {str(e)}")
+            logging.error(f"Error running Open Arena API: {str(e)}")
             return self._fallback_analysis(analysis_results)
 
     def _process_ai_results(self, ai_results: Dict, original_results: Dict) -> Dict[str, Any]:
