@@ -230,6 +230,6 @@ official_rules:
     recommendation: "Reduce the number of workflows to improve maintainability."
     type: custom
 
-  min_confidence: 0.7
-  report_format: "html"
-  output_dir: "src/AI Reports"
+min_confidence: 0.7
+report_format: "html"
+output_dir: "src/AI Reports"

@@ -33,31 +33,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r src/requirements.txt
 
-    - name: Configure DNS resolution
-      run: |
-        # Remove any existing DNS rules for the domain
-        Get-DnsClientNrptRule | Where-Object {$_.Namespace -eq ".thomsonreuters.com"} | Remove-DnsClientNrptRule -Force
-        
-        # Configure primary TR DNS servers
-        Add-DnsClientNrptRule -Namespace ".thomsonreuters.com" -NameServers "10.173.12.233","10.173.12.234" -ErrorAction Continue
-        Write-Host "Added TR DNS servers"
-        
-        # Add fallback DNS servers
-        Set-DnsClientServerAddress -InterfaceIndex (Get-NetAdapter | Where-Object {$_.Status -eq "Up"}).InterfaceIndex -ServerAddresses "10.173.12.233","10.173.12.234","8.8.8.8","8.8.4.4"
-        Write-Host "Added fallback DNS servers"
-        
-        # Clear and display DNS cache
-        ipconfig /flushdns
-        Write-Host "Flushed DNS cache"
-        
-        # Verify DNS settings
-        Get-DnsClientServerAddress | Format-List
-        Get-DnsClientNrptRule | Format-List
-        
-        # Test DNS resolution multiple times
-        Write-Host "Testing DNS resolution..."
-        $maxAttempts = 3
-        $delaySeconds = 5
         $success = $false
         
         for ($i = 1; $i -le $maxAttempts; $i++) {
