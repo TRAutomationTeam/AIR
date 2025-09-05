@@ -16,122 +16,29 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       
-    - name: Check and Setup CUDA
+    - name: System Check
       run: |
-        Write-Host "Checking CUDA installation..."
+        Write-Host "Checking system requirements..."
         
-        # Check if CUDA is already installed
-        $cudaPath = "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8"
-        $cudaExists = Test-Path $cudaPath
-        $nvccExists = Get-Command nvcc -ErrorAction SilentlyContinue
+        # Check system resources
+        $memory = (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB
+        $cpuCores = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors
         
-        if ($cudaExists -and $nvccExists) {
-            Write-Host "CUDA 11.8 is already installed and configured"
-            Write-Host "CUDA Path: $cudaPath"
-            Write-Host "NVCC Version: $((nvcc --version | Select-Object -First 1))"
+        Write-Host "System Memory: $([math]::Round($memory, 2)) GB"
+        Write-Host "CPU Cores: $cpuCores"
+        
+        # Check if we have enough resources for the model
+        if ($memory -lt 8) {
+            Write-Warning "Low memory detected. Performance might be affected."
+        }
+        
+        # Check for GPU (informational only)
+        $hasNvidiaGPU = Get-WmiObject Win32_VideoController | Where-Object { $_.Name -match 'NVIDIA' }
+        if ($hasNvidiaGPU) {
+            Write-Host "NVIDIA GPU detected: $($hasNvidiaGPU.Name)"
         } else {
-            Write-Host "Installing CUDA and cuDNN..."
-            
-            # Cache CUDA installer
-            $cudaCache = "C:\cuda_cache"
-            if (-not (Test-Path $cudaCache)) {
-                New-Item -Path $cudaCache -ItemType Directory -Force
-            }
-            
-            $cudaInstaller = Join-Path $cudaCache "cuda_installer.exe"
-            if (-not (Test-Path $cudaInstaller)) {
-                Write-Host "Downloading CUDA installer..."
-                $cudaUrl = "https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_522.06_windows.exe"
-                Invoke-WebRequest -Uri $cudaUrl -OutFile $cudaInstaller
-            } else {
-                Write-Host "Using cached CUDA installer"
-            }
-            
-            # Silent install CUDA
-            Write-Host "Installing CUDA..."
-            $process = Start-Process -FilePath $cudaInstaller -ArgumentList "-s" -PassThru -Wait
-            if ($process.ExitCode -ne 0) {
-                Write-Error "CUDA installation failed with exit code $($process.ExitCode)"
-                exit 1
-            }
+            Write-Host "No GPU detected. Using CPU mode."
         }
-        
-        # Ensure CUDA is in PATH
-        $currentPath = [System.Environment]::GetEnvironmentVariable("Path", [System.EnvironmentVariableTarget]::Machine)
-        if (-not $currentPath.Contains("CUDA")) {
-            $env:PATH = "C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.8\bin;$env:PATH"
-            Write-Host "Added CUDA to PATH"
-        }
-        
-        # Verify CUDA setup
-        Write-Host "Verifying CUDA setup..."
-        nvcc --version
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "CUDA verification failed"
-            exit 1
-        }
-        Write-Host "CUDA setup verified successfully"
-      shell: pwsh
-
-    - name: Check and Setup VS Build Tools
-      run: |
-        Write-Host "Checking Visual Studio Build Tools installation..."
-        
-        # Check if VS Build Tools are already installed
-        $buildToolsPath = "C:\BuildTools"
-        $vcvarsallPath = "C:\BuildTools\VC\Auxiliary\Build\vcvarsall.bat"
-        $buildToolsExists = Test-Path $vcvarsallPath
-        
-        if ($buildToolsExists) {
-            Write-Host "Visual Studio Build Tools are already installed"
-            Write-Host "Build Tools Path: $buildToolsPath"
-            
-            # Verify installation
-            cmd /c """$vcvarsallPath"" x64 && cl.exe 2>&1" | ForEach-Object { 
-                if ($_ -match "Microsoft.*C/C\+\+ Compiler") {
-                    Write-Host "Compiler version: $_"
-                }
-            }
-        } else {
-            Write-Host "Installing Visual Studio Build Tools..."
-            
-            # Cache VS Build Tools installer
-            $vsCache = "C:\vs_cache"
-            if (-not (Test-Path $vsCache)) {
-                New-Item -Path $vsCache -ItemType Directory -Force
-            }
-            
-            $vsInstaller = Join-Path $vsCache "vs_buildtools.exe"
-            if (-not (Test-Path $vsInstaller)) {
-                Write-Host "Downloading VS Build Tools installer..."
-                $vsUrl = "https://aka.ms/vs/17/release/vs_buildtools.exe"
-                Invoke-WebRequest -Uri $vsUrl -OutFile $vsInstaller
-            } else {
-                Write-Host "Using cached VS Build Tools installer"
-            }
-            
-            # Install VS Build Tools
-            Write-Host "Installing VS Build Tools..."
-            $process = Start-Process -Wait -FilePath $vsInstaller -ArgumentList `
-                "--quiet", "--wait", "--norestart", "--nocache", `
-                "--installPath", $buildToolsPath, `
-                "--add", "Microsoft.VisualStudio.Component.VC.Tools.x86.x64", `
-                "--add", "Microsoft.VisualStudio.Component.Windows10SDK.19041" `
-                -PassThru
-                
-            if ($process.ExitCode -ne 0) {
-                Write-Error "VS Build Tools installation failed with exit code $($process.ExitCode)"
-                exit 1
-            }
-        }
-        
-        # Verify Build Tools setup
-        Write-Host "Verifying VS Build Tools setup..."
-        if (-not (Test-Path $vcvarsallPath)) {
-            Write-Error "VS Build Tools verification failed - vcvarsall.bat not found"
-            exit 1
-        }
-        Write-Host "VS Build Tools setup verified successfully"
       shell: pwsh
 
     - name: Cache Ollama Model
@@ -294,11 +201,20 @@ jobs:
       with:
         python-version: '3.11'
         
-    - name: Install dependencies
+    - name: Setup Python Environment
       run: |
+        Write-Host "Setting up Python environment..."
+        
+        # Upgrade pip
         python -m pip install --upgrade pip
-        pip install torch==2.1.0 transformers==4.35.0 accelerate==0.24.0 sentencepiece==0.1.99 protobuf==4.24.4
+        
+        # Install only required packages (removed ML packages since Ollama handles that)
+        Write-Host "Installing Python dependencies..."
         pip install -r src/requirements.txt
+        
+        # Verify installations
+        Write-Host "Verifying Python packages..."
+        pip list
 
     - name: Configure DNS resolution
       run: |
