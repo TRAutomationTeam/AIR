@@ -3,17 +3,28 @@ import json
 from typing import Dict, List, Any
 import logging
 import re
-from gpt4all import GPT4All
+from langchain.llms import LlamaCpp
+from langchain.callbacks.manager import CallbackManager
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 class AICodeAnalyzer:
     def __init__(self, config: dict = None, metrics: dict = None):
         self.config = config or {}
         self.metrics = metrics or {}
-        model_path = os.path.join(os.path.dirname(__file__), "models", "ggml-gpt4all-j-v1.3-groovy.bin")
+        model_path = os.path.join(os.path.dirname(__file__), "models", "codellama-7b-instruct.Q4_0.gguf")
         
-        # Initialize lightweight model for code review
-        self.model = GPT4All(model_path)
-        logging.info("Using GPT4All for code analysis")
+        # Initialize model with minimal settings
+        callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
+        self.model = LlamaCpp(
+            model_path=model_path,
+            temperature=0.7,
+            max_tokens=2000,
+            n_ctx=2048,
+            callback_manager=callback_manager,
+            n_threads=4,  # Use fewer threads
+            n_gpu_layers=0  # CPU only
+        )
+        logging.info("Using LlamaCpp for code analysis")
         
     def _convert_analysis_results(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
         """Convert analysis results to our expected format."""
@@ -107,16 +118,9 @@ class AICodeAnalyzer:
             # Prepare input for the model
             input_text = f"{prompt}\n\n{chr(10).join(prompt_lines)}"
 
-            # Generate response using GPT4All
+            # Generate response using LlamaCpp
             logging.info("Generating analysis with local model")
-            response = self.model.generate(
-                input_text,
-                max_tokens=2048,
-                temp=0.7,
-                top_p=0.95,
-                n_predict=512,
-                streaming=False
-            )
+            response = self.model(input_text)
 
             try:
                 # Parse the LLM response

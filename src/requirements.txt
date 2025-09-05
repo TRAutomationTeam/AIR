@@ -2,4 +2,6 @@ requests
 gitpython
 jinja2
 pyyaml
-gpt4all
+langchain
+llama-cpp-python
+langchain-community

@@ -31,31 +31,42 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
+        cache: 'pip'
 
-    - name: Cache GPT4All Model
+    - name: Cache Python Dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/pip
+          %LocalAppData%\pip\Cache
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Cache Model
       id: cache-model
       uses: actions/cache@v3
       with:
         path: src/ai/models
-        key: gpt4all-j-v1.3-groovy-${{ runner.os }}
+        key: codellama-q4-${{ runner.os }}-${{ hashFiles('src/requirements.txt') }}
         restore-keys: |
-          gpt4all-j-v1.3-groovy-
+          codellama-q4-${{ runner.os }}-
 
     - name: Model Setup
       shell: pwsh
       run: >-
         $modelDir = "src/ai/models";
-        $modelPath = Join-Path $modelDir "ggml-gpt4all-j-v1.3-groovy.bin";
+        $modelPath = Join-Path $modelDir "codellama-7b-instruct.Q4_0.gguf";
         if (Test-Path $modelPath) {
-            Write-Host "Using cached GPT4All model...";
+            Write-Host "Using cached CodeLlama model...";
             Write-Host "Model location: $modelPath";
             Write-Host "Model size: $([math]::Round((Get-Item $modelPath).Length / 1MB, 2)) MB";
         } else {
-            Write-Host "Cache miss - Downloading GPT4All model...";
+            Write-Host "Cache miss - Downloading CodeLlama model...";
             if (-not (Test-Path $modelDir)) {
                 New-Item -ItemType Directory -Path $modelDir -Force;
             }
-            $modelUrl = "https://gpt4all.io/models/ggml-gpt4all-j-v1.3-groovy.bin";
+            $modelUrl = "https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_0.gguf";
             try {
                 $wc = New-Object System.Net.WebClient;
                 $wc.DownloadFile($modelUrl, $modelPath);
@@ -70,8 +81,13 @@ jobs:
       shell: pwsh
       run: >-
         Write-Host "Setting up Python environment...";
-        python -m pip install --upgrade pip;
-        pip install -r src/requirements.txt;
+        if (Test-Path "$env:LocalAppData\pip\Cache") {
+            Write-Host "Using cached pip dependencies";
+        } else {
+            Write-Host "Installing dependencies from scratch";
+            python -m pip install --upgrade pip;
+        }
+        pip install -r src/requirements.txt --no-deps --require-hashes;
         pip list;
 
     - name: Clean old reports
