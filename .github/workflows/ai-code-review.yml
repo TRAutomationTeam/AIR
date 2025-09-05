@@ -28,48 +28,87 @@ jobs:
 
     - name: Configure DNS resolution
       run: |
-        # Remove any existing DNS rules for the domain
-        Get-DnsClientNrptRule | Where-Object {$_.Namespace -eq ".thomsonreuters.com"} | Remove-DnsClientNrptRule -Force
+        Write-Host "Starting enhanced DNS configuration..."
         
-        # Configure primary TR DNS servers
-        Add-DnsClientNrptRule -Namespace ".thomsonreuters.com" -NameServers "10.173.12.233","10.173.12.234" -ErrorAction Continue
-        Write-Host "Added TR DNS servers"
+        # Remove existing DNS configurations
+        Get-DnsClientNrptRule | Remove-DnsClientNrptRule -Force
+        Write-Host "Cleared existing DNS rules"
         
-        # Add fallback DNS servers
-        Set-DnsClientServerAddress -InterfaceIndex (Get-NetAdapter | Where-Object {$_.Status -eq "Up"}).InterfaceIndex -ServerAddresses "10.173.12.233","10.173.12.234","8.8.8.8","8.8.4.4"
-        Write-Host "Added fallback DNS servers"
+        # Configure specific DNS rules for different TR domains
+        $rules = @(
+            @{
+                Namespace = ".thomsonreuters.com"
+                Servers = @("10.173.12.233", "10.173.12.234")
+            },
+            @{
+                Namespace = ".int.thomsonreuters.com"
+                Servers = @("10.173.12.233", "10.173.12.234")
+            },
+            @{
+                Namespace = ".gcs.int.thomsonreuters.com"
+                Servers = @("10.173.12.233", "10.173.12.234")
+            }
+        )
         
-        # Clear and display DNS cache
-        ipconfig /flushdns
-        Write-Host "Flushed DNS cache"
-        
-        # Verify DNS settings
-        Get-DnsClientServerAddress | Format-List
-        Get-DnsClientNrptRule | Format-List
-        
-        # Test DNS resolution multiple times
-        Write-Host "Testing DNS resolution..."
-        $maxAttempts = 3
-        $delaySeconds = 5
-        $success = $false
-        
-        for ($i = 1; $i -le $maxAttempts; $i++) {
+        foreach ($rule in $rules) {
             try {
-                $result = Resolve-DnsName -Name "aiopenarena.gcs.int.thomsonreuters.com" -Type A -ErrorAction Stop
-                Write-Host "DNS resolution successful on attempt $i"
-                Write-Host "Resolved IP: $($result.IPAddress)"
-                $success = $true
-                break
+                Add-DnsClientNrptRule -Namespace $rule.Namespace -NameServers $rule.Servers -ErrorAction Stop
+                Write-Host "Added DNS rule for $($rule.Namespace)"
             } catch {
-                Write-Host "DNS resolution attempt $i failed: $_"
-                if ($i -lt $maxAttempts) {
-                    Write-Host "Waiting $delaySeconds seconds before next attempt..."
-                    Start-Sleep -Seconds $delaySeconds
+                Write-Host "Warning: Failed to add rule for $($rule.Namespace): $_"
+            }
+        }
+        
+        # Configure network adapters
+        $adapters = Get-NetAdapter | Where-Object {$_.Status -eq "Up"}
+        foreach ($adapter in $adapters) {
+            try {
+                # Set primary DNS servers
+                Set-DnsClientServerAddress -InterfaceIndex $adapter.InterfaceIndex -ServerAddresses @("10.173.12.233", "10.173.12.234", "8.8.8.8", "8.8.4.4") -ErrorAction Stop
+                Write-Host "Configured DNS servers for adapter: $($adapter.Name)"
+            } catch {
+                Write-Host "Warning: Failed to configure DNS for adapter $($adapter.Name): $_"
+            }
+        }
+        
+        Write-Host "Flushing DNS cache..."
+        ipconfig /flushdns
+        
+        # Add hosts file entry as fallback
+        $hostEntry = "10.173.12.233 aiopenarena.gcs.int.thomsonreuters.com"
+        Add-Content -Path "$env:windir\System32\drivers\etc\hosts" -Value $hostEntry -ErrorAction Continue
+        Write-Host "Added hosts file entry as fallback"
+        
+        Write-Host "Verifying DNS configuration..."
+        Get-DnsClientServerAddress | Where-Object {$_.InterfaceAlias -notlike "*Loopback*"} | Format-Table -AutoSize
+        Get-DnsClientNrptRule | Format-List Namespace, NameServers
+        
+        Write-Host "Testing domain resolution..."
+        $testDomains = @(
+            "aiopenarena.gcs.int.thomsonreuters.com",
+            "gcs.int.thomsonreuters.com",
+            "int.thomsonreuters.com"
+        )
+        
+        foreach ($domain in $testDomains) {
+            Write-Host "`nTesting resolution for: $domain"
+            try {
+                $result = Resolve-DnsName -Name $domain -Type A -Server "10.173.12.233" -ErrorAction Stop
+                Write-Host "Successfully resolved using TR DNS: $($result.IPAddress)"
+            } catch {
+                Write-Host "Failed with TR DNS: $_"
+                try {
+                    $result = Resolve-DnsName -Name $domain -Type A -Server "8.8.8.8" -ErrorAction Stop
+                    Write-Host "Successfully resolved using Google DNS: $($result.IPAddress)"
+                } catch {
+                    Write-Host "Failed with Google DNS: $_"
                 }
             }
         }
         
-        # Continue even if DNS fails - we have local fallback
+        # Final validation
+        Write-Host "`nFinal connection test..."
+        Test-NetConnection -ComputerName aiopenarena.gcs.int.thomsonreuters.com -Port 443 -WarningAction SilentlyContinue
         
     - name: Clean old reports
       run: |
