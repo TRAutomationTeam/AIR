@@ -7,24 +7,17 @@ import logging
 import re
 
 class AICodeAnalyzer:
-    def __init__(self, ai_endpoint: str = None, api_key: str = None, model_name: str = None, config: dict = None, metrics: dict = None):
-        self.ai_endpoint = ai_endpoint
-        self.api_key = api_key
-        self.model_name = model_name or 'openai_gpt-4-turbo'
+    def __init__(self, config: dict = None, metrics: dict = None):
         self.config = config or {}
         self.metrics = metrics or {}
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
-        """Send workflow analyzer results to AI for enhanced analysis with targeted suggestions"""
-        workflow_id = "80f448d2-fd59-440f-ba24-ebc3014e1fdf"
-        endpoint = f"{self.ai_endpoint.rstrip('/')}/v1/inference"
-        logging.info(f"Making request to TR Arena API endpoint: {endpoint}")
-
-        # Prepare a detailed prompt listing all violations
+        """Use local TinyLlama (via Ollama) for enhanced analysis and AI suggestions"""
+        import subprocess
+        import sys
         violations = analysis_results.get('rules_violations', [])
         if not violations:
             violations = analysis_results.get('original_analysis', {}).get('rules_violations', [])
-        # Only include warnings and errors
         violations = [v for v in violations if v.get('Severity') in ('Warning', 'Error')]
 
         prompt_lines = [
@@ -42,114 +35,31 @@ class AICodeAnalyzer:
         prompt_lines.append("For each issue above, provide a specific, actionable suggestion to resolve it. Format your response as a numbered list, mapping each suggestion to the corresponding issue.")
         detailed_prompt = "\n".join(prompt_lines)
 
-        payload = {
-            "workflow_id": workflow_id,
-            "query": detailed_prompt,
-            "is_persistence_allowed": False,
-            "modelparams": {
-                self.model_name: {
-                    "system_prompt": "You are an experienced Software Developer. Respond in a professional manner.",
-                    "temperature": "0.7",
-                    "top_p": "0.9",
-                    "frequency_penalty": "0",
-                    "max_tokens": "1200",
-                    "presence_penalty": "0"
-                }
-            }
-        }
-        headers = {
-            'Authorization': f'Bearer {self.api_key}',
-            'Content-Type': 'application/json'
-        }
+        # Call TinyLlama via Ollama (must be running locally)
         try:
-            logging.debug(f"Request payload: {json.dumps(payload, indent=2)}")
-            logging.debug(f"Request headers: Authorization: Bearer ***{self.api_key[-4:] if self.api_key else 'None'}")
-            
-            # Get proxy settings from environment variables
-            proxies = {
-                'http': os.environ.get('HTTP_PROXY'),
-                'https': os.environ.get('HTTPS_PROXY')
-            }
-            
-            # Try to resolve the host first
-            import socket
-            try:
-                host = self.ai_endpoint.split('://')[1].split('/')[0]
-                logging.info(f"Attempting to resolve host: {host}")
-                ip = socket.gethostbyname(host)
-                logging.info(f"Host resolves to IP: {ip}")
-            except socket.gaierror as e:
-                logging.error(f"Failed to resolve host {host}: {str(e)}")
-                raise
-                
-            response = requests.post(
-                endpoint,
-                json=payload,
-                headers=headers,
-                timeout=120,
-                proxies=proxies,
-                verify=True  # Enable SSL verification
-            )
-            
-            logging.info(f"TR Arena API response status: {response.status_code}")
-            
-            if response.status_code == 200:
-                logging.info("TR Arena API request successful")
-                ai_results = response.json()
-                logging.info("TR Arena API response received")
-                logging.debug(f"API Response: {json.dumps(ai_results, indent=2)}")
-                result = self._process_ai_results(ai_results, analysis_results)
-                logging.info("TR Arena API results processed and combined with local analysis")
-                
-                # Process custom rules
-                custom_rules = [rule for rule in self.config.get('official_rules', []) if rule.get('type') == 'custom']
-                violations_list = result['original_analysis'].setdefault('rules_violations', [])
-                
-                for rule in custom_rules:
-                    metric = rule.get('metric')
-                    threshold = rule.get('threshold')
-                    if metric and threshold is not None:
-                        metric_value = analysis_results.get(metric, 0)
-                        if metric == "activities_count" and isinstance(metric_value, dict):
-                            for file_path, count in metric_value.items():
-                                if count > threshold:
-                                    if not any(v.get('RuleId') == rule['id'] and v.get('File') == file_path for v in violations_list):
-                                        recommendation = f"{rule.get('recommendation', '')} {file_path} has {count} activities (Threshold: {threshold})"
-                                        violations_list.append({
-                                            'RuleId': rule['id'],
-                                            'RuleName': rule.get('name', rule['id']),
-                                            'Severity': rule.get('severity', 'Error'),
-                                            'Recommendation': recommendation,
-                                            'File': file_path,
-                                            'FilePath': file_path,
-                                            'Count': count
-                                        })
-                        elif isinstance(metric_value, (int, float)) and metric_value > threshold:
-                            if not any(v.get('RuleId') == rule['id'] for v in violations_list):
-                                recommendation = f"{rule.get('recommendation', '')} Current count: {metric_value} (Threshold: {threshold})"
-                                violations_list.append({
-                                    'RuleId': rule['id'],
-                                    'RuleName': rule.get('name', rule['id']),
-                                    'Severity': rule.get('severity', 'Error'),
-                                    'Recommendation': recommendation,
-                                    'File': '',
-                                    'FilePath': '',
-                                    'Count': metric_value
-                                })
-                return result
-            
-            logging.error(f"TR Arena API request failed with status {response.status_code}")
-            logging.error(f"Response text: {response.text[:500]}...")
-            return self._fallback_analysis(analysis_results)
-            
-        except requests.exceptions.RequestException as e:
-            logging.error(f"Network error connecting to TR Arena API: {str(e)}")
-            return self._fallback_analysis(analysis_results)
-        except json.JSONDecodeError as e:
-            logging.error(f"Failed to parse TR Arena API response: {str(e)}")
-            return self._fallback_analysis(analysis_results)
+            result = subprocess.run([
+                "ollama", "run", "tinyllama", detailed_prompt
+            ], capture_output=True, text=True, timeout=120)
+            if result.returncode == 0:
+                ai_text = result.stdout.strip()
+                # Parse suggestions into a list
+                suggestions = [line.strip() for line in ai_text.split('\n') if line.strip()]
+                # Use the same reporting structure
+                return {
+                    'original_analysis': analysis_results,
+                    'ai_insights': suggestions,
+                    'recommendations': suggestions,
+                    'quality_score': 0,
+                    'go_no_go_decision': 'REVIEW_REQUIRED',
+                    'confidence': 0,
+                    'summary': 'AI suggestions generated by TinyLlama',
+                    'critical_issues': []
+                }
+            else:
+                logging.error(f"TinyLlama (Ollama) call failed: {result.stderr}")
+                return self._fallback_analysis(analysis_results)
         except Exception as e:
-            logging.error(f"Unexpected error in TR Arena API call: {str(e)}")
+            logging.error(f"Error running TinyLlama (Ollama): {str(e)}")
             return self._fallback_analysis(analysis_results)
 
     def _process_ai_results(self, ai_results: Dict, original_results: Dict) -> Dict[str, Any]:

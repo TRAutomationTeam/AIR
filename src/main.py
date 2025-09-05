@@ -48,15 +48,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
 
     # ...existing analysis code...
     # Setup analyzer and report generator
-    ai_arena_cfg = config.get('ai_arena', {})
-    ai_arena_api_key = ai_arena_cfg.get('api_key')
-    ai_arena_endpoint = ai_arena_cfg.get('endpoint')
-    model_name = "openai_gpt-4-turbo"
-
     ai_analyzer = AICodeAnalyzer(
-        ai_endpoint=ai_arena_endpoint,
-        api_key=ai_arena_api_key,
-        model_name=model_name,
         config=config,
         metrics={}
     )
