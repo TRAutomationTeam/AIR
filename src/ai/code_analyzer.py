@@ -37,8 +37,9 @@ class AICodeAnalyzer:
 
         # Call TinyLlama via Ollama (must be running locally)
         try:
+            OLLAMA_PATH = r"C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Ollama\ollama app.exe"
             result = subprocess.run([
-                "ollama", "run", "tinyllama", detailed_prompt
+                OLLAMA_PATH, "run", "tinyllama", detailed_prompt
             ], capture_output=True, text=True, timeout=120)
             if result.returncode == 0:
                 ai_text = result.stdout.strip()
