@@ -140,5 +140,12 @@ def cleanup_old_reports(report_dir):
 if __name__ == "__main__":
     repo_path = normalize_path(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
     report_dir = normalize_path(os.path.join(repo_path, 'src', 'AI Reports'))
+    # Debug Ollama path existence before analysis
+    try:
+        from ai.code_analyzer import OLLAMA_PATH
+        print("[DEBUG] Checking Ollama path:", OLLAMA_PATH)
+        print("[DEBUG] Exists?", os.path.exists(OLLAMA_PATH))
+    except Exception as e:
+        print(f"[DEBUG] Could not import OLLAMA_PATH: {e}")
     cleanup_old_reports(report_dir)
     analyze_repository(repo_path)
