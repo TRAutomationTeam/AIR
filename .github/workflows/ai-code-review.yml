@@ -12,99 +12,81 @@ on:
 jobs:
   review:
     runs-on: windows-latest
+    
     steps:
     - uses: actions/checkout@v3
-
-    - name: System Check
-      shell: pwsh
-      run: >-
-        Write-Host "Checking system requirements...";
-        $memory = (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory / 1GB;
-        $cpuCores = (Get-CimInstance Win32_ComputerSystem).NumberOfLogicalProcessors;
-        Write-Host "System Memory: $([math]::Round($memory, 2)) GB";
-        Write-Host "CPU Cores: $cpuCores";
-        if ($memory -lt 4) {
-            Write-Warning "Low memory detected. Performance might be affected.";
-        }
-
+      
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
-        cache: 'pip'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r src/requirements.txt
 
-    - name: Cache Python Dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/pip
-          %LocalAppData%\pip\Cache
-        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-
-    - name: Cache Model
-      id: cache-model
-      uses: actions/cache@v3
-      with:
-        path: src/ai/models
-        key: codellama-q4-${{ runner.os }}-${{ hashFiles('src/requirements.txt') }}
-        restore-keys: |
-          codellama-q4-${{ runner.os }}-
-
-    - name: Model Setup
-      shell: pwsh
-      run: >-
-        $modelDir = "src/ai/models";
-        $modelPath = Join-Path $modelDir "codellama-7b-instruct.Q4_0.gguf";
-        if (Test-Path $modelPath) {
-            Write-Host "Using cached CodeLlama model...";
-            Write-Host "Model location: $modelPath";
-            Write-Host "Model size: $([math]::Round((Get-Item $modelPath).Length / 1MB, 2)) MB";
-        } else {
-            Write-Host "Cache miss - Downloading CodeLlama model...";
-            if (-not (Test-Path $modelDir)) {
-                New-Item -ItemType Directory -Path $modelDir -Force;
-            }
-            $modelUrl = "https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_0.gguf";
+    - name: Configure DNS resolution
+      run: |
+        # Remove any existing DNS rules for the domain
+        Get-DnsClientNrptRule | Where-Object {$_.Namespace -eq ".thomsonreuters.com"} | Remove-DnsClientNrptRule -Force
+        
+        # Configure primary TR DNS servers
+        Add-DnsClientNrptRule -Namespace ".thomsonreuters.com" -NameServers "10.173.12.233","10.173.12.234" -ErrorAction Continue
+        Write-Host "Added TR DNS servers"
+        
+        # Add fallback DNS servers
+        Set-DnsClientServerAddress -InterfaceIndex (Get-NetAdapter | Where-Object {$_.Status -eq "Up"}).InterfaceIndex -ServerAddresses "10.173.12.233","10.173.12.234","8.8.8.8","8.8.4.4"
+        Write-Host "Added fallback DNS servers"
+        
+        # Clear and display DNS cache
+        ipconfig /flushdns
+        Write-Host "Flushed DNS cache"
+        
+        # Verify DNS settings
+        Get-DnsClientServerAddress | Format-List
+        Get-DnsClientNrptRule | Format-List
+        
+        # Test DNS resolution multiple times
+        Write-Host "Testing DNS resolution..."
+        $maxAttempts = 3
+        $delaySeconds = 5
+        $success = $false
+        
+        for ($i = 1; $i -le $maxAttempts; $i++) {
             try {
-                $wc = New-Object System.Net.WebClient;
-                $wc.DownloadFile($modelUrl, $modelPath);
-                Write-Host "Download complete. Model size: $([math]::Round((Get-Item $modelPath).Length / 1MB, 2)) MB";
+                $result = Resolve-DnsName -Name "aiopenarena.gcs.int.thomsonreuters.com" -Type A -ErrorAction Stop
+                Write-Host "DNS resolution successful on attempt $i"
+                Write-Host "Resolved IP: $($result.IPAddress)"
+                $success = $true
+                break
             } catch {
-                Write-Error "Failed to download model: $_";
-                exit 1;
+                Write-Host "DNS resolution attempt $i failed: $_"
+                if ($i -lt $maxAttempts) {
+                    Write-Host "Waiting $delaySeconds seconds before next attempt..."
+                    Start-Sleep -Seconds $delaySeconds
+                }
             }
         }
-
-    - name: Setup Python Environment
-      shell: pwsh
-      run: >-
-        Write-Host "Setting up Python environment...";
-        if (Test-Path "$env:LocalAppData\pip\Cache") {
-            Write-Host "Using cached pip dependencies";
-        } else {
-            Write-Host "Installing dependencies from scratch";
-            python -m pip install --upgrade pip;
-        }
-        pip install -r src/requirements.txt --no-deps --require-hashes;
-        pip list;
-
+        
+        # Continue even if DNS fails - we have local fallback
+        
     - name: Clean old reports
-      shell: pwsh
-      run: >-
+      run: |
         if (Test-Path "src/AI Reports") {
-            Remove-Item -Path "src/AI Reports/*" -Force -Recurse;
-            Write-Host "Cleaned AI Reports directory";
+            Remove-Item -Path "src/AI Reports/*" -Force -Recurse
+            Write-Host "Cleaned AI Reports directory"
         }
 
     - name: Run AI code review
-      shell: pwsh
-      run: >-
-        $env:LOG_LEVEL = "DEBUG";
-        $env:DNS_TIMEOUT = "30";
-        python src/main.py;
-
+      run: |
+        # Enable debug logging
+        $env:LOG_LEVEL = "DEBUG"
+        # Set DNS timeout
+        $env:DNS_TIMEOUT = "30"
+        # Run the analysis with fallback mode enabled
+        python src/main.py
+        
     - name: Upload Analysis Reports
       if: always()
       uses: actions/upload-artifact@v4

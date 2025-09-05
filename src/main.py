@@ -27,16 +27,16 @@ def normalize_path(path):
 # ...existing environment variable mapping and imports...
 
 def analyze_repository(repo_path: str, commit_sha: str = None):
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)s %(message)s')
     """Analyzes entire repository for UiPath files"""
-    logging.info(f"Starting AI analysis for repository: {repo_path}")
 
-    # Load config from settings.txt
+    # Load config from settings.txt (now in src/config)
     repo_path = normalize_path(repo_path)
     config_path = normalize_path(os.path.join(repo_path, 'src', 'config', 'settings.txt'))
     with open(config_path, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
-
-    logging.info("Finding UiPath project files...")
+    
+    # ...existing config loading code...
 
     logging.info(f"Starting AI analysis for repository: {repo_path}")
     repo = git.Repo(repo_path)
@@ -48,7 +48,15 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
 
     # ...existing analysis code...
     # Setup analyzer and report generator
+    ai_arena_cfg = config.get('ai_arena', {})
+    ai_arena_api_key = ai_arena_cfg.get('api_key')
+    ai_arena_endpoint = ai_arena_cfg.get('endpoint')
+    model_name = "openai_gpt-4-turbo"
+
     ai_analyzer = AICodeAnalyzer(
+        ai_endpoint=ai_arena_endpoint,
+        api_key=ai_arena_api_key,
+        model_name=model_name,
         config=config,
         metrics={}
     )
