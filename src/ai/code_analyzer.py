@@ -7,99 +7,147 @@ import logging
 import re
 
 class AICodeAnalyzer:
-    def __init__(self, ai_endpoint: str = None, api_key: str = None, model_name: str = None, config: dict = None, metrics: dict = None):
-        self.ai_endpoint = ai_endpoint
-        self.api_key = api_key
-        self.model_name = model_name or 'openai_gpt-4-turbo'
+    def __init__(self, config: dict = None, metrics: dict = None):
         self.config = config or {}
         self.metrics = metrics or {}
+        self.ollama_endpoint = "http://localhost:11434/api/generate"
+        self.model = "codellama:7b-code"
+        
+    def _convert_ollama_results(self, analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Convert Ollama analysis results to our expected format."""
+        violations = []
+        
+        # Convert issues
+        for idx, issue in enumerate(analysis.get('issues', [])):
+            violations.append({
+                'RuleId': f'OLLM-ISS-{idx:03d}',
+                'RuleName': 'Code Issue',
+                'Severity': issue.get('severity', 'Warning'),
+                'Description': issue.get('description', ''),
+                'Recommendation': 'Fix the identified issue',
+                'Line': issue.get('line', '')
+            })
+            
+        # Convert violations
+        for idx, violation in enumerate(analysis.get('violations', [])):
+            violations.append({
+                'RuleId': f'OLLM-VIO-{idx:03d}',
+                'RuleName': violation.get('rule', 'Best Practice Violation'),
+                'Severity': 'Warning',
+                'Description': violation.get('description', ''),
+                'Recommendation': violation.get('recommendation', '')
+            })
+            
+        # Convert security issues
+        for idx, sec in enumerate(analysis.get('security', [])):
+            violations.append({
+                'RuleId': f'OLLM-SEC-{idx:03d}',
+                'RuleName': 'Security Issue',
+                'Severity': sec.get('severity', 'Error'),
+                'Description': sec.get('description', ''),
+                'Recommendation': sec.get('mitigation', '')
+            })
+            
+        # Convert performance issues
+        for idx, perf in enumerate(analysis.get('performance', [])):
+            violations.append({
+                'RuleId': f'OLLM-PERF-{idx:03d}',
+                'RuleName': 'Performance Issue',
+                'Severity': 'Warning' if perf.get('impact') == 'Low' else 'Error',
+                'Description': perf.get('description', ''),
+                'Recommendation': perf.get('solution', '')
+            })
+            
+        return violations
+        
+    def _get_system_prompt(self) -> str:
+        """Get system prompt for code analysis."""
+        return """
+        You are an expert UiPath code reviewer. Analyze the workflow and provide:
+        1. List of issues found (with severity)
+        2. Best practices violations
+        3. Security concerns
+        4. Performance improvements
+        5. Code quality recommendations
+        
+        Format your response as JSON with the following structure:
+        {
+            "issues": [{"severity": "Error|Warning", "description": "...", "line": "..."}],
+            "violations": [{"rule": "...", "description": "...", "recommendation": "..."}],
+            "security": [{"severity": "...", "description": "...", "mitigation": "..."}],
+            "performance": [{"impact": "High|Medium|Low", "description": "...", "solution": "..."}],
+            "quality": [{"category": "...", "recommendation": "..."}]
+        }
+        """
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
-        """Send workflow analyzer results to AI for enhanced analysis with targeted suggestions"""
-        workflow_id = "80f448d2-fd59-440f-ba24-ebc3014e1fdf"
-        endpoint = f"{self.ai_endpoint.rstrip('/')}/v1/inference"
-        logging.info(f"Making request to TR Arena API endpoint: {endpoint}")
+        """Analyze workflow results using local Ollama instance"""
+        logging.info("Starting Ollama-based analysis")
 
-        # Prepare a detailed prompt listing all violations
-        violations = analysis_results.get('rules_violations', [])
-        if not violations:
-            violations = analysis_results.get('original_analysis', {}).get('rules_violations', [])
-        # Only include warnings and errors
-        violations = [v for v in violations if v.get('Severity') in ('Warning', 'Error')]
-
-        prompt_lines = [
-            "You are an expert UiPath code reviewer. Here are the warnings and errors found in my UiPath workflows:",
-            ""
-        ]
-        for v in violations:
-            rule_id = v.get('RuleId', 'Unknown')
-            rule_name = v.get('RuleName', '')
-            severity = v.get('Severity', '')
-            recommendation = v.get('Recommendation', '')
-            file = v.get('File', v.get('FilePath', ''))
-            prompt_lines.append(f"- [{severity}] {rule_id} ({rule_name}) in {file}: {recommendation}")
-        prompt_lines.append("")
-        prompt_lines.append("For each issue above, provide a specific, actionable suggestion to resolve it. Format your response as a numbered list, mapping each suggestion to the corresponding issue.")
-        detailed_prompt = "\n".join(prompt_lines)
-
-        payload = {
-            "workflow_id": workflow_id,
-            "query": detailed_prompt,
-            "is_persistence_allowed": False,
-            "modelparams": {
-                self.model_name: {
-                    "system_prompt": "You are an experienced Software Developer. Respond in a professional manner.",
-                    "temperature": "0.7",
-                    "top_p": "0.9",
-                    "frequency_penalty": "0",
-                    "max_tokens": "1200",
-                    "presence_penalty": "0"
-                }
-            }
-        }
-        headers = {
-            'Authorization': f'Bearer {self.api_key}',
-            'Content-Type': 'application/json'
-        }
         try:
-            logging.debug(f"Request payload: {json.dumps(payload, indent=2)}")
-            logging.debug(f"Request headers: Authorization: Bearer ***{self.api_key[-4:] if self.api_key else 'None'}")
-            
-            # Get proxy settings from environment variables
-            proxies = {
-                'http': os.environ.get('HTTP_PROXY'),
-                'https': os.environ.get('HTTPS_PROXY')
+            # Prepare violations for analysis
+            violations = analysis_results.get('rules_violations', [])
+            if not violations:
+                violations = analysis_results.get('original_analysis', {}).get('rules_violations', [])
+            violations = [v for v in violations if v.get('Severity') in ('Warning', 'Error')]
+
+            # Create analysis request
+            prompt = self._get_system_prompt()
+            prompt_lines = ["### Current Analysis Results:"]
+            for v in violations:
+                rule_id = v.get('RuleId', 'Unknown')
+                rule_name = v.get('RuleName', '')
+                severity = v.get('Severity', '')
+                recommendation = v.get('Recommendation', '')
+                file = v.get('File', v.get('FilePath', ''))
+                prompt_lines.append(f"- [{severity}] {rule_id} ({rule_name}) in {file}: {recommendation}")
+
+            # Create the Ollama request
+            payload = {
+                "model": self.model,
+                "prompt": f"{prompt}\n\n{chr(10).join(prompt_lines)}",
+                "stream": False,
+                "temperature": 0.7,
+                "top_p": 0.9,
+                "max_tokens": 2000
             }
-            
-            # Try to resolve the host first
-            import socket
-            try:
-                host = self.ai_endpoint.split('://')[1].split('/')[0]
-                logging.info(f"Attempting to resolve host: {host}")
-                ip = socket.gethostbyname(host)
-                logging.info(f"Host resolves to IP: {ip}")
-            except socket.gaierror as e:
-                logging.error(f"Failed to resolve host {host}: {str(e)}")
-                raise
-                
-            response = requests.post(
-                endpoint,
-                json=payload,
-                headers=headers,
-                timeout=120,
-                proxies=proxies,
-                verify=True  # Enable SSL verification
-            )
-            
-            logging.info(f"TR Arena API response status: {response.status_code}")
-            
+
+            # Make request to local Ollama
+            logging.info("Sending request to Ollama")
+            response = requests.post(self.ollama_endpoint, json=payload)
+
             if response.status_code == 200:
-                logging.info("TR Arena API request successful")
-                ai_results = response.json()
-                logging.info("TR Arena API response received")
-                logging.debug(f"API Response: {json.dumps(ai_results, indent=2)}")
-                result = self._process_ai_results(ai_results, analysis_results)
-                logging.info("TR Arena API results processed and combined with local analysis")
+                logging.info("Ollama analysis completed successfully")
+                result = response.json()
+                
+                try:
+                    # Parse the LLM response
+                    analysis = json.loads(result['response'])
+                    
+                    # Convert to our expected format
+                    return {
+                        'enhanced_analysis': True,
+                        'rules_violations': self._convert_ollama_results(analysis),
+                        'original_analysis': analysis_results,
+                        'summary': {
+                            'total_issues': len(analysis.get('issues', [])),
+                            'total_violations': len(analysis.get('violations', [])),
+                            'security_concerns': len(analysis.get('security', [])),
+                            'performance_issues': len(analysis.get('performance', [])),
+                            'quality_recommendations': len(analysis.get('quality', []))
+                        }
+                    }
+                except json.JSONDecodeError as e:
+                    logging.error(f"Failed to parse Ollama response: {str(e)}")
+                    return analysis_results
+            else:
+                logging.error(f"Ollama request failed with status {response.status_code}")
+                return analysis_results
+
+        except Exception as e:
+            logging.error(f"Error during Ollama analysis: {str(e)}")
+            return analysis_results
+
                 
                 # Process custom rules
                 custom_rules = [rule for rule in self.config.get('official_rules', []) if rule.get('type') == 'custom']
