@@ -5,6 +5,10 @@ import json
 from typing import Dict, List, Any
 import logging
 import re
+import getpass
+
+# Dynamically set Ollama path for current user
+OLLAMA_PATH = os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Programs', 'Ollama', 'ollama.exe')
 
 class AICodeAnalyzer:
     def __init__(self, config: dict = None, metrics: dict = None):
@@ -37,8 +41,6 @@ class AICodeAnalyzer:
 
         # Call TinyLlama via Ollama (must be running locally)
         try:
-            import os
-            OLLAMA_PATH = r"C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Ollama\ollama.exe"
             if not os.path.exists(OLLAMA_PATH):
                 logging.error(f"Ollama executable not found at: {OLLAMA_PATH}")
                 return self._fallback_analysis(analysis_results)
@@ -47,9 +49,7 @@ class AICodeAnalyzer:
             ], capture_output=True, text=True, timeout=120)
             if result.returncode == 0:
                 ai_text = result.stdout.strip()
-                # Parse suggestions into a list
                 suggestions = [line.strip() for line in ai_text.split('\n') if line.strip()]
-                # Use the same reporting structure
                 return {
                     'original_analysis': analysis_results,
                     'ai_insights': suggestions,
