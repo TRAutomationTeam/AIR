@@ -74,7 +74,8 @@ class ReportGenerator:
             'quality_metrics': self._calculate_metrics(analysis_results),
             'recommendations': analysis_results.get('recommendations', []),
             'ai_insights': analysis_results.get('ai_insights', []),
-            'next_steps': self._generate_next_steps({'go_no_go_decision': decision})
+            'next_steps': self._generate_next_steps({'go_no_go_decision': decision}),
+            'original_analysis': analysis_results.get('original_analysis', {})
         }
         logging.info("Generating HTML report...")
         html_report = self._generate_html_report(report_data)

@@ -75,6 +75,7 @@ class AICodeAnalyzer:
                     logging.info(f"[LiteLLM API] Payload: {json.dumps(payload)}")
                     response = requests.post(api_url, headers=headers, json=payload, timeout=60)
                     logging.info(f"[LiteLLM API] Response status: {response.status_code}")
+                    logging.info(f"[LiteLLM API] Response headers: {response.headers}")
                     logging.info(f"[LiteLLM API] Response body: {response.text}")
                     if response.status_code == 200:
                         try:
