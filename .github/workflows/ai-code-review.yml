@@ -13,7 +13,7 @@ jobs:
   review:
     runs-on: self-hosted
     env:
-      PATH: C:\Python311;$PATH
+      PATH: C:\Python311
     steps:
       - name: Checkout code to shortest path
         uses: actions/checkout@v3
