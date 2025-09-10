@@ -2,30 +2,35 @@ from typing import Dict, List, Any
 import json
 import logging
 
-def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
-    """Analyze XAML content for UiPath best practices and rules."""
-    import re
-    violations = []
-    # Load official rules from settings.txt
-    import yaml
-    import os
+_RULES_CACHE: dict | None = None
+_RULES_PATH: str | None = None
+
+def _load_rules(any_file_path: str):
+    global _RULES_CACHE, _RULES_PATH
+    if _RULES_CACHE is not None:
+        return _RULES_CACHE
+    import yaml, os
     from pathlib import Path
-    
-    # First try to get config from the project root
-    repo_root = Path(file_path).resolve()
+    probe = Path(any_file_path).resolve()
+    repo_root = probe
     while repo_root.parent != repo_root:
         if (repo_root / '.git').exists():
             break
         repo_root = repo_root.parent
-
     config_path = repo_root / 'src' / 'config' / 'settings.txt'
     if not config_path.exists():
-        # Fallback to relative path from module
         config_path = Path(os.path.join(os.path.dirname(__file__), '..', 'config', 'settings.txt'))
-    
+    _RULES_PATH = str(config_path)
     logging.info(f"Loading rules from: {config_path}")
     with open(config_path, 'r', encoding='utf-8') as f:
-        config = yaml.safe_load(f)
+        _RULES_CACHE = yaml.safe_load(f) or {}
+    return _RULES_CACHE
+
+def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
+    """Analyze XAML content for UiPath best practices and rules."""
+    import re
+    violations = []
+    config = _load_rules(file_path)
     official_rules = config.get('official_rules', [])
 
     for rule in official_rules:
@@ -79,6 +84,7 @@ def _analyze_xaml_content(xaml_content: str, file_path: str) -> List[Dict]:
                         'Count': metric_value
                     })
 
+    # Filter severities configurable later; keep existing behavior
     violations[:] = [v for v in violations if v['Severity'] in ('Error', 'Warning')]
     return violations
 

@@ -1,5 +1,3 @@
-litellm_api_key: sk-HZA9TcyLrYcGRQmvbcrRYACopy
-litellm_api_url: https://litellm.int.thomsonreuters.com
 official_rules:
   - id: "AT-WFC-002"
     name: "High Activities Count"
@@ -235,3 +233,7 @@ official_rules:
 min_confidence: 0.7
 report_format: "html"
 output_dir: "src/AI Reports"
+
+# LiteLLM API configuration (added for AI suggestions)
+litellm_api_key: sk-HZA9TcyLrYcGRQmvbcrRYACopy
+litellm_api_url: https://litellm.int.thomsonreuters.com

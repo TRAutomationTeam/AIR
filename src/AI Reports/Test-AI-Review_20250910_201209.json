@@ -1,0 +1,1025 @@
+{
+  "decision": "NO_GO",
+  "quality_score": 0,
+  "total_violations": 124,
+  "critical_issues": 75,
+  "confidence": 0,
+  "summary": "Analysis based on local rules only",
+  "recommendations_count": 0,
+  "timestamp": "2025-09-10T20:12:09.599814",
+  "violations": [
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Main.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Main.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-007",
+      "RuleName": "Missing Comments",
+      "Severity": "Warning",
+      "Description": "Pattern 'Comment' found in workflow.",
+      "Recommendation": "Add comments to explain complex logic.",
+      "File": "TR_Sanity_TaxCaddy\\Main.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-008",
+      "RuleName": "Hardcoded Values",
+      "Severity": "Warning",
+      "Description": "Pattern 'Config.xlsx' found in workflow.",
+      "Recommendation": "Move hardcoded values to configuration files.",
+      "File": "TR_Sanity_TaxCaddy\\Main.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Main.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Main.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 90, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Main.xaml",
+      "Count": 90
+    },
+    {
+      "RuleId": "AT-WFC-001",
+      "RuleName": "High Workflow Count",
+      "Severity": "Error",
+      "Description": "High Workflow Count check failed. Found 17, threshold is 5",
+      "Recommendation": "Reduce the number of workflows to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Main.xaml",
+      "Count": 17
+    },
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 86, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Count": 86
+    },
+    {
+      "RuleId": "AT-WFC-001",
+      "RuleName": "High Workflow Count",
+      "Severity": "Error",
+      "Description": "High Workflow Count check failed. Found 13, threshold is 5",
+      "Recommendation": "Reduce the number of workflows to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Data Service Report\\TestSummary_DataService_CRUD.xaml",
+      "Count": 13
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\CloseAllApplications.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\CloseAllApplications.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\GetTransactionData.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllApplications.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllApplications.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 14, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllProcessInputs.xaml",
+      "Count": 14
+    },
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-008",
+      "RuleName": "Hardcoded Values",
+      "Severity": "Warning",
+      "Description": "Pattern 'Config.xlsx' found in workflow.",
+      "Recommendation": "Move hardcoded values to configuration files.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 12, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "Count": 12
+    },
+    {
+      "RuleId": "AT-WFC-001",
+      "RuleName": "High Workflow Count",
+      "Severity": "Error",
+      "Description": "High Workflow Count check failed. Found 11, threshold is 5",
+      "Recommendation": "Reduce the number of workflows to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\InitAllSettings.xaml",
+      "Count": 11
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\KillAllProcesses.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\KillAllProcesses.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\Process.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-018",
+      "RuleName": "Flow Control",
+      "Severity": "Warning",
+      "Description": "Pattern 'Flow Decision' found in workflow.",
+      "Recommendation": "Ensure proper flow control structure.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\Process.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\Process.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\Process.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 16, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\Process.xaml",
+      "Count": 16
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-008",
+      "RuleName": "Hardcoded Values",
+      "Severity": "Warning",
+      "Description": "Pattern 'Config.xlsx' found in workflow.",
+      "Recommendation": "Move hardcoded values to configuration files.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\RetryCurrentTransaction.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 53, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Count": 53
+    },
+    {
+      "RuleId": "AT-WFC-001",
+      "RuleName": "High Workflow Count",
+      "Severity": "Error",
+      "Description": "High Workflow Count check failed. Found 19, threshold is 5",
+      "Recommendation": "Reduce the number of workflows to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\SetTransactionStatus.xaml",
+      "Count": 19
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\TakeScreenshot.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\TakeScreenshot.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Framework\\TakeScreenshot.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 36, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Client Creation.xaml",
+      "Count": 36
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml"
+    },
+    {
+      "RuleId": "UI-PRF-001",
+      "RuleName": "Performance Impact",
+      "Severity": "Warning",
+      "Description": "Pattern 'Delay' found in workflow.",
+      "Recommendation": "Review and optimize delay times.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 23, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\GetBinderStatus.xaml",
+      "Count": 23
+    },
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-007",
+      "RuleName": "Missing Comments",
+      "Severity": "Warning",
+      "Description": "Pattern 'Comment' found in workflow.",
+      "Recommendation": "Add comments to explain complex logic.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml"
+    },
+    {
+      "RuleId": "UI-PRF-001",
+      "RuleName": "Performance Impact",
+      "Severity": "Warning",
+      "Description": "Pattern 'Delay' found in workflow.",
+      "Recommendation": "Review and optimize delay times.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml"
+    },
+    {
+      "RuleId": "ST-DBP-021",
+      "RuleName": "Hardcoded Timeout",
+      "Severity": "Warning",
+      "Description": "Pattern 'Timeout=\"[0-9]+\"' found in workflow.",
+      "Recommendation": "Use config/arguments for timeout values.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 28, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\IndexTree_Exxon mobil page.xaml",
+      "Count": 28
+    },
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-007",
+      "RuleName": "Missing Comments",
+      "Severity": "Warning",
+      "Description": "Pattern 'Comment' found in workflow.",
+      "Recommendation": "Add comments to explain complex logic.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml"
+    },
+    {
+      "RuleId": "ST-DBP-021",
+      "RuleName": "Hardcoded Timeout",
+      "Severity": "Warning",
+      "Description": "Pattern 'Timeout=\"[0-9]+\"' found in workflow.",
+      "Recommendation": "Use config/arguments for timeout values.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 32, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Sanity_IndexTreeAssociation.xaml",
+      "Count": 32
+    },
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 38, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\SubmissionWizard.xaml",
+      "Count": 38
+    },
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-007",
+      "RuleName": "Missing Comments",
+      "Severity": "Warning",
+      "Description": "Pattern 'Comment' found in workflow.",
+      "Recommendation": "Add comments to explain complex logic.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 28, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\ThumbnailPageAssociation.xaml",
+      "Count": 28
+    },
+    {
+      "RuleId": "UI-DBP-006",
+      "RuleName": "Missing Exception Handling",
+      "Severity": "Error",
+      "Description": "Pattern 'TryCatch' found in workflow.",
+      "Recommendation": "Add TryCatch blocks for proper exception handling.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-007",
+      "RuleName": "Missing Comments",
+      "Severity": "Warning",
+      "Description": "Pattern 'Comment' found in workflow.",
+      "Recommendation": "Add comments to explain complex logic.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml"
+    },
+    {
+      "RuleId": "UI-PRF-001",
+      "RuleName": "Performance Impact",
+      "Severity": "Warning",
+      "Description": "Pattern 'Delay' found in workflow.",
+      "Recommendation": "Review and optimize delay times.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 29, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Count": 29
+    },
+    {
+      "RuleId": "AT-WFC-001",
+      "RuleName": "High Workflow Count",
+      "Severity": "Error",
+      "Description": "High Workflow Count check failed. Found 11, threshold is 5",
+      "Recommendation": "Reduce the number of workflows to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Performer\\Wizards.xaml",
+      "Count": 11
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\GetTransactionDataTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-008",
+      "RuleName": "Hardcoded Values",
+      "Severity": "Warning",
+      "Description": "Pattern 'Config.xlsx' found in workflow.",
+      "Recommendation": "Move hardcoded values to configuration files.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\GetTransactionDataTestCase.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\GetTransactionDataTestCase.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\GetTransactionDataTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\InitAllApplicationsTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-007",
+      "RuleName": "Missing Comments",
+      "Severity": "Warning",
+      "Description": "Pattern 'Comment' found in workflow.",
+      "Recommendation": "Add comments to explain complex logic.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\InitAllApplicationsTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-008",
+      "RuleName": "Hardcoded Values",
+      "Severity": "Warning",
+      "Description": "Pattern 'Config.xlsx' found in workflow.",
+      "Recommendation": "Move hardcoded values to configuration files.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\InitAllApplicationsTestCase.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\InitAllApplicationsTestCase.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\InitAllApplicationsTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\InitAllSettingsTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-007",
+      "RuleName": "Missing Comments",
+      "Severity": "Warning",
+      "Description": "Pattern 'Comment' found in workflow.",
+      "Recommendation": "Add comments to explain complex logic.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\InitAllSettingsTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-008",
+      "RuleName": "Hardcoded Values",
+      "Severity": "Warning",
+      "Description": "Pattern 'Config.xlsx' found in workflow.",
+      "Recommendation": "Move hardcoded values to configuration files.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\InitAllSettingsTestCase.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\InitAllSettingsTestCase.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\InitAllSettingsTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\MainTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-007",
+      "RuleName": "Missing Comments",
+      "Severity": "Warning",
+      "Description": "Pattern 'Comment' found in workflow.",
+      "Recommendation": "Add comments to explain complex logic.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\MainTestCase.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\MainTestCase.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\MainTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-007",
+      "RuleName": "Missing Comments",
+      "Severity": "Warning",
+      "Description": "Pattern 'Comment' found in workflow.",
+      "Recommendation": "Add comments to explain complex logic.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-008",
+      "RuleName": "Hardcoded Values",
+      "Severity": "Warning",
+      "Description": "Pattern 'Config.xlsx' found in workflow.",
+      "Recommendation": "Move hardcoded values to configuration files.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml"
+    },
+    {
+      "RuleId": "AT-WFC-002",
+      "RuleName": "High Activities Count",
+      "Severity": "Error",
+      "Description": "High Activities Count check failed. Found 13, threshold is 10",
+      "Recommendation": "Reduce the number of activities in each workflow to improve maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\ProcessTestCase.xaml",
+      "Count": 13
+    },
+    {
+      "RuleId": "UI-DBP-013",
+      "RuleName": "Missing Logging",
+      "Severity": "Warning",
+      "Description": "Pattern 'LogMessage' found in workflow.",
+      "Recommendation": "Add LogMessage activities for better traceability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\WorkflowTestCaseTemplate.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-007",
+      "RuleName": "Missing Comments",
+      "Severity": "Warning",
+      "Description": "Pattern 'Comment' found in workflow.",
+      "Recommendation": "Add comments to explain complex logic.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\WorkflowTestCaseTemplate.xaml"
+    },
+    {
+      "RuleId": "UI-DBP-008",
+      "RuleName": "Hardcoded Values",
+      "Severity": "Warning",
+      "Description": "Pattern 'Config.xlsx' found in workflow.",
+      "Recommendation": "Move hardcoded values to configuration files.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\WorkflowTestCaseTemplate.xaml"
+    },
+    {
+      "RuleId": "ST-NMG-001",
+      "RuleName": "Missing Naming Convention",
+      "Severity": "Error",
+      "Description": "Pattern 'Name=' found in workflow.",
+      "Recommendation": "Ensure all activities and variables follow the official UiPath naming conventions.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\WorkflowTestCaseTemplate.xaml"
+    },
+    {
+      "RuleId": "ST-USG-002",
+      "RuleName": "Unused Variable Detected",
+      "Severity": "Error",
+      "Description": "Pattern '<Variable' found in workflow.",
+      "Recommendation": "Remove unused variables to improve workflow clarity and maintainability.",
+      "File": "TR_Sanity_TaxCaddy\\Tests\\WorkflowTestCaseTemplate.xaml"
+    }
+  ],
+  "recommendations": [],
+  "ai_insights": []
+}
