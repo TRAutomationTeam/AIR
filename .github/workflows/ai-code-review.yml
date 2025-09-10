@@ -12,69 +12,67 @@ on:
 jobs:
   review:
     runs-on: self-hosted
-    
     steps:
-    - name: Checkout code to shortest path
-      uses: actions/checkout@v3
-      with:
-        path: a
-      
-    - name: Cache pip
-      uses: actions/cache@v3
-      with:
-        path: C:/Users/${{ env.USERNAME }}/AppData/Local/pip/Cache
-        key: ${{ runner.os }}-pip-${{ hashFiles('src/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-  # Python is already installed on the runner, so skip setup-python
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r src/requirements.txt
+      - name: Checkout code to shortest path
+        uses: actions/checkout@v3
+        with:
+          path: a
 
-        $success = $false
-        
-        for ($i = 1; $i -le $maxAttempts; $i++) {
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: C:/Users/${{ env.USERNAME }}/AppData/Local/pip/Cache
+          key: ${{ runner.os }}-pip-${{ hashFiles('a/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      # Python is already installed on the runner, so skip setup-python
+
+      - name: Install dependencies
+        run: |
+          C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe -m pip install --upgrade pip
+          C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe -m pip install -r a/requirements.txt
+
+      - name: DNS check (optional)
+        run: |
+          $maxAttempts = 3
+          $delaySeconds = 5
+          $success = $false
+          for ($i = 1; $i -le $maxAttempts; $i++) {
             try {
-                $result = Resolve-DnsName -Name "aiopenarena.gcs.int.thomsonreuters.com" -Type A -ErrorAction Stop
-                Write-Host "DNS resolution successful on attempt $i"
-                Write-Host "Resolved IP: $($result.IPAddress)"
-                $success = $true
-                break
+              $result = Resolve-DnsName -Name "aiopenarena.gcs.int.thomsonreuters.com" -Type A -ErrorAction Stop
+              Write-Host "DNS resolution successful on attempt $i"
+              Write-Host "Resolved IP: $($result.IPAddress)"
+              $success = $true
+              break
             } catch {
-                Write-Host "DNS resolution attempt $i failed: $_"
-                if ($i -lt $maxAttempts) {
-                    Write-Host "Waiting $delaySeconds seconds before next attempt..."
-                    Start-Sleep -Seconds $delaySeconds
-                }
+              Write-Host "DNS resolution attempt $i failed: $_"
+              if ($i -lt $maxAttempts) {
+                Write-Host "Waiting $delaySeconds seconds before next attempt..."
+                Start-Sleep -Seconds $delaySeconds
+              }
             }
-        }
-        
-        # Continue even if DNS fails - we have local fallback
-        
-    - name: Clean old reports
-      run: |
-        if (Test-Path "src/AI Reports") {
-            Remove-Item -Path "src/AI Reports/*" -Force -Recurse
-            Write-Host "Cleaned AI Reports directory"
-        }
+          }
+          # Continue even if DNS fails - we have local fallback
 
-    - name: Run AI code review
-      run: |
-        # Enable debug logging
-        $env:LOG_LEVEL = "DEBUG"
-        # Set DNS timeout
-        $env:DNS_TIMEOUT = "30"
-        # Set Ollama path for CI/CD (shared location)
-        $env:OLLAMA_PATH = "D:\Rajesh\Ollama\ollama.exe"
-        # Run the analysis with fallback mode enabled
-        python src/main.py
-        
-    - name: Upload Analysis Reports
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: ai-code-review-reports
-        path: src/AI Reports/
-        if-no-files-found: error
+      - name: Clean old reports
+        run: |
+          if (Test-Path "a/AI Reports") {
+            Remove-Item -Path "a/AI Reports/*" -Force -Recurse
+            Write-Host "Cleaned AI Reports directory"
+          }
+
+      - name: Run AI code review
+        run: |
+          $env:LOG_LEVEL = "DEBUG"
+          $env:DNS_TIMEOUT = "30"
+          $env:OLLAMA_PATH = "D:\Rajesh\Ollama\ollama.exe"
+          C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe a/main.py
+
+      - name: Upload Analysis Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-code-review-reports
+          path: a/AI Reports/
+          if-no-files-found: error
