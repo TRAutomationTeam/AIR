@@ -9,6 +9,11 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s'
 )
 import os
+# Ensure the directory containing this script is on sys.path (embeddable Python fix)
+_SCRIPT_DIR = os.path.abspath(os.path.dirname(__file__))
+if _SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPT_DIR)
+
 # GitPython is optional; handle environments where git.exe isn't available
 try:
     import git  # type: ignore
@@ -47,6 +52,9 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     # ...existing config loading code...
 
     logging.info(f"Starting AI analysis for repository: {repo_path}")
+    logging.debug("sys.path entries (top 5): %s", sys.path[:5])
+    if 'ai' not in {p.split(os.sep)[-1] for p in sys.path}:
+        logging.debug("'ai' package directory not explicitly on sys.path; relying on script dir injection.")
     repo = None
     if git is not None:
         try:

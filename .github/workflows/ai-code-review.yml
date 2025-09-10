@@ -11,7 +11,7 @@ on:
 
 jobs:
   review:
-    runs-on: self-hosted
+    runs-on: self-hostedython lib fixes7
     timeout-minutes: 30
     env:
       FORCE_CLEAN: 'true'
@@ -78,6 +78,13 @@ jobs:
       run: |
         & $Env:PYTHON_EXE --version
         & $Env:PYTHON_EXE -c "import sys,platform;print('Executable:',sys.executable);print('Platform:',platform.platform())"
+
+    - name: Configure runtime env (PYTHONPATH + silence GitPython)
+      shell: pwsh
+      run: |
+        echo "PYTHONPATH=$PWD/src" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+        echo "GIT_PYTHON_REFRESH=quiet" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+        Write-Host "Set PYTHONPATH and silenced GitPython init warnings."
 
     - name: Install dependencies
       shell: pwsh
