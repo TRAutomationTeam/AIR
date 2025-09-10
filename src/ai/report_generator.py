@@ -86,23 +86,54 @@ class ReportGenerator:
         ai_status = report_data.get('ai_status')
         if ai_status == 'SUCCESS' and report_data['ai_insights']:
             last_rule_id = None
-            heading_pattern = re.compile(r'^\*\*(.+?)\s*\(([^()]+)\)\*\*$', re.IGNORECASE)
+            heading_pattern_primary = re.compile(r'^\*\*(.+?)\s*\(([^()]+)\)\*\*:?$', re.IGNORECASE)
+            heading_pattern_alt = re.compile(r'^\*\*([^*]+)\*\*\s*\(([^()]+)\)')  # **Title** (RULE)
+            inline_rule_pattern = re.compile(r'\b[A-Z]{2,}-[A-Z0-9]{2,}-\d{3}\b')
             suggestion_pattern = re.compile(r'^\*\*Suggestion\*\*:\s*(.+)$', re.IGNORECASE)
-            for line in report_data['ai_insights']:
-                m_head = heading_pattern.match(line)
-                if m_head:
-                    # Extract and normalize rule id portion (second group often like CODE)
-                    last_rule_id = m_head.group(2).strip()
+            actionable_starts = tuple(['add','ensure','remove','use','reduce','review','move','refactor','optimize','implement'])
+            per_rule_added = {}
+            for raw_line in report_data['ai_insights']:
+                line = raw_line.strip()
+                if not line:
                     continue
+                # Skip generic closing / boilerplate
+                low = line.lower()
+                if low.startswith('ensure to address each of these') or low.startswith('these suggestions will'):
+                    continue
+                # Explicit suggestion line following a heading
                 m_sug = suggestion_pattern.match(line)
                 if m_sug and last_rule_id:
                     suggestion_text = m_sug.group(1).strip()
-                    ai_rows.append({'rule_id': last_rule_id, 'suggestion': suggestion_text})
-                    last_rule_id = None  # Prevent pairing with multiple suggestions accidentally
-                else:
-                    # Fallback: single-line suggestion without heading, include if meaningful and short
-                    if not line.lower().startswith('ensure to address') and 'suggestion' not in line.lower():
-                        ai_rows.append({'rule_id': 'GENERAL', 'suggestion': line})
+                    if last_rule_id not in per_rule_added:
+                        ai_rows.append({'rule_id': last_rule_id, 'suggestion': suggestion_text})
+                        per_rule_added[last_rule_id] = True
+                    last_rule_id = None
+                    continue
+                # Heading styles
+                m_head = heading_pattern_primary.match(line) or heading_pattern_alt.match(line)
+                if m_head:
+                    # Rule id expected inside parentheses (group 2)
+                    rid_candidate = m_head.group(2).strip()
+                    # Validate candidate has pattern
+                    if inline_rule_pattern.search(rid_candidate):
+                        last_rule_id = inline_rule_pattern.search(rid_candidate).group(0)
+                        continue
+                # Attempt to detect rule id inline even if not heading
+                rid_inline_match = inline_rule_pattern.search(line)
+                if rid_inline_match and ('suggestion' not in low):
+                    last_rule_id = rid_inline_match.group(0)
+                    # If line also seems actionable (contains a verb), we may treat rest as suggestion if colon present
+                    continue
+                # Plain actionable sentence: associate with last_rule_id if present
+                if last_rule_id and low.startswith(actionable_starts):
+                    if last_rule_id not in per_rule_added:
+                        ai_rows.append({'rule_id': last_rule_id, 'suggestion': line})
+                        per_rule_added[last_rule_id] = True
+                    last_rule_id = None
+                    continue
+                # Fallback generic suggestion (only if looks actionable but no rule context)
+                if low.startswith(actionable_starts):
+                    ai_rows.append({'rule_id': 'GENERAL', 'suggestion': line})
             # Deduplicate while preserving order
             seen_combo = set()
             deduped = []
@@ -113,6 +144,29 @@ class ReportGenerator:
                 seen_combo.add(key)
                 deduped.append(row)
             ai_rows = deduped
+            # Second pass: infer rule IDs for GENERAL entries using keyword patterns
+            if ai_rows:
+                pattern_map = [
+                    (re.compile(r'exception handling|trycatch', re.IGNORECASE), 'UI-DBP-006'),
+                    (re.compile(r'logmessage|logging', re.IGNORECASE), 'UI-DBP-013'),
+                    (re.compile(r'comments?\b', re.IGNORECASE), 'UI-DBP-007'),
+                    (re.compile(r'hardcoded values?', re.IGNORECASE), 'UI-DBP-008'),
+                    (re.compile(r'naming convention|naming', re.IGNORECASE), 'ST-NMG-001'),
+                    (re.compile(r'unused variables?', re.IGNORECASE), 'ST-USG-002'),
+                    (re.compile(r'activities? in each workflow', re.IGNORECASE), 'AT-WFC-002'),
+                    (re.compile(r'number of workflows', re.IGNORECASE), 'AT-WFC-001'),
+                    (re.compile(r'flow control', re.IGNORECASE), 'UI-DBP-018'),
+                    (re.compile(r'delay times?|optimi[sz]e delay', re.IGNORECASE), 'UI-PRF-001'),
+                    (re.compile(r'timeout values?', re.IGNORECASE), 'ST-DBP-021')
+                ]
+                for row in ai_rows:
+                    if row['rule_id'] != 'GENERAL':
+                        continue
+                    text = row['suggestion']
+                    for pat, rid in pattern_map:
+                        if pat.search(text):
+                            row['rule_id'] = rid
+                            break
         report_data['ai_recommendations_table'] = ai_rows
         if report_data['ai_status'] == 'SUCCESS':
             logging.info(f"AI suggestions working: {len(report_data['ai_insights'])} suggestions.")
