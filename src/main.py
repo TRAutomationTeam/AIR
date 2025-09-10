@@ -59,6 +59,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     logging.info(f"Total workflows found: {workflow_count}")
     logging.info("Running AI analysis...")
     ai_results = ai_analyzer.analyze_workflow_results(analysis_results)
+    ai_results = ai_results or {}
     original_analysis = ai_results.get('original_analysis') or {}
     errors = [v for v in original_analysis.get('rules_violations', []) if v.get('Severity') == 'Error']
     warnings = [v for v in original_analysis.get('rules_violations', []) if v.get('Severity') == 'Warning']
