@@ -1,4 +1,5 @@
 import requests
+
 import yaml
 import os
 import json
@@ -7,12 +8,21 @@ import logging
 import re
 import getpass
 
-# Dynamically set Ollama path for current user
+# Load LiteLLM API config from settings.txt
+def load_litellm_config(settings_path: str = os.path.join(os.path.dirname(__file__), '../config/settings.txt')):
+    api_key = None
+    api_url = None
+    try:
+        with open(settings_path, 'r') as f:
+            for line in f:
+                if line.strip().startswith('litellm_api_key:'):
+                    api_key = line.split(':', 1)[1].strip()
+                if line.strip().startswith('litellm_api_url:'):
+                    api_url = line.split(':', 1)[1].strip()
+    except Exception as e:
+        logging.error(f"Error loading LiteLLM config: {e}")
+    return api_key, api_url
 
-# Open Arena API config
-
-OPEN_ARENA_API_URL = "https://aiopenarena.gcs.int.thomsonreuters.com/v1/inference"
-OPEN_ARENA_API_KEY = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IlJERTBPVEF3UVVVMk16Z3hPRUpGTkVSRk5qUkRNakkzUVVFek1qZEZOVEJCUkRVMlJrTTRSZyJ9.eyJodHRwczovL3RyLmNvbS9mZWRlcmF0ZWRfdXNlcl9pZCI6IkMyOTE4MjUiLCJodHRwczovL3RyLmNvbS9mZWRlcmF0ZWRfcHJvdmlkZXJfaWQiOiJUUlNTTyIsImh0dHBzOi8vdHIuY29tL2xpbmtlZF9kYXRhIjpbeyJzdWIiOiJvaWRjfHNzby1hdXRofFRSU1NPfGMyOTE4MjUifV0sImh0dHBzOi8vdHIuY29tL2V1aWQiOiIxNjY2YzdlMC0yYWJiLTQ3YzgtYWFlYi03ZTAxZGJhMmFmMDYiLCJodHRwczovL3RyLmNvbS9hc3NldElEIjoiYTIwODE5OSIsImlzcyI6Imh0dHBzOi8vYXV0aC50aG9tc29ucmV1dGVycy5jb20vIiwic3ViIjoiYXV0aDB8NjU3OTZiZmU2NGI3OWEyY2RjZDRlZjBhIiwiYXVkIjpbIjQ5ZDcwYTU4LTk1MDktNDhhMi1hZTEyLTRmNmUwMGNlYjI3MCIsImh0dHBzOi8vbWFpbi5jaWFtLnRob21zb25yZXV0ZXJzLmNvbS91c2VyaW5mbyJdLCJpYXQiOjE3NTcwNjQyNTksImV4cCI6MTc1NzE1MDY1OSwic2NvcGUiOiJvcGVuaWQgcHJvZmlsZSBlbWFpbCIsImF6cCI6InRnVVZad1hBcVpXV0J5dXM5UVNQaTF5TnlvTjJsZmxJIn0.LYSIdmaSmJLgO2454RuN71dCTzeeizULt5t1T3DG6rCzbe4AzUtD5JAz0kvZSjchqJzU6e1pvOef0pV6IhSptkzzMf0XOBTqx8QQIaSacoSt_Mzt7DLCA8Byi_dNy5-Oy5n9NU18cDyuxDjAczSJFLO7HF35ewKi_fOVOBJgfo8tkeUeNNCumkI95ltGr2ySQ_GyLJpcJPYx7HIdj_-hazauYYxVy5NODxekHB7i4TU-OwYoHhdd_I_LVxmklUS3-IezbZ1uoFf6vWg6JyyU2s52was4UuoLLVe0sRRF_069P44A1zyghoDRX46P4AF2D6SyY7u4bQ1NLH3_cXKv3w"
 
 
 class AICodeAnalyzer:
@@ -21,7 +31,7 @@ class AICodeAnalyzer:
         self.metrics = metrics or {}
         
     def analyze_workflow_results(self, analysis_results: Dict[str, Any]) -> Dict[str, Any]:
-        """Use local TinyLlama (via Ollama) for enhanced analysis and AI suggestions"""
+        """Use LiteLLM for enhanced analysis and AI suggestions"""
         violations = analysis_results.get('rules_violations', [])
         if not violations:
             violations = analysis_results.get('original_analysis', {}).get('rules_violations', [])
@@ -42,25 +52,31 @@ class AICodeAnalyzer:
         prompt_lines.append("For each issue above, provide a specific, actionable suggestion to resolve it. Format your response as a numbered list, mapping each suggestion to the corresponding issue.")
         detailed_prompt = "\n".join(prompt_lines)
 
-        # Call Open Arena API for AI suggestions
+        # Load LiteLLM API config
+        api_key, api_url = load_litellm_config()
+        if not api_key or not api_url:
+            logging.error("LiteLLM API key or URL not found in settings.txt")
+            return self._fallback_analysis(analysis_results)
+
+        # Call LiteLLM API for AI suggestions
         try:
             payload = {
-                "workflow_id": "80f448d2-fd59-440f-ba24-ebc3014e1fdf",
-                "query": detailed_prompt,
-                "is_persistence_allowed": False
+                "prompt": detailed_prompt,
+                "model": "gpt-3.5-turbo",  # or the model you want to use
+                "temperature": 0.2
             }
             headers = {
-                "Authorization": f"Bearer {OPEN_ARENA_API_KEY}",
+                "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json"
             }
-            logging.info(f"[TR Arena API] Endpoint: {OPEN_ARENA_API_URL}")
-            logging.info(f"[TR Arena API] Payload: {json.dumps(payload)}")
-            response = requests.post(OPEN_ARENA_API_URL, headers=headers, json=payload, timeout=60)
-            logging.info(f"[TR Arena API] Response status: {response.status_code}")
+            logging.info(f"[LiteLLM API] Endpoint: {api_url}")
+            logging.info(f"[LiteLLM API] Payload: {json.dumps(payload)}")
+            response = requests.post(api_url, headers=headers, json=payload, timeout=60)
+            logging.info(f"[LiteLLM API] Response status: {response.status_code}")
+            logging.info(f"[LiteLLM API] Response body: {response.text}")
             if response.status_code == 200:
                 data = response.json()
-                logging.info(f"[TR Arena API] Response data: {json.dumps(data)}")
-                answer = data.get("answer", "")
+                answer = data.get("choices", [{}])[0].get("message", {}).get("content", "")
                 suggestions = [line.strip() for line in answer.split('\n') if line.strip()]
                 return {
                     'original_analysis': analysis_results,
@@ -69,14 +85,14 @@ class AICodeAnalyzer:
                     'quality_score': 0,
                     'go_no_go_decision': 'REVIEW_REQUIRED',
                     'confidence': 0,
-                    'summary': 'AI suggestions generated by Open Arena',
+                    'summary': 'AI suggestions generated by LiteLLM',
                     'critical_issues': []
                 }
             else:
-                logging.error(f"[TR Arena API] Call failed: {response.text}")
+                logging.error(f"[LiteLLM API] Call failed: {response.text}")
                 return self._fallback_analysis(analysis_results)
         except Exception as e:
-            logging.error(f"[TR Arena API] Exception: {str(e)}")
+            logging.error(f"[LiteLLM API] Exception: {str(e)}")
             return self._fallback_analysis(analysis_results)
 
     def _process_ai_results(self, ai_results: Dict, original_results: Dict) -> Dict[str, Any]:
