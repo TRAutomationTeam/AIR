@@ -30,8 +30,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe -m pip install --upgrade pip
-          C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe -m pip install -r a/requirements.txt
+          & 'C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe' -m pip install --upgrade pip
+          & 'C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe' -m pip install -r a/requirements.txt
 
       - name: DNS check (optional)
         run: |
@@ -67,7 +67,7 @@ jobs:
           $env:LOG_LEVEL = "DEBUG"
           $env:DNS_TIMEOUT = "30"
           $env:OLLAMA_PATH = "D:\Rajesh\Ollama\ollama.exe"
-          C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe a/main.py
+          & 'C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe' a/main.py
 
       - name: Upload Analysis Reports
         if: always()
