@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 from datetime import datetime
 from jinja2 import Template
 from typing import Dict, Any, List
@@ -76,8 +77,43 @@ class ReportGenerator:
             'ai_insights': analysis_results.get('ai_insights', []),
             'ai_status': analysis_results.get('ai_status', 'UNKNOWN'),
             'ai_error': analysis_results.get('ai_error'),
+            'ai_provider': analysis_results.get('ai_provider', 'LiteLLM'),
+            'ai_model': analysis_results.get('ai_model', ''),
             'next_steps': self._generate_next_steps({'go_no_go_decision': decision})
         }
+        # Build structured AI recommendations table (Rule ID, Suggestion) if possible
+        ai_rows = []
+        ai_status = report_data.get('ai_status')
+        if ai_status == 'SUCCESS' and report_data['ai_insights']:
+            last_rule_id = None
+            heading_pattern = re.compile(r'^\*\*(.+?)\s*\(([^()]+)\)\*\*$', re.IGNORECASE)
+            suggestion_pattern = re.compile(r'^\*\*Suggestion\*\*:\s*(.+)$', re.IGNORECASE)
+            for line in report_data['ai_insights']:
+                m_head = heading_pattern.match(line)
+                if m_head:
+                    # Extract and normalize rule id portion (second group often like CODE)
+                    last_rule_id = m_head.group(2).strip()
+                    continue
+                m_sug = suggestion_pattern.match(line)
+                if m_sug and last_rule_id:
+                    suggestion_text = m_sug.group(1).strip()
+                    ai_rows.append({'rule_id': last_rule_id, 'suggestion': suggestion_text})
+                    last_rule_id = None  # Prevent pairing with multiple suggestions accidentally
+                else:
+                    # Fallback: single-line suggestion without heading, include if meaningful and short
+                    if not line.lower().startswith('ensure to address') and 'suggestion' not in line.lower():
+                        ai_rows.append({'rule_id': 'GENERAL', 'suggestion': line})
+            # Deduplicate while preserving order
+            seen_combo = set()
+            deduped = []
+            for row in ai_rows:
+                key = (row['rule_id'].lower(), row['suggestion'].lower())
+                if key in seen_combo:
+                    continue
+                seen_combo.add(key)
+                deduped.append(row)
+            ai_rows = deduped
+        report_data['ai_recommendations_table'] = ai_rows
         if report_data['ai_status'] == 'SUCCESS':
             logging.info(f"AI suggestions working: {len(report_data['ai_insights'])} suggestions.")
         elif report_data['ai_status'] == 'FALLBACK':
@@ -248,25 +284,27 @@ class ReportGenerator:
     </div>
     <div class="summary">
         <h2>Summary</h2>
+        {% set decision_val = go_no_go_decision or analysis_summary.decision %}
         <p><strong>Decision:</strong>
-            {% if analysis_summary.decision == 'REVIEW_REQUIRED' %}
-                <span style="color:red;font-weight:bold;">REVIEW_REQUIRED</span>
-            {% elif analysis_summary.decision == 'GO' %}
+            {% if decision_val == 'GO' %}
                 <span style="color:green;font-weight:bold;">GO</span>
-            {% else %}
+            {% elif decision_val == 'NO_GO' %}
                 <span style="color:red;font-weight:bold;">NO_GO</span>
+            {% else %}
+                <span style="color:#cc8800;font-weight:bold;">REVIEW_REQUIRED</span>
             {% endif %}
         </p>
         <p><strong>Quality Score:</strong> {{ analysis_summary.quality_score }}/100</p>
         <p><strong>Total Violations:</strong> {{ analysis_summary.total_violations }}</p>
         <p><strong>Critical Issues:</strong> {{ analysis_summary.critical_issues }}</p>
         <div class="ai-banner {% if ai_status == 'SUCCESS' %}success{% elif ai_status == 'FALLBACK' %}fallback{% else %}error{% endif %}">
-            <strong>AI Status:</strong> {{ ai_status }}
-            {% if ai_status == 'SUCCESS' %}- {{ ai_insights|length }} suggestions generated.
-            {% elif ai_status == 'FALLBACK' %}- AI unavailable, showing rule-based recommendations only.
-            {% else %}- No AI data.
+            <strong>AI Engine:</strong> {{ ai_provider }}{% if ai_model %} (model: {{ ai_model }}){% endif %}<br/>
+            <strong>Status:</strong> {{ ai_status }}
+            {% if ai_status == 'SUCCESS' %}- {{ ai_insights|length }} recommendations generated.
+            {% elif ai_status == 'FALLBACK' %}- Falling back to rule-based recommendations only.
+            {% else %}- No AI data available.
             {% endif %}
-            {% if ai_error %}<br/><strong>AI Error:</strong> {{ ai_error }}{% endif %}
+            {% if ai_error %}<br/><strong>Last Error:</strong> {{ ai_error }}{% endif %}
         </div>
     </div>
     <div class="metrics">
@@ -278,7 +316,7 @@ class ReportGenerator:
     {% set filtered_violations = detailed_results.original_analysis.rules_violations | selectattr('Severity','in',['Warning','Error']) | list %}
     {% if filtered_violations %}
     <div class="ai-insights">
-        <h2>TR AI Suggestions</h2>
+        <h2>Rule-Based Suggestions (from static analyzer)</h2>
         <table><tr><th>#</th><th>Suggestion</th></tr>
         {% set seen_rules = [] %}
         {% set suggestion_count = namespace(value=1) %}
@@ -324,8 +362,14 @@ class ReportGenerator:
         {% endfor %}
         </table>
         <h2>AI Recommendations</h2>
-        {% if ai_status == 'SUCCESS' and ai_insights %}
-            <ul>{% for recommendation in recommendations %}<li>{{ recommendation }}</li>{% endfor %}</ul>
+        {% if ai_status == 'SUCCESS' and ai_recommendations_table %}
+            <table><tr><th>Rule ID</th><th>AI Suggestion</th></tr>
+            {% for row in ai_recommendations_table %}
+                <tr><td>{{ row.rule_id }}</td><td>{{ row.suggestion }}</td></tr>
+            {% endfor %}
+            </table>
+        {% elif ai_status == 'SUCCESS' and ai_insights %}
+            <ul>{% for item in ai_insights %}<li>{{ item }}</li>{% endfor %}</ul>
         {% elif ai_status != 'SUCCESS' %}
             <p>No AI recommendations (status: {{ ai_status }}).</p>
         {% else %}
@@ -375,4 +419,6 @@ class ReportGenerator:
             'ai_insights': report_data.get('ai_insights', []),
             'ai_status': report_data.get('ai_status', 'UNKNOWN'),
             'ai_error': report_data.get('ai_error')
+            ,'ai_provider': report_data.get('ai_provider'),
+            'ai_model': report_data.get('ai_model')
         }

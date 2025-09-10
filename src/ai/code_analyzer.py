@@ -290,10 +290,32 @@ class AICodeAnalyzer:
                         last_error = f"No answer content in response schema"
                         continue
                     suggestions = [line.strip() for line in answer.split('\n') if line.strip()]
+                    # Clean and normalize suggestions (remove conversational fluff / numbering)
+                    def _clean(lines: List[str]) -> List[str]:
+                        cleaned = []
+                        seen = set()
+                        for raw in lines:
+                            line = raw.strip()
+                            # Skip generic openers
+                            if re.match(r'^(sure|certainly|of course|here (are|is)|below (are|is))\b', line, re.IGNORECASE):
+                                continue
+                            # Remove leading bullet / numbers
+                            line = re.sub(r'^[\-\*]\s*', '', line)
+                            line = re.sub(r'^\d+[\).\-:]\s*', '', line)
+                            # Trim redundant spaces
+                            line = line.strip(' -:')
+                            if not line:
+                                continue
+                            if line.lower() in seen:
+                                continue
+                            seen.add(line.lower())
+                            cleaned.append(line)
+                        return cleaned
+                    cleaned_suggestions = _clean(suggestions)
                     logging.info(
-                        f"[LiteLLM] AI suggestions active: {len(suggestions)} items (model={model}, temp={temperature})"
+                        f"[LiteLLM] AI suggestions active: {len(cleaned_suggestions)} items (model={model}, temp={temperature})"
                     )
-                    for i, s in enumerate(suggestions[:5], 1):
+                    for i, s in enumerate(cleaned_suggestions[:5], 1):
                         logging.debug(f"[LiteLLM] Suggestion {i}: {s[:180]}")
                     logging.info(f"[LiteLLM] Success via {endpoint} style={style} key={masked_key}")
                     # Cache successful endpoint
@@ -301,9 +323,12 @@ class AICodeAnalyzer:
                         self._resolved_endpoint = endpoint
                     return {
                         'original_analysis': analysis_results,
-                        'ai_insights': suggestions,
-                        'recommendations': suggestions,
+                        # Provide both raw and cleaned for any downstream debug if needed
+                        'ai_insights': cleaned_suggestions,
+                        'recommendations': cleaned_suggestions,
                         'ai_status': 'SUCCESS',
+                        'ai_provider': 'LiteLLM',
+                        'ai_model': model,
                         'quality_score': 0,
                         'go_no_go_decision': 'REVIEW_REQUIRED',
                         'confidence': 0,
@@ -391,6 +416,8 @@ class AICodeAnalyzer:
             'ai_insights': [],
             'recommendations': [],
             'ai_status': 'FALLBACK',
+            'ai_provider': 'LiteLLM',
+            'ai_model': self.config.get('litellm_model') or 'unknown',
             'quality_score': 0,
             'go_no_go_decision': 'REVIEW_REQUIRED',
             'confidence': 0,
