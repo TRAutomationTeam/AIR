@@ -12,6 +12,8 @@ on:
 jobs:
   review:
     runs-on: self-hosted
+    env:
+      PATH: C:\Python311;${{ env.PATH }}
     steps:
       - name: Checkout code to shortest path
         uses: actions/checkout@v3
@@ -26,12 +28,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      # Python is already installed on the runner, so skip setup-python
+      # Python is already installed system-wide on the runner
 
       - name: Install dependencies
         run: |
-          & 'C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe' -m pip install --upgrade pip
-          & 'C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe' -m pip install -r a/requirements.txt
+          & 'C:\Python311\python.exe' -m pip install --upgrade pip
+          & 'C:\Python311\python.exe' -m pip install -r a/requirements.txt
 
       - name: DNS check (optional)
         run: |
@@ -67,7 +69,7 @@ jobs:
           $env:LOG_LEVEL = "DEBUG"
           $env:DNS_TIMEOUT = "30"
           $env:OLLAMA_PATH = "D:\Rajesh\Ollama\ollama.exe"
-          & 'C:\Users\s.sp.dev-agentuser\AppData\Local\Programs\Python\Python311\python.exe' a/main.py
+          & 'C:\Python311\python.exe' a/main.py
 
       - name: Upload Analysis Reports
         if: always()
