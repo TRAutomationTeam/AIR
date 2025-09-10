@@ -3,7 +3,7 @@
 <<<<<<< HEAD
     <x:Property sap2010:Annotation.AnnotationText="Allows the Orchestrator 96965e name to be passed as an argument, instead of only being defined in the configuration file." Name="in_OrchestratorQueueName" Type="InArgument(x:String)" />
 =======
-    <x:Property sap2010:Annotation.AnnotationText="Allows the Orchestrator 968886e name to be passed as an argument, instead of only being defined in the configuration file." Name="in_OrchestratorQueueName" Type="InArgument(x:String)" />
+    <x:Property sap2010:Annotation.AnnotationText="Allows the Orchestrator 96886e name to be passed as an argument, instead of only being defined in the configuration file." Name="in_OrchestratorQueueName" Type="InArgument(x:String)" />
 >>>>>>> 7006079711bf1e24dcb8a1145a8745f2f6279ee2
     <x:Property sap2010:Annotation.AnnotationText="Allows the Orchestrator folder name where the queue is created to be passed as an argument, instead of only being defined in the configuration file." Name="in_OrchestratorQueueFolder" Type="InArgument(x:String)" />
     <x:Property Name="in_ConfigFilePath" Type="InArgument(x:String)" />
