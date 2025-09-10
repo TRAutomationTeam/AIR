@@ -12,69 +12,114 @@ on:
 jobs:
   review:
     runs-on: self-hosted
-    
+    timeout-minutes: 30
+    env:
+      # Toggle to use pre-installed system Python instead of setup-python
+      USE_SYSTEM_PYTHON: 'true'
+      # Adjust if your local Python path differs
+      SYSTEM_PYTHON_PATH: 'C:/Users/C291825/AppData/Local/Programs/Python/Python311/python.exe'
+      # Force a hard workspace clean (besides .git) before checkout
+      FORCE_CLEAN: 'true'
+      # DNS retry settings
+      DNS_ATTEMPTS: '3'
+      DNS_DELAY: '5'
+
     steps:
-    - uses: actions/checkout@v3
-      
-    - name: Cache pip
-      uses: actions/cache@v3
-      with:
-        path: C:/Users/${{ env.USERNAME }}/AppData/Local/pip/Cache
-        key: ${{ runner.os }}-pip-${{ hashFiles('src/requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-pip-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r src/requirements.txt
+      - name: Show pre-existing workspace (before cleanup)
+        shell: pwsh
+        run: |
+          Write-Host "Listing top-level before cleanup:"; Get-ChildItem -Force | Select-Object Name
 
-        $success = $false
-        
-        for ($i = 1; $i -le $maxAttempts; $i++) {
+      - name: Manual workspace cleanup (preserve .git folder if exists)
+        if: env.FORCE_CLEAN == 'true'
+        shell: pwsh
+        run: |
+          Write-Host "Cleaning workspace (except .git)";
+          Get-ChildItem -Force | Where-Object { $_.Name -ne '.git' } | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+          Write-Host "Post-clean listing:"; Get-ChildItem -Force | Select-Object Name
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          clean: true
+          fetch-depth: 0
+
+      - name: Decide Python source
+        id: python_source
+        shell: pwsh
+        run: |
+          if ($Env:USE_SYSTEM_PYTHON -eq 'true' -and (Test-Path $Env:SYSTEM_PYTHON_PATH)) {
+            Write-Host "Using system Python at $Env:SYSTEM_PYTHON_PATH";
+            "$Env:SYSTEM_PYTHON_PATH --version:" | Write-Host; & $Env:SYSTEM_PYTHON_PATH --version;
+            "PYTHON_EXE=$Env:SYSTEM_PYTHON_PATH" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append;
+            "python-source=system" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append;
+          } else {
+            Write-Host "Will install Python via actions/setup-python";
+            "python-source=action" | Out-File -FilePath $Env:GITHUB_OUTPUT -Encoding utf8 -Append;
+          }
+
+      - name: Set up Python (action)
+        if: steps.python_source.outputs.python-source == 'action'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Fallback define PYTHON_EXE after action
+        if: steps.python_source.outputs.python-source == 'action'
+        shell: pwsh
+        run: |
+          $py = (Get-Command python).Source
+            Write-Host "Resolved action Python: $py"
+            "PYTHON_EXE=$py" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Verify Python
+        shell: pwsh
+        run: |
+          & $Env:PYTHON_EXE --version
+          & $Env:PYTHON_EXE -c "import sys,platform;print('Executable:',sys.executable);print('Platform:',platform.platform())"
+
+      - name: Install dependencies
+        shell: pwsh
+        run: |
+          $py = $Env:PYTHON_EXE
+          & $py -m pip install --upgrade pip
+          & $py -m pip install -r src/requirements.txt
+
+          $attempts = [int]$Env:DNS_ATTEMPTS
+          $delay = [int]$Env:DNS_DELAY
+          for ($i=1; $i -le $attempts; $i++) {
             try {
-                $result = Resolve-DnsName -Name "aiopenarena.gcs.int.thomsonreuters.com" -Type A -ErrorAction Stop
-                Write-Host "DNS resolution successful on attempt $i"
-                Write-Host "Resolved IP: $($result.IPAddress)"
-                $success = $true
-                break
+              $result = Resolve-DnsName -Name "aiopenarena.gcs.int.thomsonreuters.com" -Type A -ErrorAction Stop
+              Write-Host "DNS resolution successful on attempt $i -> $($result.IPAddress)"; break
             } catch {
-                Write-Host "DNS resolution attempt $i failed: $_"
-                if ($i -lt $maxAttempts) {
-                    Write-Host "Waiting $delaySeconds seconds before next attempt..."
-                    Start-Sleep -Seconds $delaySeconds
-                }
+              Write-Host "DNS attempt $i failed: $_"
+              if ($i -lt $attempts) { Start-Sleep -Seconds $delay }
             }
-        }
-        
-        # Continue even if DNS fails - we have local fallback
-        
-    - name: Clean old reports
-      run: |
-        if (Test-Path "src/AI Reports") {
-            Remove-Item -Path "src/AI Reports/*" -Force -Recurse
-            Write-Host "Cleaned AI Reports directory"
-        }
+          }
+          Write-Host "Continuing regardless of DNS success (fallback logic in app)."
 
-    - name: Run AI code review
-      run: |
-        # Enable debug logging
-        $env:LOG_LEVEL = "DEBUG"
-        # Set DNS timeout
-        $env:DNS_TIMEOUT = "30"
-        # Set Ollama path for CI/CD (shared location)
-        $env:OLLAMA_PATH = "D:\Rajesh\Ollama\ollama.exe"
-        # Run the analysis with fallback mode enabled
-        python src/main.py
-        
-    - name: Upload Analysis Reports
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: ai-code-review-reports
-        path: src/AI Reports/
-        if-no-files-found: error
+      - name: Clean old reports
+        shell: pwsh
+        run: |
+          if (Test-Path "src/AI Reports") {
+            Remove-Item -Path "src/AI Reports/*" -Force -Recurse -ErrorAction SilentlyContinue
+            Write-Host "Cleaned AI Reports directory"
+          }
+
+      - name: Run AI code review
+        shell: pwsh
+        env:
+          LOG_LEVEL: DEBUG
+          DNS_TIMEOUT: '30'
+          OLLAMA_PATH: 'D:/Rajesh/Ollama/ollama.exe'
+        run: |
+          & $Env:PYTHON_EXE src/main.py
+
+      - name: Upload Analysis Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-code-review-reports
+          path: src/AI Reports/
+          if-no-files-found: error
