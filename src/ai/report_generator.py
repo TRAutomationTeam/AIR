@@ -393,7 +393,7 @@ class ReportGenerator:
         """
         
         template = Template(html_template)
-        return template.render(**report_data)
+    return template.render(report_data=report_data)
 
         
     def _generate_json_summary(self, report_data: Dict[str, Any]) -> Dict[str, Any]:

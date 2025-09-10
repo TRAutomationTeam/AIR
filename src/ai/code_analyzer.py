@@ -36,6 +36,15 @@ class AICodeAnalyzer:
         if not violations:
             violations = analysis_results.get('original_analysis', {}).get('rules_violations', [])
         violations = [v for v in violations if v.get('Severity') in ('Warning', 'Error')]
+        # Force API call for testing: add a dummy violation if none exist
+        if not violations:
+            violations = [{
+                'RuleId': 'TEST-API',
+                'RuleName': 'Dummy Violation',
+                'Severity': 'Warning',
+                'Recommendation': 'This is a test to trigger the API call.',
+                'File': 'dummy.xaml'
+            }]
 
         prompt_lines = [
             "You are an expert UiPath code reviewer. Here are the warnings and errors found in my UiPath workflows:",
