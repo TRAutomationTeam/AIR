@@ -1,5 +1,5 @@
 litellm_api_key: sk-HZA9TcyLrYcGRQmvbcrRYACopy
-litellm_api_url: https://litellm.int.thomsonreuters.com/v1/chat/completions
+litellm_api_url: https://litellm.int.thomsonreuters.com
 official_rules:
   - id: "AT-WFC-002"
     name: "High Activities Count"
