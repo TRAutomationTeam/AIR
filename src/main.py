@@ -9,7 +9,15 @@ logging.basicConfig(
     format='%(asctime)s %(levelname)s %(message)s'
 )
 import os
-import git
+# GitPython is optional; handle environments where git.exe isn't available
+try:
+    import git  # type: ignore
+except Exception as git_import_error:  # ImportError or runtime initialization error
+    git = None  # fallback
+    logging.warning(
+        "GitPython unavailable or git.exe missing; proceeding without git context. Error: %s",
+        git_import_error,
+    )
 from pathlib import Path
 import json
 import glob
@@ -39,7 +47,12 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     # ...existing config loading code...
 
     logging.info(f"Starting AI analysis for repository: {repo_path}")
-    repo = git.Repo(repo_path)
+    repo = None
+    if git is not None:
+        try:
+            repo = git.Repo(repo_path)
+        except Exception as e:
+            logging.warning("Failed to initialize git repository context (continuing without git): %s", e)
 
     # ...existing git diff code...
 
@@ -66,7 +79,7 @@ def analyze_repository(repo_path: str, commit_sha: str = None):
     project_info = {
         'name': os.path.basename(repo_path),
         'commit_sha': commit_sha,
-        'changed_files': None
+        'changed_files': None  # placeholder; could be populated if repo & diff logic added
     }
     logging.info("Generating report files...")
     report = report_generator.generate_report(ai_results, project_info, repo_path=repo_path)
